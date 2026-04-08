@@ -301,6 +301,34 @@
         gap: 1.2rem;
     }
 
+    .sp-user-home-card {
+        border-radius: 1rem;
+        padding: 1.3rem;
+        border: none;
+        background: transparent;
+        box-shadow:
+            0 0 0 1px rgba(241, 247, 246, 0.08),
+            0 0 32px rgba(241, 247, 246, 0.16),
+            0 12px 26px rgba(0, 15, 31, 0.2),
+            inset 0 0 22px rgba(241, 247, 246, 0.05);
+        display: grid;
+        gap: 0.95rem;
+    }
+
+    .sp-user-home-card h1 {
+        margin: 0;
+        color: #f1f7f6;
+        font-size: clamp(1.35rem, 2.8vw, 1.8rem);
+        line-height: 1.3;
+    }
+
+    .sp-user-home-card p {
+        margin: 0;
+        color: #aac8c4;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
     .sp-admin-page-header h1 {
         margin: 0;
         font-size: clamp(1.6rem, 3vw, 2rem);
@@ -1052,6 +1080,15 @@ select:focus[data-flux-control] {
     }
 
     @media (max-width: 1023px) {
+        .sp-private-plans-hero.animate__animated,
+        .sp-private-plan-card-left.animate__animated,
+        .sp-private-plan-card-center.animate__animated,
+        .sp-private-plan-card-right.animate__animated {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
         .sp-auth-back-link {
             position: static;
             margin: 1rem 1rem 0;

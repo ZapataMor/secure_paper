@@ -12,6 +12,10 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-[#000F1F] font-sans text-[#F1F7F6] selection:bg-[#2CC295] selection:text-[#000F1F]">
+        @php
+            $loginUrl = Route::has('login') ? route('login') : '#';
+        @endphp
+
         @include('partials.public.header')
 
         <section class="relative overflow-hidden px-6 pb-16 pt-20">
@@ -50,9 +54,9 @@
                         <p class="mt-1 text-xs text-[#AAC8C4]">~201.000 COP</p>
                     </div>
 
-                    <button class="mb-8 w-full rounded-xl bg-white/10 py-3 font-semibold text-white transition-colors hover:bg-white/20">
+                    <a href="{{ $loginUrl }}" class="mb-8 block w-full rounded-xl bg-white/10 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20">
                         Empezar ahora
-                    </button>
+                    </a>
 
                     <div class="space-y-4">
                         <p class="text-sm font-semibold uppercase tracking-wider text-[#AAC8C4]">Valor principal</p>
@@ -93,9 +97,9 @@
                         <p class="mt-1 text-xs text-[#AAC8C4]">~1.226.000 COP</p>
                     </div>
 
-                    <button class="mb-8 w-full rounded-xl bg-white/10 py-3 font-semibold text-white transition-colors hover:bg-white/20">
+                    <a href="{{ $loginUrl }}" class="mb-8 block w-full rounded-xl bg-white/10 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20">
                         Empezar ahora
-                    </button>
+                    </a>
 
                     <div class="space-y-4">
                         <p class="text-sm font-semibold uppercase tracking-wider text-[#AAC8C4]">Valor principal</p>
@@ -143,9 +147,9 @@
                         <p class="mt-1 text-xs text-[#AAC8C4]">~4.096.000 COP</p>
                     </div>
 
-                    <button class="mb-8 w-full rounded-xl bg-[#2CC295] py-3 font-bold text-[#000F1F] shadow-[0_0_20px_rgba(44,194,149,0.3)] transition-colors hover:bg-[#00BF81]">
-                        Seleccionar Premium
-                    </button>
+                    <a href="{{ $loginUrl }}" class="mb-8 block w-full rounded-xl bg-[#2CC295] py-3 text-center font-bold text-[#000F1F] shadow-[0_0_20px_rgba(44,194,149,0.3)] transition-colors hover:bg-[#00BF81]">
+                        Empezar ahora
+                    </a>
 
                     <div class="space-y-4">
                         <p class="text-sm font-semibold uppercase tracking-wider text-[#AAC8C4]">Valor principal</p>
