@@ -1,18 +1,27 @@
-<x-layouts::app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+<x-layouts::app :title="__('Panel de administracion')">
+    <section class="sp-admin-page">
+        <header class="sp-admin-page-header">
+            <p class="sp-admin-page-kicker">Panel principal</p>
+            <h1>Modulos del sistema</h1>
+            <p>Selecciona el modulo que deseas gestionar desde la barra superior o desde las tarjetas.</p>
+        </header>
+
+        @if(auth()->user()?->isAdmin())
+            <div class="sp-admin-modules-grid">
+                <article class="sp-admin-module-card">
+                    <span class="sp-admin-module-badge">Modulo 01</span>
+                    <h2>Gestion de usuarios</h2>
+                    <p>Administra la informacion de los usuarios registrados en Secure Papers.</p>
+                    <a href="{{ route('admin.users.index') }}" class="sp-admin-module-action" wire:navigate>
+                        Abrir modulo
+                    </a>
+                </article>
             </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+        @else
+            <div class="sp-admin-empty-state">
+                <h2>Sin modulos disponibles</h2>
+                <p>Tu cuenta no tiene permisos de administrador para visualizar modulos.</p>
             </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-        </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-        </div>
-    </div>
+        @endif
+    </section>
 </x-layouts::app>

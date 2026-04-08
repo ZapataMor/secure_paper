@@ -1,9 +1,9 @@
-<flux:dropdown position="bottom" align="start">
-    <flux:sidebar.profile
+<flux:dropdown position="bottom" align="end">
+    <flux:profile
         :name="auth()->user()->name"
         :initials="auth()->user()->initials()"
-        icon:trailing="chevrons-up-down"
-        data-test="sidebar-menu-button"
+        icon-trailing="chevrons-up-down"
+        data-test="user-menu-button"
     />
 
     <flux:menu>

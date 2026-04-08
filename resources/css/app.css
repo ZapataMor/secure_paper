@@ -28,6 +28,535 @@
     --color-accent-foreground: var(--color-white);
 }
 
+@layer components {
+    .sp-admin-shell {
+        position: relative;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        color: #f1f7f6;
+        background:
+            radial-gradient(circle at 10% 16%, rgba(44, 194, 149, 0.18), transparent 42%),
+            radial-gradient(circle at 84% 12%, rgba(0, 106, 76, 0.16), transparent 44%),
+            radial-gradient(circle at 72% 74%, rgba(3, 34, 33, 0.4), transparent 46%),
+            linear-gradient(145deg, #000f1f 0%, #032221 56%, #006a4c 100%);
+    }
+
+    .sp-admin-shell::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at 28% 84%, rgba(44, 194, 149, 0.12), transparent 36%),
+            radial-gradient(circle at 80% 62%, rgba(0, 106, 76, 0.14), transparent 34%);
+        filter: blur(16px);
+    }
+
+    .sp-admin-navbar {
+        position: sticky;
+        top: 0.85rem;
+        z-index: 60;
+        width: min(78rem, calc(100% - 1.5rem));
+        margin: 0 auto;
+        border-radius: 1.7rem;
+        border: 1px solid rgba(241, 247, 246, 0.16);
+        background: rgba(3, 34, 33, 0.58);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 14px 36px rgba(0, 15, 31, 0.34);
+        overflow: visible;
+    }
+
+    .sp-admin-navbar::after {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        pointer-events: none;
+        box-shadow: 0 0 0 1px rgba(241, 247, 246, 0.06), 0 0 22px rgba(44, 194, 149, 0.12);
+    }
+
+    .sp-admin-navbar-inner {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.74rem 0.9rem;
+    }
+
+    .sp-admin-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        white-space: nowrap;
+        color: #f1f7f6;
+    }
+
+    .sp-admin-brand-mark {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(241, 247, 246, 0.15);
+        background: rgba(0, 15, 31, 0.36);
+        color: #aac8c4;
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.05);
+    }
+
+    .sp-admin-brand-mark svg {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+
+    .sp-admin-brand-text {
+        font-size: 1rem;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+    }
+
+    .sp-admin-modules-nav {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        min-width: 0;
+    }
+
+    .sp-admin-module-link {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        text-decoration: none;
+        padding: 0.54rem 0.86rem;
+        border-radius: 0.82rem;
+        color: #f1f7f6;
+        font-size: 0.9rem;
+        font-weight: 500;
+        opacity: 0.9;
+        border: 1px solid transparent;
+        transition: color 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sp-admin-module-link:hover {
+        opacity: 1;
+        border-color: rgba(241, 247, 246, 0.16);
+        background: rgba(241, 247, 246, 0.06);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.08);
+    }
+
+    .sp-admin-module-link.is-active {
+        opacity: 1;
+        border-color: rgba(241, 247, 246, 0.22);
+        background: rgba(241, 247, 246, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.1);
+    }
+
+    .sp-admin-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-left: auto;
+    }
+
+    .sp-admin-cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.92rem;
+        padding: 0.6rem 0.95rem;
+        text-decoration: none;
+        white-space: nowrap;
+        color: #f1f7f6;
+        font-size: 0.88rem;
+        font-weight: 700;
+        border: 1px solid rgba(44, 194, 149, 0.45);
+        background: rgba(0, 106, 76, 0.34);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.05), 0 8px 20px rgba(0, 15, 31, 0.25);
+        transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sp-admin-cta:hover {
+        transform: translateY(-1px);
+        border-color: rgba(44, 194, 149, 0.72);
+        background: rgba(44, 194, 149, 0.18);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.08), 0 10px 24px rgba(0, 15, 31, 0.3);
+    }
+
+    .sp-admin-user-menu {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .sp-admin-user-menu [data-test='user-menu-button'] {
+        border-radius: 0.85rem;
+        border: 1px solid rgba(241, 247, 246, 0.15);
+        background: rgba(0, 15, 31, 0.3);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.04);
+    }
+
+    .sp-admin-menu-toggle {
+        display: none;
+        width: 2.35rem;
+        height: 2.35rem;
+        border-radius: 0.85rem;
+        border: 1px solid rgba(241, 247, 246, 0.18);
+        background: rgba(0, 15, 31, 0.3);
+        color: #f1f7f6;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .sp-admin-menu-toggle:hover {
+        border-color: rgba(241, 247, 246, 0.3);
+        background: rgba(241, 247, 246, 0.08);
+    }
+
+    .sp-admin-menu-toggle svg {
+        width: 1.02rem;
+        height: 1.02rem;
+        transition: transform 0.28s ease;
+    }
+
+    .sp-admin-menu-toggle[aria-expanded='true'] svg {
+        transform: rotate(90deg);
+    }
+
+    .sp-admin-mobile-panel {
+        display: none;
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+        padding: 0 0.9rem 0.9rem;
+        margin-top: 0.1rem;
+        border-top: 1px solid rgba(241, 247, 246, 0.12);
+    }
+
+    .sp-admin-mobile-link {
+        display: block;
+        text-decoration: none;
+        color: #f1f7f6;
+        opacity: 0.9;
+        border: 1px solid rgba(241, 247, 246, 0.1);
+        border-radius: 0.8rem;
+        background: rgba(241, 247, 246, 0.04);
+        padding: 0.62rem 0.75rem;
+        transition: opacity 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sp-admin-mobile-link:hover {
+        opacity: 1;
+        border-color: rgba(241, 247, 246, 0.22);
+        background: rgba(241, 247, 246, 0.1);
+    }
+
+    .sp-admin-cta--mobile {
+        margin-top: 0.1rem;
+        width: 100%;
+    }
+
+    .sp-admin-content {
+        width: min(100%, 78rem);
+        margin: 0 auto;
+        padding: 1.75rem 1rem 2.2rem;
+    }
+
+    .sp-admin-page {
+        display: grid;
+        gap: 1.2rem;
+    }
+
+    .sp-admin-page-header h1 {
+        margin: 0;
+        font-size: clamp(1.6rem, 3vw, 2rem);
+        line-height: 1.2;
+    }
+
+    .sp-admin-page-header p {
+        margin: 0.35rem 0 0;
+        color: #aac8c4;
+        font-size: 0.95rem;
+        line-height: 1.45;
+    }
+
+    .sp-admin-page-kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #2cc295;
+    }
+
+    .sp-admin-modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: 1rem;
+    }
+
+    .sp-admin-module-card {
+        border: 1px solid #006a4c;
+        border-radius: 1rem;
+        background: linear-gradient(145deg, #032221 0%, #006a4c 100%);
+        padding: 1.2rem;
+        box-shadow: 10px 10px 25px rgba(0, 15, 31, 0.25);
+    }
+
+    .sp-admin-module-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.25rem 0.55rem;
+        background: rgba(44, 194, 149, 0.17);
+        color: #2cc295;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .sp-admin-module-card h2 {
+        margin: 0.85rem 0 0.55rem;
+        font-size: 1.2rem;
+        color: #f1f7f6;
+    }
+
+    .sp-admin-module-card p {
+        margin: 0;
+        color: #aac8c4;
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+
+    .sp-admin-module-action {
+        margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+        padding: 0.55rem 0.9rem;
+        border: 1px solid #2cc295;
+        color: #2cc295;
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 700;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .sp-admin-module-action:hover {
+        background: #2cc295;
+        color: #000f1f;
+    }
+
+    .sp-admin-empty-state {
+        border: 1px dashed #006a4c;
+        border-radius: 1rem;
+        padding: 1.2rem;
+        background: rgba(0, 106, 76, 0.15);
+    }
+
+    .sp-admin-empty-state h2 {
+        margin: 0;
+        font-size: 1.05rem;
+    }
+
+    .sp-admin-empty-state p {
+        margin-top: 0.45rem;
+        color: #aac8c4;
+    }
+
+    .sp-users-card {
+        border: 1px solid #006a4c;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: #032221;
+        box-shadow: 10px 10px 24px rgba(0, 15, 31, 0.28);
+    }
+
+    .sp-users-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.95rem 1rem;
+        background: #000f1f;
+        border-bottom: 1px solid #006a4c;
+    }
+
+    .sp-users-card-header h2 {
+        margin: 0;
+        font-size: 1rem;
+        color: #f1f7f6;
+    }
+
+    .sp-users-count {
+        border-radius: 999px;
+        padding: 0.24rem 0.6rem;
+        font-size: 0.78rem;
+        color: #2cc295;
+        border: 1px solid #2cc295;
+    }
+
+    .sp-users-table-wrap {
+        overflow-x: auto;
+    }
+
+    .sp-users-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 42rem;
+    }
+
+    .sp-users-table th,
+    .sp-users-table td {
+        text-align: left;
+        padding: 0.82rem 1rem;
+        border-bottom: 1px solid rgba(170, 200, 196, 0.16);
+    }
+
+    .sp-users-table th {
+        color: #aac8c4;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 700;
+        background: rgba(0, 15, 31, 0.3);
+    }
+
+    .sp-users-table tbody tr:hover {
+        background: rgba(44, 194, 149, 0.08);
+    }
+
+    .sp-users-name {
+        margin: 0;
+        color: #f1f7f6;
+        font-size: 0.94rem;
+        font-weight: 700;
+    }
+
+    .sp-users-secondary {
+        margin: 0;
+        color: #aac8c4;
+        font-size: 0.83rem;
+    }
+
+    .sp-role-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.26rem 0.58rem;
+        border-radius: 999px;
+        border: 1px solid #006a4c;
+        color: #2cc295;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .sp-status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.58rem;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+
+    .sp-status-pill.is-active {
+        color: #2cc295;
+        background: rgba(44, 194, 149, 0.16);
+    }
+
+    .sp-status-pill.is-inactive {
+        color: #fecaca;
+        background: rgba(248, 113, 113, 0.16);
+    }
+
+    .sp-users-empty {
+        text-align: center;
+        color: #aac8c4;
+    }
+
+    @media (max-width: 1023px) {
+        .sp-admin-navbar {
+            top: 0.62rem;
+            width: calc(100% - 0.9rem);
+            border-radius: 1.3rem;
+        }
+
+        .sp-admin-navbar-inner {
+            gap: 0.55rem;
+        }
+
+        .sp-admin-modules-nav {
+            display: none;
+        }
+
+        .sp-admin-cta {
+            display: none;
+        }
+
+        .sp-admin-menu-toggle {
+            display: inline-flex;
+        }
+
+        .sp-admin-actions {
+            margin-left: 0;
+            flex: 1;
+        }
+
+        .sp-admin-user-menu {
+            margin-left: auto;
+        }
+
+        .sp-admin-mobile-panel {
+            display: grid;
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-8px);
+            overflow: hidden;
+            margin-top: 0;
+            padding: 0 0.9rem;
+            border-top-color: transparent;
+            pointer-events: none;
+            transition:
+                max-height 0.36s ease,
+                opacity 0.28s ease,
+                transform 0.28s ease,
+                padding 0.3s ease,
+                margin-top 0.3s ease,
+                border-top-color 0.3s ease;
+        }
+
+        .sp-admin-mobile-panel.is-open {
+            display: grid;
+            max-height: 12rem;
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: 0.1rem;
+            padding: 0.55rem 0.9rem 0.9rem;
+            border-top-color: rgba(241, 247, 246, 0.12);
+            pointer-events: auto;
+        }
+
+        .sp-admin-content {
+            padding-top: 1.25rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .sp-admin-brand-text {
+            display: none;
+        }
+
+        .sp-users-table {
+            min-width: 36rem;
+        }
+    }
+}
+
 @layer theme {
     .dark {
         --color-accent: var(--color-white);
