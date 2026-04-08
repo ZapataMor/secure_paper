@@ -19,9 +19,14 @@
             </div>
         @else
             <article class="sp-user-home-card animate__animated animate__fadeInDownBig">
-                <h1>Hola, bienvenido a Professional Papers.</h1>
-                <p>Si te encuentras en el desarrollo de tu proyecto y necesitas apoyo, ideas, revisiones u orientación, estás en el lugar indicado.</p>
-                <p>Para comenzar, dirígete al módulo "Planes" y elige la opción que mejor se adapte a tus necesidades. Luego, podrás cargar tu proyecto en el módulo "Cargue de documentos" y empezar a recibir acompañamiento en cada etapa de tu proceso.</p>
+                <h1 class="mb-6 text-5xl font-bold md:text-6xl">
+                    Hola, bienvenido a <br class="hidden md:block">
+                    <span class="bg-gradient-to-r from-[#2CC295] to-[#00BF81] bg-clip-text text-transparent">
+                        Professional Papers
+                    </span>
+                </h1>
+                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Si te encuentras en el desarrollo de tu proyecto y necesitas apoyo, ideas, revisiones u orientacion, estas en el lugar indicado.</p>
+                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Para comenzar, dirigete al modulo "Planes" y elige la opcion que mejor se adapte a tus necesidades. Luego, podras cargar tu proyecto en el modulo "Cargue de documentos" y empezar a recibir acompanamiento en cada etapa de tu proceso.</p>
             </article>
         @endif
     </section>
