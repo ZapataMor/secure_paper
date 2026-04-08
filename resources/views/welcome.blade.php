@@ -14,7 +14,7 @@
     <body class="min-h-screen bg-[#F1F7F6]">
         @php
             $loginUrl = Route::has('login') ? route('login') : '#';
-            $registerUrl = Route::has('register') ? route('register') : $loginUrl;
+            $plansUrl = Route::has('plans') ? route('plans') : url('/planes');
         @endphp
 
         @include('partials.public.header')
@@ -139,7 +139,7 @@
                     <a href="{{ $loginUrl }}" class="rounded-lg bg-[#F1F7F6] px-8 py-4 text-lg font-semibold text-[#006A4C] shadow-lg transition-colors hover:bg-white">
                         Comenzar Ahora
                     </a>
-                    <a href="{{ $registerUrl }}" class="rounded-lg border-2 border-[#F1F7F6] px-8 py-4 text-lg font-semibold text-[#F1F7F6] transition-colors hover:bg-[#F1F7F6] hover:text-[#006A4C]">
+                    <a href="{{ $plansUrl }}" class="rounded-lg border-2 border-[#F1F7F6] px-8 py-4 text-lg font-semibold text-[#F1F7F6] transition-colors hover:bg-[#F1F7F6] hover:text-[#006A4C]">
                         Ver Planes y Precios
                     </a>
                 </div>
