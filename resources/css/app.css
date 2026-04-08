@@ -55,10 +55,11 @@
 
     .sp-admin-navbar {
         position: sticky;
-        top: 0.85rem;
+        top: 0.25rem;
         z-index: 60;
         width: min(78rem, calc(100% - 1.5rem));
         margin: 0 auto;
+        margin-top: 8px;
         border-radius: 1.7rem;
         border: 1px solid rgba(241, 247, 246, 0.16);
         background: rgba(3, 34, 33, 0.58);
@@ -124,6 +125,7 @@
         justify-content: center;
         gap: 0.3rem;
         min-width: 0;
+        position: relative;
     }
 
     .sp-admin-module-link {
@@ -139,13 +141,15 @@
         opacity: 0.9;
         border: 1px solid transparent;
         transition: color 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        z-index: 1;
     }
 
     .sp-admin-module-link:hover {
         opacity: 1;
-        border-color: rgba(241, 247, 246, 0.16);
-        background: rgba(241, 247, 246, 0.06);
-        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.08);
+        border-color: transparent;
+        background: transparent;
+        box-shadow: none;
     }
 
     .sp-admin-module-link.is-active {
@@ -153,6 +157,33 @@
         border-color: rgba(241, 247, 246, 0.22);
         background: rgba(241, 247, 246, 0.1);
         box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.1);
+    }
+
+    .sp-admin-nav-indicator {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 0;
+        height: calc(100% - 0.34rem);
+        border: 1px solid rgba(241, 247, 246, 0.22);
+        border-radius: 0.82rem;
+        background: rgba(241, 247, 246, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(241, 247, 246, 0.1);
+        pointer-events: none;
+        opacity: 0;
+        transform: translate3d(0, -50%, 0);
+        transition:
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            width 0.35s ease,
+            opacity 0.2s ease;
+        will-change: transform, width;
+        z-index: 0;
+    }
+
+    .sp-admin-modules-nav.has-indicator .sp-admin-module-link.is-active {
+        border-color: transparent;
+        background: transparent;
+        box-shadow: none;
     }
 
     .sp-admin-actions {
@@ -481,7 +512,7 @@
 
     @media (max-width: 1023px) {
         .sp-admin-navbar {
-            top: 0.62rem;
+            top: 0.25rem;
             width: calc(100% - 0.9rem);
             border-radius: 1.3rem;
         }
