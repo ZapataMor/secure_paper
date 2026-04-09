@@ -7,6 +7,7 @@ use App\Models\DocumentType;
 use App\Models\UserMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class PrivateDocumentUploadController extends Controller
@@ -39,11 +40,15 @@ class PrivateDocumentUploadController extends Controller
             ->latest('id')
             ->get();
 
+        $additionalInformationEntries = $this->formatAdditionalInformationEntries(
+            $user->additionalInformationEntries()
+        );
+
         return view('private.upload-document', [
             'documents' => $documents,
             'adminDocuments' => $adminDocuments,
             'adminMessages' => $adminMessages,
-            'additionalInformation' => $user->document_additional_information,
+            'additionalInformationEntries' => $additionalInformationEntries,
         ]);
     }
 
@@ -69,11 +74,11 @@ class PrivateDocumentUploadController extends Controller
         }
 
         if ($additionalInformation !== null) {
-            $user->document_additional_information = $additionalInformation;
+            $user->appendAdditionalInformation($additionalInformation);
             $user->save();
         }
 
-        $documentDescription = $additionalInformation ?? $user->document_additional_information;
+        $documentDescription = $additionalInformation ?? $user->latestAdditionalInformationContent();
 
         $uploadedCount = 0;
 
@@ -110,6 +115,22 @@ class PrivateDocumentUploadController extends Controller
         return redirect()
             ->route('private.upload-document')
             ->with('status', $status);
+    }
+
+    private function formatAdditionalInformationEntries(Collection $entries): Collection
+    {
+        return $entries
+            ->map(function (array $entry): array {
+                $createdAt = $entry['created_at'] ?? null;
+
+                return [
+                    'content' => $entry['content'],
+                    'date_key' => $createdAt?->format('Y-m-d') ?? 'sin-fecha',
+                    'date_label' => $createdAt?->format('d/m/Y') ?? 'Sin fecha',
+                    'time_label' => $createdAt?->format('H:i') ?? null,
+                ];
+            })
+            ->values();
     }
 
     private function resolveDocumentTypeId(?string $extension): int

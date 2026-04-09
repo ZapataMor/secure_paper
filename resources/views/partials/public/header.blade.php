@@ -16,7 +16,7 @@
                 </svg>
             </div>
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Secure Papers</h1>
+                <h1 class="text-2xl font-bold tracking-tight">Professional Papers</h1>
                 <p class="text-sm text-[#AAC8C4]">Academic Excellence & Trust</p>
             </div>
         </div>

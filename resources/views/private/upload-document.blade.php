@@ -3,7 +3,8 @@
         $documents = $documents ?? collect();
         $adminDocuments = $adminDocuments ?? collect();
         $adminMessages = $adminMessages ?? collect();
-        $additionalInformation = $additionalInformation ?? null;
+        $additionalInformationEntries = collect($additionalInformationEntries ?? []);
+        $additionalInformationByDate = $additionalInformationEntries->groupBy('date_key');
     @endphp
 
     <section class="sp-admin-page mx-auto w-full max-w-5xl">
@@ -94,10 +95,30 @@
         <article class="w-full rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
             <h2 class="text-lg font-semibold text-[#F1F7F6]">Tu informacion adicional guardada</h2>
 
-            @if (filled($additionalInformation))
-                <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
-                    {{ $additionalInformation }}
-                </p>
+            @if ($additionalInformationEntries->isNotEmpty())
+                <div class="mt-4 space-y-4">
+                    @foreach ($additionalInformationByDate as $entriesForDate)
+                        <section class="rounded-xl border border-[#AAC8C4]/25 bg-[#000F1F]/35 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-[#AAC8C4]">
+                                {{ $entriesForDate->first()['date_label'] ?? 'Sin fecha' }}
+                            </p>
+
+                            <ul class="mt-3 space-y-2">
+                                @foreach ($entriesForDate as $entry)
+                                    <li class="rounded-lg border border-[#AAC8C4]/20 bg-[#032221]/55 px-3 py-3">
+                                        @if (filled($entry['time_label'] ?? null))
+                                            <p class="text-xs text-[#AAC8C4]">{{ $entry['time_label'] }}</p>
+                                        @endif
+
+                                        <p class="mt-1 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
+                                            {{ $entry['content'] }}
+                                        </p>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </section>
+                    @endforeach
+                </div>
             @else
                 <p class="mt-3 text-sm text-[#AAC8C4]">
                     Aun no has agregado informacion adicional.

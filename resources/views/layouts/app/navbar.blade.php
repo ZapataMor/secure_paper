@@ -20,7 +20,7 @@
                         </svg>
                     </span>
                     <span class="sp-admin-brand-text">
-                        Secure Papers
+                        Professional Papers
                     </span>
                 </a>
 

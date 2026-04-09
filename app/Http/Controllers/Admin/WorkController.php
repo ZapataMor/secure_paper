@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserMessage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class WorkController extends Controller
@@ -60,12 +61,16 @@ class WorkController extends Controller
             ->latest('id')
             ->get();
 
+        $additionalInformationEntries = $this->formatAdditionalInformationEntries(
+            $user->additionalInformationEntries()
+        );
+
         return view('admin.works.show', [
             'targetUser' => $user,
             'userDocuments' => $userDocuments,
             'adminDocuments' => $adminDocuments,
             'adminMessages' => $adminMessages,
-            'additionalInformation' => $user->document_additional_information,
+            'additionalInformationEntries' => $additionalInformationEntries,
         ]);
     }
 
@@ -138,6 +143,22 @@ class WorkController extends Controller
         return redirect()
             ->route('admin.works.show', $user)
             ->with('status', $status);
+    }
+
+    private function formatAdditionalInformationEntries(Collection $entries): Collection
+    {
+        return $entries
+            ->map(function (array $entry): array {
+                $createdAt = $entry['created_at'] ?? null;
+
+                return [
+                    'content' => $entry['content'],
+                    'date_key' => $createdAt?->format('Y-m-d') ?? 'sin-fecha',
+                    'date_label' => $createdAt?->format('d/m/Y') ?? 'Sin fecha',
+                    'time_label' => $createdAt?->format('H:i') ?? null,
+                ];
+            })
+            ->values();
     }
 
     private function resolveDocumentTypeId(?string $extension): int
