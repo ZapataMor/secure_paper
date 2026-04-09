@@ -14,8 +14,8 @@
     <body class="min-h-screen bg-[#F1F7F6]">
         @include('partials.public.header')
 
-        <section class="bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 py-20 text-[#F1F7F6]">
-            <div class="mx-auto max-w-7xl text-center">
+        <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-24 pt-32 text-[#F1F7F6] md:pb-28 md:pt-36">
+            <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
                 <h2 class="mb-6 text-4xl font-bold md:text-5xl">
                     Sobre <span class="text-[#2CC295]">Nosotros</span>
                 </h2>

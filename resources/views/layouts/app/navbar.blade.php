@@ -51,6 +51,14 @@
 
                     @if($isAdmin)
                         <a
+                            href="{{ route('admin.works.index') }}"
+                            wire:navigate
+                            class="sp-admin-module-link {{ request()->routeIs('admin.works.*') ? 'is-active' : '' }}"
+                        >
+                            Trabajos
+                        </a>
+
+                        <a
                             href="{{ route('admin.users.index') }}"
                             wire:navigate
                             class="sp-admin-module-link {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}"
@@ -88,6 +96,9 @@
                 <a href="{{ route('private.upload-document') }}" class="sp-admin-mobile-link" wire:navigate>Cargar documento</a>
 
                 @if($isAdmin)
+                    <a href="{{ route('admin.works.index') }}" class="sp-admin-mobile-link" wire:navigate>
+                        Trabajos
+                    </a>
                     <a href="{{ route('admin.users.index') }}" class="sp-admin-mobile-link" wire:navigate>
                         Gestion de usuarios
                     </a>

@@ -18,10 +18,10 @@
 
         @include('partials.public.header')
 
-        <section class="relative overflow-hidden px-6 pb-16 pt-20">
+        <section class="relative overflow-hidden px-6 pb-16 pt-32 md:pt-36">
             <div class="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-[#006A4C] opacity-20 blur-[120px]"></div>
 
-            <div class="relative z-10 mx-auto max-w-7xl text-center">
+            <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
                 <span class="mb-4 block text-sm font-semibold uppercase tracking-wider text-[#2CC295]">Portafolio de Servicios</span>
                 <h1 class="mb-6 text-5xl font-bold md:text-6xl">
                     Tu camino seguro a la <br class="hidden md:block">
@@ -38,7 +38,7 @@
 
         <section class="relative z-10 mx-auto max-w-7xl px-6 pb-24">
             <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-3">
-                <article class="rounded-3xl border border-[#006A4C]/30 bg-[#031A19]/60 p-8 backdrop-blur-md transition-colors hover:border-[#006A4C]/60">
+                <article class="rounded-3xl border border-[#006A4C]/30 bg-[#031A19]/60 p-8 backdrop-blur-md transition-colors hover:border-[#006A4C]/60 sp-private-plan-card-left animate__animated animate__fadeInLeft">
                     <h3 class="mb-2 text-2xl font-bold">Esencial</h3>
                     <p class="mb-6 h-10 text-sm text-[#AAC8C4]">Idea inicial, tesis en etapa temprana o consulta rapida.</p>
 
@@ -81,7 +81,7 @@
                     </div>
                 </article>
 
-                <article class="mt-0 rounded-3xl border border-[#006A4C]/30 bg-[#031A19]/60 p-8 backdrop-blur-md transition-colors hover:border-[#006A4C]/60 md:mt-4">
+                <article class="mt-0 rounded-3xl border border-[#006A4C]/30 bg-[#031A19]/60 p-8 backdrop-blur-md transition-colors hover:border-[#006A4C]/60 md:mt-4 sp-private-plan-card-center animate__animated animate__fadeInUp">
                     <h3 class="mb-2 text-2xl font-bold">Correccion Completa</h3>
                     <p class="mb-6 h-10 text-sm text-[#AAC8C4]">Correccion profunda de tesis o articulo.</p>
 
@@ -128,7 +128,7 @@
                     </div>
                 </article>
 
-                <article class="relative rounded-3xl border-2 border-[#2CC295] bg-gradient-to-b from-[#006A4C]/30 to-[#031A19]/80 p-8 shadow-[0_0_40px_rgba(44,194,149,0.15)] backdrop-blur-md md:-translate-y-4">
+                <article class="relative rounded-3xl border-2 border-[#2CC295] bg-gradient-to-b from-[#006A4C]/30 to-[#031A19]/80 p-8 shadow-[0_0_40px_rgba(44,194,149,0.15)] backdrop-blur-md md:-translate-y-4 sp-private-plan-card-right animate__animated animate__fadeInRight">
                     <div class="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2CC295] px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-[#000F1F] shadow-lg">
                         El mas recomendado
                     </div>

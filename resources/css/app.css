@@ -29,6 +29,57 @@
 }
 
 @layer components {
+    .sp-public-navbar {
+        position: fixed;
+        top: 0.5rem;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        z-index: 60;
+        width: min(78rem, calc(100% - 1.5rem));
+        border-radius: 1.7rem;
+        border: 1px solid rgba(241, 247, 246, 0.16);
+        background: rgba(3, 34, 33, 0.58);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 14px 36px rgba(0, 15, 31, 0.34);
+    }
+
+    .sp-public-navbar::after {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        pointer-events: none;
+        box-shadow: 0 0 0 1px rgba(241, 247, 246, 0.06), 0 0 22px rgba(44, 194, 149, 0.1);
+    }
+
+    .sp-public-navbar-inner {
+        padding: 1rem 1.5rem;
+    }
+
+    .sp-home-hero-grid-bg {
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+        --sp-home-hero-grid-speed: 3.2s;
+    }
+
+    .sp-home-hero-grid-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+            radial-gradient(circle at 1px 1px, rgba(241, 247, 246, 0.24) 1px, transparent 1.2px),
+            linear-gradient(rgba(241, 247, 246, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(241, 247, 246, 0.08) 1px, transparent 1px);
+        background-repeat: repeat;
+        background-size: 50px 50px, 50px 50px, 50px 50px;
+        animation: sp-home-bg-scrolling-reverse var(--sp-home-hero-grid-speed) linear infinite;
+    }
+
     .sp-admin-shell {
         position: relative;
         min-height: 100vh;
@@ -581,6 +632,15 @@
     }
 
     @media (max-width: 1023px) {
+        .sp-public-navbar {
+            width: calc(100% - 0.9rem);
+            border-radius: 1.3rem;
+        }
+
+        .sp-public-navbar-inner {
+            padding: 0.85rem 1rem;
+        }
+
         .sp-admin-navbar {
             top: 0.25rem;
             width: calc(100% - 0.9rem);
@@ -655,6 +715,18 @@
         .sp-users-table {
             min-width: 36rem;
         }
+    }
+}
+
+@keyframes sp-home-bg-scrolling-reverse {
+    100% {
+        background-position: 50px 50px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sp-home-hero-grid-bg::before {
+        animation: none;
     }
 }
 
