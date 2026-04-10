@@ -28,40 +28,127 @@
                 <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Si te encuentras en el desarrollo de tu proyecto y necesitas apoyo, ideas, revisiones u orientacion, estas en el lugar indicado.</p>
                 <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Para comenzar, dirigete al modulo "Planes" y elige la opcion que mejor se adapte a tus necesidades. Luego, podras cargar tu proyecto en el modulo "Cargue de documentos" y empezar a recibir acompanamiento en cada etapa de tu proceso.</p>
 
-                <section class="sp-user-guide">
-                    <h2>Guia de uso inicial</h2>
-                    <ol>
-                        <li>
-                            <span class="sp-user-guide-step">1</span>
-                            <div>
-                                Una vez inicies sesion en el aplicativo, es necesario seguir una secuencia sencilla para comenzar con el proceso de acompanamiento de tu proyecto.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="sp-user-guide-step">2</span>
-                            <div>
-                                En primer lugar, debes dirigirte al modulo "Planes", donde podras revisar las opciones disponibles y seleccionar el plan que mejor se ajuste a tus necesidades. Este paso es obligatorio para habilitar los demas servicios del sistema.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="sp-user-guide-step">3</span>
-                            <div>
-                                Despues de elegir tu plan, podras acceder al modulo "Cargue de documentos". Alli deberas subir tu archivo y, si lo consideras necesario, agregar indicaciones, observaciones o aspectos especificos que deseas que sean revisados.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="sp-user-guide-step">4</span>
-                            <div>
-                                Una vez enviado el documento, el equipo iniciara el proceso de analisis. A partir de este momento, deberas esperar un tiempo determinado para recibir la retroalimentacion correspondiente y la programacion de una reunion con el asesor.
-                            </div>
-                        </li>
-                        <li>
-                            <span class="sp-user-guide-step">5</span>
-                            <div>
-                                Este flujo garantiza una atencion organizada y un acompanamiento adecuado durante el desarrollo de tu proyecto.
-                            </div>
-                        </li>
-                    </ol>
+                <section class="sp-user-guide" aria-labelledby="sp-user-guide-title">
+                    <div class="sp-user-guide-shell">
+                        <header class="sp-user-guide-header">
+                            <h2 id="sp-user-guide-title">Guia de uso inicial</h2>
+                            <p>Sigue esta secuencia sencilla para comenzar el proceso de acompanamiento de tu proyecto.</p>
+                        </header>
+
+                        <ol class="sp-user-guide-list">
+                            <li class="sp-user-guide-item is-current">
+                                <span class="sp-user-guide-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 7v14" />
+                                        <path d="M3 18h6a3 3 0 0 1 3 3 3 3 0 0 1 3-3h6V4h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3H3z" />
+                                    </svg>
+                                </span>
+
+                                <article class="sp-user-guide-card">
+                                    <div class="sp-user-guide-meta">
+                                        <div class="sp-user-guide-title-wrap">
+                                            <p class="sp-user-guide-step-label">Paso 1</p>
+                                            <h3 class="sp-user-guide-title">Elige tu plan</h3>
+                                        </div>
+                                        <a href="{{ route('private.planes') }}" class="sp-user-guide-action" wire:navigate>
+                                            Ver planes
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M5 12h14" />
+                                                <path d="m13 5 7 7-7 7" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <p class="sp-user-guide-description">
+                                        Dirigete al modulo "Planes", donde podras revisar y seleccionar el plan que mejor se ajuste a tus necesidades (Esencial, Completa o Premium).
+                                    </p>
+                                </article>
+                            </li>
+
+                            <li class="sp-user-guide-item is-pending">
+                                <span class="sp-user-guide-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 12v9" />
+                                        <path d="m16 16-4-4-4 4" />
+                                        <path d="M20.39 18.39A5.5 5.5 0 0 0 18 8h-1.26A8 8 0 1 0 3 16.3" />
+                                    </svg>
+                                </span>
+
+                                <article class="sp-user-guide-card">
+                                    <div class="sp-user-guide-meta">
+                                        <div class="sp-user-guide-title-wrap">
+                                            <p class="sp-user-guide-step-label">Paso 2</p>
+                                            <h3 class="sp-user-guide-title">Carga tus documentos</h3>
+                                        </div>
+                                        <a href="{{ route('private.upload-document') }}" class="sp-user-guide-action is-secondary" wire:navigate>
+                                            Ir a cargar
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M5 12h14" />
+                                                <path d="m13 5 7 7-7 7" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <p class="sp-user-guide-description">
+                                        Accede a "Cargar documento". Sube tu archivo y agrega las indicaciones u observaciones especificas que deseas que sean revisadas.
+                                    </p>
+                                </article>
+                            </li>
+
+                            <li class="sp-user-guide-item is-pending">
+                                <span class="sp-user-guide-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7" />
+                                        <path d="m20 20-3.5-3.5" />
+                                    </svg>
+                                </span>
+
+                                <article class="sp-user-guide-card">
+                                    <div class="sp-user-guide-title-wrap">
+                                        <p class="sp-user-guide-step-label">Paso 3</p>
+                                        <h3 class="sp-user-guide-title">Analisis experto</h3>
+                                    </div>
+                                    <p class="sp-user-guide-description">
+                                        Una vez enviado, nuestro equipo iniciara el proceso de analisis segun el plan elegido. Te notificaremos cuando haya avances.
+                                    </p>
+                                </article>
+                            </li>
+
+                            <li class="sp-user-guide-item is-pending">
+                                <span class="sp-user-guide-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                    </svg>
+                                </span>
+
+                                <article class="sp-user-guide-card">
+                                    <div class="sp-user-guide-title-wrap">
+                                        <p class="sp-user-guide-step-label">Paso 4</p>
+                                        <h3 class="sp-user-guide-title">Retroalimentacion y reunion</h3>
+                                    </div>
+                                    <p class="sp-user-guide-description">
+                                        Recibiras las correcciones, comentarios detallados y la programacion de una reunion con tu asesor (dependiendo del plan).
+                                    </p>
+                                </article>
+                            </li>
+
+                            <li class="sp-user-guide-item is-pending">
+                                <span class="sp-user-guide-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m12 2 2.95 5.98 6.6.96-4.78 4.66 1.13 6.57L12 17.08 6.1 20.17l1.13-6.57-4.78-4.66 6.6-.96z" />
+                                    </svg>
+                                </span>
+
+                                <article class="sp-user-guide-card">
+                                    <div class="sp-user-guide-title-wrap">
+                                        <p class="sp-user-guide-step-label">Paso 5</p>
+                                        <h3 class="sp-user-guide-title">Garantia y acompanamiento</h3>
+                                    </div>
+                                    <p class="sp-user-guide-description">
+                                        Este flujo garantiza una atencion organizada hasta alcanzar tus objetivos academicos.
+                                    </p>
+                                </article>
+                            </li>
+                        </ol>
+                    </div>
                 </section>
             </article>
         @endif

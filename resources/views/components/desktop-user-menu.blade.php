@@ -2,7 +2,8 @@
     <flux:profile
         :name="auth()->user()->name"
         :initials="auth()->user()->initials()"
-        icon-trailing="chevrons-up-down"
+        icon-trailing="chevron-down"
+        circle
         data-test="user-menu-button"
     />
 
@@ -11,6 +12,7 @@
             <flux:avatar
                 :name="auth()->user()->name"
                 :initials="auth()->user()->initials()"
+                circle
             />
             <div class="grid flex-1 text-start text-sm leading-tight">
                 <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
