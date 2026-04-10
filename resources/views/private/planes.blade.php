@@ -1,6 +1,8 @@
 <x-layouts::app :title="__('Planes')">
     @php
-        $startUrl = route('private.upload-document');
+        $startUrl = auth()->user()?->isAdmin()
+            ? route('admin.works.index')
+            : route('private.upload-document');
     @endphp
 
     <section class="relative overflow-hidden px-6 pb-16 pt-20">

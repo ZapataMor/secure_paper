@@ -41,13 +41,15 @@
                         Planes
                     </a>
 
-                    <a
-                        href="{{ route('private.upload-document') }}"
-                        wire:navigate
-                        class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }}"
-                    >
-                        Cargar documento
-                    </a>
+                    @unless($isAdmin)
+                        <a
+                            href="{{ route('private.upload-document') }}"
+                            wire:navigate
+                            class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }}"
+                        >
+                            Cargar documento
+                        </a>
+                    @endunless
 
                     @if($isAdmin)
                         <a
@@ -93,7 +95,9 @@
             <div class="sp-admin-mobile-panel" id="spModulesPanel">
                 <a href="{{ route('dashboard') }}" class="sp-admin-mobile-link" wire:navigate>Inicio</a>
                 <a href="{{ route('private.planes') }}" class="sp-admin-mobile-link" wire:navigate>Planes</a>
-                <a href="{{ route('private.upload-document') }}" class="sp-admin-mobile-link" wire:navigate>Cargar documento</a>
+                @unless($isAdmin)
+                    <a href="{{ route('private.upload-document') }}" class="sp-admin-mobile-link" wire:navigate>Cargar documento</a>
+                @endunless
 
                 @if($isAdmin)
                     <a href="{{ route('admin.works.index') }}" class="sp-admin-mobile-link" wire:navigate>

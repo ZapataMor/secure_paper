@@ -15,6 +15,7 @@ class PrivateDocumentUploadController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+        abort_if($user?->isAdmin(), 403);
 
         $documents = Document::query()
             ->with('documentType:id,name')
@@ -54,13 +55,15 @@ class PrivateDocumentUploadController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        abort_if($user?->isAdmin(), 403);
+
         $request->validate([
             'document_files' => ['nullable', 'array'],
             'document_files.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,webp,bmp', 'max:20480'],
             'additional_information' => ['nullable', 'string', 'max:8000'],
         ]);
 
-        $user = $request->user();
         $additionalInformation = trim((string) $request->input('additional_information'));
         $additionalInformation = $additionalInformation !== '' ? $additionalInformation : null;
 
@@ -120,6 +123,7 @@ class PrivateDocumentUploadController extends Controller
     private function formatAdditionalInformationEntries(Collection $entries): Collection
     {
         return $entries
+            ->sortByDesc(fn (array $entry): int => ($entry['created_at'] ?? null)?->getTimestamp() ?? -1)
             ->map(function (array $entry): array {
                 $createdAt = $entry['created_at'] ?? null;
 

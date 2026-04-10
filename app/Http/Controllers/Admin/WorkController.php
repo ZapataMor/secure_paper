@@ -148,6 +148,7 @@ class WorkController extends Controller
     private function formatAdditionalInformationEntries(Collection $entries): Collection
     {
         return $entries
+            ->sortByDesc(fn (array $entry): int => ($entry['created_at'] ?? null)?->getTimestamp() ?? -1)
             ->map(function (array $entry): array {
                 $createdAt = $entry['created_at'] ?? null;
 
