@@ -11,7 +11,10 @@ class UserManagementController extends Controller
     public function index(): View
     {
         $users = User::query()
-            ->with('role:id,name')
+            ->with([
+                'role:id,name',
+                'activePaidSubscription.paymentPlan:id,name',
+            ])
             ->orderBy('name')
             ->orderBy('last_name')
             ->get([

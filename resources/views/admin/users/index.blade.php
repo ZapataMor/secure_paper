@@ -21,6 +21,7 @@
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Rol</th>
+                            <th>Plan</th>
                             <th>Documento</th>
                             <th>Estado</th>
                             <th>Registro</th>
@@ -28,6 +29,11 @@
                     </thead>
                     <tbody>
                         @forelse($users as $user)
+                            @php
+                                $isClient = $user->role?->name === 'client';
+                                $planName = $isClient ? $user->activePaidSubscription?->paymentPlan?->name : null;
+                            @endphp
+
                             <tr>
                                 <td data-label="Nombre">
                                     <p class="sp-users-name">{{ $user->fullName() }}</p>
@@ -40,6 +46,15 @@
                                 </td>
                                 <td data-label="Rol">
                                     <span class="sp-role-pill">{{ ucfirst($user->role?->name ?? 'sin rol') }}</span>
+                                </td>
+                                <td data-label="Plan">
+                                    @if(! $isClient)
+                                        <span class="sp-role-pill">No aplica</span>
+                                    @elseif($planName)
+                                        <span class="sp-role-pill">{{ $planName }}</span>
+                                    @else
+                                        <span class="sp-status-pill is-inactive">Sin plan</span>
+                                    @endif
                                 </td>
                                 <td data-label="Documento">
                                     @if($user->document_type && $user->document_number)
@@ -59,7 +74,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="sp-users-empty">No hay usuarios registrados.</td>
+                                <td colspan="7" class="sp-users-empty">No hay usuarios registrados.</td>
                             </tr>
                         @endforelse
                     </tbody>

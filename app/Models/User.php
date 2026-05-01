@@ -3,13 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use DateTimeInterface;
 use Database\Factories\UserFactory;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -46,6 +47,42 @@ class User extends Authenticatable
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function userSubscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function activePaidSubscription(): HasOne
+    {
+        return $this->hasOne(UserSubscription::class)
+            ->activePaid()
+            ->latestOfMany('end_date');
+    }
+
+    public function hasActiveMembership(): bool
+    {
+        if ($this->relationLoaded('activePaidSubscription')) {
+            return $this->activePaidSubscription !== null;
+        }
+
+        return $this->activePaidSubscription()->exists();
+    }
+
+    public function activeMembershipPlanName(): ?string
+    {
+        $subscription = $this->relationLoaded('activePaidSubscription')
+            ? $this->activePaidSubscription
+            : $this->activePaidSubscription()->with('paymentPlan:id,name')->first();
+
+        if (! $subscription) {
+            return null;
+        }
+
+        $subscription->loadMissing('paymentPlan:id,name');
+
+        return $subscription->paymentPlan?->name;
     }
 
     public function additionalInformationEntries(): Collection

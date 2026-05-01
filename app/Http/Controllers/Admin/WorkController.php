@@ -17,7 +17,10 @@ class WorkController extends Controller
     public function index(): View
     {
         $users = User::query()
-            ->with('role:id,name')
+            ->with([
+                'role:id,name',
+                'activePaidSubscription.paymentPlan:id,name',
+            ])
             ->whereHas('role', fn ($query) => $query->where('name', 'client'))
             ->orderBy('name')
             ->orderBy('last_name')
@@ -26,7 +29,17 @@ class WorkController extends Controller
                 'role_id',
                 'name',
                 'last_name',
-            ]);
+            ])
+            ->sortBy(function (User $user): string {
+                $membershipPriority = $user->hasActiveMembership() ? '0' : '1';
+
+                return sprintf(
+                    '%s|%s',
+                    $membershipPriority,
+                    strtolower($user->fullName())
+                );
+            })
+            ->values();
 
         return view('admin.works.index', [
             'users' => $users,

@@ -14,8 +14,10 @@ Route::view('/planes', 'planes')->name('plans');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::view('dashboard/planes', 'private.planes')->name('private.planes');
-    Route::get('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'index'])->name('private.upload-document');
-    Route::post('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'store'])->name('private.upload-document.store');
+    Route::middleware('membership')->group(function () {
+        Route::get('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'index'])->name('private.upload-document');
+        Route::post('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'store'])->name('private.upload-document.store');
+    });
     Route::get('dashboard/documentos/{document}/archivo', [DocumentFileController::class, 'show'])->name('documents.file.show');
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {

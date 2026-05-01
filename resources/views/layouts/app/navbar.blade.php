@@ -7,12 +7,13 @@
         @php
             $currentUser = auth()->user();
             $isAdmin = $currentUser?->isAdmin();
+            $hasActiveMembership = $isAdmin || ($currentUser?->hasActiveMembership() ?? false);
         @endphp
 
         @persist('admin-navbar')
         <header class="sp-admin-navbar">
             <div class="sp-admin-navbar-inner">
-                <a href="{{ route('dashboard') }}" class="sp-admin-brand" wire:navigate>
+                <div class="sp-admin-brand" aria-label="Professional Papers">
                     <span class="sp-admin-brand-mark">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2 4 6v6c0 5 3.2 9.4 8 10 4.8-.6 8-5 8-10V6z" />
@@ -22,7 +23,7 @@
                     <span class="sp-admin-brand-text">
                         Professional Papers
                     </span>
-                </a>
+                </div>
 
                 <nav class="sp-admin-modules-nav">
                     <a
@@ -45,7 +46,9 @@
                         <a
                             href="{{ route('private.upload-document') }}"
                             wire:navigate
-                            class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }}"
+                            class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }} {{ $hasActiveMembership ? '' : 'pointer-events-none opacity-55' }}"
+                            aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
+                            title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
                         >
                             Cargar documento
                         </a>
@@ -96,7 +99,15 @@
                 <a href="{{ route('dashboard') }}" class="sp-admin-mobile-link" wire:navigate>Inicio</a>
                 <a href="{{ route('private.planes') }}" class="sp-admin-mobile-link" wire:navigate>Planes</a>
                 @unless($isAdmin)
-                    <a href="{{ route('private.upload-document') }}" class="sp-admin-mobile-link" wire:navigate>Cargar documento</a>
+                    <a
+                        href="{{ route('private.upload-document') }}"
+                        class="sp-admin-mobile-link {{ $hasActiveMembership ? '' : 'pointer-events-none opacity-55' }}"
+                        wire:navigate
+                        aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
+                        title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
+                    >
+                        Cargar documento{{ $hasActiveMembership ? '' : ' (bloqueado)' }}
+                    </a>
                 @endunless
 
                 @if($isAdmin)

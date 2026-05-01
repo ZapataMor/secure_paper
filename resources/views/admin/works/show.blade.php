@@ -1,7 +1,17 @@
 <x-layouts::app :title="__('Trabajos de usuario')">
     @php
         $additionalInformationEntries = collect($additionalInformationEntries ?? []);
-        $additionalInformationByDate = $additionalInformationEntries->groupBy('date_key');
+        $formatFileSize = static function (int $bytes): string {
+            if ($bytes < 1024) {
+                return $bytes.' B';
+            }
+
+            if ($bytes < 1024 * 1024) {
+                return number_format($bytes / 1024, 1).' KB';
+            }
+
+            return number_format($bytes / (1024 * 1024), 2).' MB';
+        };
     @endphp
 
     <section class="sp-admin-page mx-auto w-full max-w-6xl">
@@ -34,123 +44,273 @@
             </div>
         @endif
 
-        <article class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-            <h2 class="text-lg font-semibold text-[#F1F7F6]">Informacion adicional del usuario</h2>
+        <form
+            method="POST"
+            action="{{ route('admin.works.store', $targetUser) }}"
+            enctype="multipart/form-data"
+            class="space-y-6"
+        >
+            @csrf
 
-            @if ($additionalInformationEntries->isNotEmpty())
-                <div class="mt-4 space-y-4">
-                    @foreach ($additionalInformationByDate as $entriesForDate)
-                        <section class="rounded-xl border border-[#AAC8C4]/25 bg-[#000F1F]/35 px-4 py-3">
-                            <p class="text-xs font-semibold uppercase tracking-wide text-[#AAC8C4]">
-                                {{ $entriesForDate->first()['date_label'] ?? 'Sin fecha' }}
+            <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+                <article class="xl:col-span-7 overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+                    <div class="flex items-center gap-2 border-b border-[#006A4C]/35 bg-[#006A4C]/10 px-5 py-4">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" class="h-5 w-5 text-[#2CC295]">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <path d="m17 8-5-5-5 5"/>
+                            <path d="M12 3v12"/>
+                        </svg>
+                        <h2 class="text-lg font-semibold text-[#F1F7F6]">Contenedor de carga de archivos</h2>
+                    </div>
+
+                    <div class="p-5">
+                        <p class="text-sm text-[#AAC8C4]">
+                            Carga archivos para este usuario. Formatos permitidos: Word, PDF, Excel e imagenes.
+                        </p>
+
+                        <div class="mt-4 rounded-xl border-2 border-dashed border-[#2CC295]/45 bg-[#000F1F]/35 px-4 py-6 text-center">
+                            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#2CC295]/40 bg-[#006A4C]/18">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" class="h-7 w-7 text-[#2CC295]">
+                                    <path d="M12 16V4"/>
+                                    <path d="m7 9 5-5 5 5"/>
+                                    <path d="M20 16.5a4.5 4.5 0 0 1-4.5 4.5h-7A4.5 4.5 0 0 1 4 16.5"/>
+                                </svg>
+                            </div>
+
+                            <p class="text-base font-semibold text-[#F1F7F6]">Selecciona uno o varios archivos para enviar</p>
+                            <p class="mt-2 text-sm text-[#AAC8C4]">
+                                Formatos permitidos: Word, PDF, Excel e imagenes.<br>
+                                Tamano maximo por archivo: 20 MB.
                             </p>
 
-                            <ul class="mt-3 space-y-2">
-                                @foreach ($entriesForDate as $entry)
-                                    <li class="rounded-lg border border-[#AAC8C4]/20 bg-[#032221]/55 px-3 py-3">
-                                        @if (filled($entry['time_label'] ?? null))
-                                            <p class="text-xs text-[#AAC8C4]">{{ $entry['time_label'] }}</p>
-                                        @endif
+                            <input
+                                id="admin_files"
+                                type="file"
+                                name="admin_files[]"
+                                multiple
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.bmp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/*"
+                                class="mt-4 block w-full cursor-pointer rounded-lg border border-[#AAC8C4]/45 bg-[#032221] px-3 py-2 text-sm text-[#F1F7F6] file:mr-3 file:rounded-md file:border-0 file:bg-[#006A4C] file:px-3 file:py-2 file:font-semibold file:text-[#F1F7F6] hover:file:bg-[#2CC295]/40"
+                            >
+                        </div>
+                    </div>
+                </article>
 
-                                        <p class="mt-1 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
-                                            {{ $entry['content'] }}
-                                        </p>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </section>
-                    @endforeach
-                </div>
+                <article class="xl:col-span-5 overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+                    <div class="flex items-center gap-2 border-b border-[#006A4C]/35 bg-[#006A4C]/10 px-5 py-4">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" class="h-5 w-5 text-[#2CC295]">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <h2 class="text-lg font-semibold text-[#F1F7F6]">Mensaje de seguimiento</h2>
+                    </div>
+
+                    <div class="p-5">
+                        <p class="text-sm text-[#AAC8C4]">
+                            Escribe indicaciones, observaciones o links para guiar el proceso del usuario.
+                        </p>
+
+                        <label for="admin_message" class="sr-only">Mensaje para el usuario</label>
+                        <textarea
+                            id="admin_message"
+                            name="admin_message"
+                            rows="6"
+                            placeholder="Escribe aqui la informacion que deseas compartir, incluyendo links si aplica."
+                            class="mt-4 min-h-[196px] w-full rounded-xl border border-[#006A4C]/55 bg-[#011E15]/95 px-4 py-3 text-sm text-[#F1F7F6] placeholder:text-[#AAC8C4]/55 focus:border-[#2CC295] focus:outline-none"
+                        >{{ old('admin_message') }}</textarea>
+
+                        <button
+                            type="submit"
+                            class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#2CC295]/60 bg-[#2CC295]/95 px-4 py-3 text-sm font-bold text-[#000F1F] transition hover:bg-[#00BF81]"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            Enviar al usuario
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </form>
+
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-[#006A4C]/55 to-transparent"></div>
+
+        <article class="overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos cargados por el usuario</h2>
+                <span class="inline-flex items-center rounded-full border border-[#006A4C]/55 bg-[#006A4C]/25 px-2.5 py-1 text-xs font-semibold text-[#2CC295]">
+                    {{ $userDocuments->count() }}
+                </span>
+            </div>
+
+            @if ($userDocuments->isEmpty())
+                <p class="mt-3 text-sm text-[#AAC8C4]">Este usuario aun no ha cargado archivos.</p>
             @else
-                <p class="mt-3 text-sm text-[#AAC8C4]">
-                    El usuario aun no ha agregado informacion adicional.
-                </p>
-            @endif
-        </article>
+                <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+                    @foreach ($userDocuments as $document)
+                        @php
+                            $mimeType = strtolower((string) $document->mime_type);
+                            $isImage = str_starts_with($mimeType, 'image/');
+                            $extension = strtolower(pathinfo((string) $document->original_name, PATHINFO_EXTENSION));
+                            $fileUrl = route('documents.file.show', $document);
+                            $badge = $document->documentType?->name ?? ($extension !== '' ? strtoupper($extension) : 'ARCHIVO');
+                        @endphp
 
-        <article class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-            <h2 class="text-lg font-semibold text-[#F1F7F6]">Archivos cargados por el usuario</h2>
-            <x-document-preview-grid
-                :documents="$userDocuments"
-                empty-text="Este usuario aun no ha cargado archivos."
-            />
-        </article>
+                        <li class="group overflow-hidden rounded-xl border border-[#006A4C]/35 bg-[#032A1E]/82 transition hover:border-[#2CC295]/60">
+                            <a href="{{ $fileUrl }}" target="_blank" rel="noopener" class="block">
+                                <div class="relative h-28 overflow-hidden border-b border-[#006A4C]/35 bg-[#011E15]">
+                                    @if ($isImage)
+                                        <img
+                                            src="{{ $fileUrl }}"
+                                            alt="{{ $document->original_name }}"
+                                            class="h-full w-full object-cover opacity-70 transition group-hover:opacity-100"
+                                            loading="lazy"
+                                        >
+                                    @else
+                                        <div class="flex h-full w-full items-center justify-center">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-10 w-10 text-[#2CC295]">
+                                                <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/>
+                                                <path d="M14 2v5h5"/>
+                                            </svg>
+                                        </div>
+                                    @endif
 
-        <article class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-            <h2 class="text-lg font-semibold text-[#F1F7F6]">Enviar informacion al usuario</h2>
+                                    <span class="absolute right-2 top-2 rounded-full bg-[#006A4C]/75 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#F1F7F6]">
+                                        {{ $extension !== '' ? $extension : 'file' }}
+                                    </span>
+                                </div>
 
-            <form
-                method="POST"
-                action="{{ route('admin.works.store', $targetUser) }}"
-                enctype="multipart/form-data"
-                class="mt-4 space-y-5"
-            >
-                @csrf
-
-                <div>
-                    <label for="admin_message" class="mb-2 block text-sm font-medium text-[#F1F7F6]">
-                        Mensaje para el usuario
-                    </label>
-                    <textarea
-                        id="admin_message"
-                        name="admin_message"
-                        rows="5"
-                        placeholder="Escribe aqui la informacion que deseas compartir, incluyendo links si aplica."
-                        class="w-full rounded-lg border border-[#AAC8C4]/45 bg-[#032221] px-3 py-2 text-sm text-[#F1F7F6] placeholder:text-[#AAC8C4]/70 focus:border-[#2CC295] focus:outline-none"
-                    >{{ old('admin_message') }}</textarea>
-                </div>
-
-                <div class="rounded-xl border border-dashed border-[#2CC295]/50 bg-[#000F1F]/35 p-4">
-                    <label for="admin_files" class="mb-2 block text-sm font-medium text-[#F1F7F6]">
-                        Cargar archivos para el usuario
-                    </label>
-                    <input
-                        id="admin_files"
-                        type="file"
-                        name="admin_files[]"
-                        multiple
-                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.bmp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/*"
-                        class="block w-full cursor-pointer rounded-lg border border-[#AAC8C4]/45 bg-[#032221] px-3 py-2 text-sm text-[#F1F7F6] file:mr-3 file:rounded-md file:border-0 file:bg-[#2CC295]/25 file:px-3 file:py-2 file:font-semibold file:text-[#D7FFF2] hover:file:bg-[#2CC295]/35"
-                    >
-                    <p class="mt-2 text-xs text-[#AAC8C4]">Tamano maximo por archivo: 20 MB.</p>
-                </div>
-
-                <button
-                    type="submit"
-                    class="inline-flex items-center justify-center rounded-xl border border-[#2CC295]/65 bg-[#006A4C]/55 px-4 py-2 text-sm font-semibold text-[#F1F7F6] transition hover:bg-[#2CC295]/30"
-                >
-                    Enviar al usuario
-                </button>
-            </form>
-        </article>
-
-        <article class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-            <h2 class="text-lg font-semibold text-[#F1F7F6]">Archivos enviados por administracion</h2>
-            <x-document-preview-grid
-                :documents="$adminDocuments"
-                empty-text="Aun no has enviado archivos a este usuario."
-            />
-        </article>
-
-        <article class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-            <h2 class="text-lg font-semibold text-[#F1F7F6]">Mensajes enviados al usuario</h2>
-
-            @if ($adminMessages->isEmpty())
-                <p class="mt-3 text-sm text-[#AAC8C4]">Aun no hay mensajes enviados.</p>
-            @else
-                <ul class="mt-4 space-y-3">
-                    @foreach ($adminMessages as $adminMessage)
-                        <li class="rounded-xl border border-[#AAC8C4]/25 bg-[#000F1F]/35 px-4 py-3">
-                            <p class="text-xs text-[#AAC8C4]">
-                                {{ optional($adminMessage->sent_at)->format('d/m/Y H:i') }}
-                            </p>
-                            <p class="mt-2 whitespace-pre-line break-words text-sm text-[#F1F7F6]">
-                                {{ $adminMessage->message }}
-                            </p>
+                                <div class="p-3">
+                                    <p class="truncate text-sm font-medium text-[#F1F7F6]" title="{{ $document->original_name }}">
+                                        {{ $document->original_name }}
+                                    </p>
+                                    <div class="mt-1 flex items-center justify-between text-xs">
+                                        <span class="uppercase text-[#AAC8C4]">{{ $badge }}</span>
+                                        <span class="text-[#7AA39E]">{{ $formatFileSize((int) $document->file_size) }}</span>
+                                    </div>
+                                </div>
+                            </a>
                         </li>
                     @endforeach
                 </ul>
             @endif
         </article>
+
+        <article class="overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos enviados por administracion</h2>
+                <span class="inline-flex items-center rounded-full border border-[#2CC295]/45 bg-[#2CC295]/18 px-2.5 py-1 text-xs font-semibold text-[#2CC295]">
+                    {{ $adminDocuments->count() }}
+                </span>
+            </div>
+
+            @if ($adminDocuments->isEmpty())
+                <p class="mt-3 text-sm text-[#AAC8C4]">Aun no has enviado archivos a este usuario.</p>
+            @else
+                <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+                    @foreach ($adminDocuments as $document)
+                        @php
+                            $mimeType = strtolower((string) $document->mime_type);
+                            $isImage = str_starts_with($mimeType, 'image/');
+                            $extension = strtolower(pathinfo((string) $document->original_name, PATHINFO_EXTENSION));
+                            $fileUrl = route('documents.file.show', $document);
+                            $badge = $document->documentType?->name ?? ($extension !== '' ? strtoupper($extension) : 'ARCHIVO');
+                        @endphp
+
+                        <li class="group overflow-hidden rounded-xl border border-[#2CC295]/30 bg-gradient-to-b from-[#006A4C]/18 to-[#032A1E]/80 shadow-[0_0_15px_rgba(44,194,149,0.08)] transition hover:border-[#2CC295]/65">
+                            <a href="{{ $fileUrl }}" target="_blank" rel="noopener" class="block">
+                                <div class="relative h-28 overflow-hidden border-b border-[#2CC295]/28 bg-[#011E15]">
+                                    @if ($isImage)
+                                        <img
+                                            src="{{ $fileUrl }}"
+                                            alt="{{ $document->original_name }}"
+                                            class="h-full w-full object-cover opacity-75 transition group-hover:opacity-100"
+                                            loading="lazy"
+                                        >
+                                    @else
+                                        <div class="flex h-full w-full items-center justify-center">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-10 w-10 text-[#2CC295]">
+                                                <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/>
+                                                <path d="M14 2v5h5"/>
+                                            </svg>
+                                        </div>
+                                    @endif
+
+                                    <span class="absolute right-2 top-2 rounded-full bg-[#2CC295] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#000F1F]">
+                                        Nuevo
+                                    </span>
+                                </div>
+
+                                <div class="p-3">
+                                    <p class="truncate text-sm font-medium text-[#F1F7F6]" title="{{ $document->original_name }}">
+                                        {{ $document->original_name }}
+                                    </p>
+                                    <div class="mt-1 flex items-center justify-between text-xs">
+                                        <span class="uppercase text-[#2CC295]">{{ $badge }}</span>
+                                        <span class="text-[#AAC8C4]">{{ $formatFileSize((int) $document->file_size) }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </article>
+
+        <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <article class="rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+                <h2 class="text-lg font-semibold text-[#F1F7F6]">Informacion adicional del usuario</h2>
+
+                @if ($additionalInformationEntries->isNotEmpty())
+                    <ul class="mt-4 space-y-3">
+                        @foreach ($additionalInformationEntries as $entry)
+                            <li class="rounded-xl border border-[#006A4C]/30 bg-[#032A1E]/45 px-4 py-4 transition hover:bg-[#032A1E]/65">
+                                <div class="flex flex-wrap items-center gap-2 text-xs text-[#AAC8C4]">
+                                    <span class="rounded-md bg-[#011E15] px-2 py-1">{{ $entry['date_label'] ?? 'Sin fecha' }}</span>
+
+                                    @if (filled($entry['time_label'] ?? null))
+                                        <span class="rounded-md bg-[#011E15] px-2 py-1">{{ $entry['time_label'] }}</span>
+                                    @endif
+                                </div>
+
+                                <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
+                                    {{ $entry['content'] }}
+                                </p>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="mt-3 text-sm text-[#AAC8C4]">
+                        El usuario aun no ha agregado informacion adicional.
+                    </p>
+                @endif
+            </article>
+
+            <article class="rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
+                <h2 class="text-lg font-semibold text-[#F1F7F6]">Mensajes enviados al usuario</h2>
+
+                @if ($adminMessages->isEmpty())
+                    <p class="mt-3 text-sm text-[#AAC8C4]">Aun no hay mensajes enviados.</p>
+                @else
+                    <ul class="mt-4 space-y-3">
+                        @foreach ($adminMessages as $adminMessage)
+                            <li class="relative overflow-hidden rounded-xl border border-[#2CC295]/30 bg-gradient-to-r from-[#006A4C]/10 to-[#032A1E]/45 px-4 py-4 pl-5 shadow-[0_4px_18px_rgba(44,194,149,0.07)]">
+                                <span class="absolute inset-y-0 left-0 w-1 bg-[#2CC295]"></span>
+                                <div class="flex flex-wrap items-center gap-2 text-xs">
+                                    <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
+                                        {{ optional($adminMessage->sent_at)->format('d/m/Y') }}
+                                    </span>
+                                    <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
+                                        {{ optional($adminMessage->sent_at)->format('H:i') }}
+                                    </span>
+                                    <span class="ml-auto text-[#AAC8C4]">Administracion Secure Papers</span>
+                                </div>
+                                <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
+                                    {{ $adminMessage->message }}
+                                </p>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </article>
+        </section>
     </section>
 </x-layouts::app>

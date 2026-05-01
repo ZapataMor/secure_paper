@@ -18,6 +18,11 @@
                 </article>
             </div>
         @else
+            @php
+                $hasActiveMembership = auth()->user()?->hasActiveMembership() ?? false;
+                $activePlanName = auth()->user()?->activeMembershipPlanName();
+            @endphp
+
             <article class="sp-user-home-card animate__animated animate__fadeInDownBig">
                 <h1 class="mb-6 text-5xl font-bold md:text-6xl">
                     Hola, bienvenido a <br class="hidden md:block">
@@ -79,17 +84,42 @@
                                             <p class="sp-user-guide-step-label">Paso 2</p>
                                             <h3 class="sp-user-guide-title">Carga tus documentos</h3>
                                         </div>
-                                        <a href="{{ route('private.upload-document') }}" class="sp-user-guide-action is-secondary" wire:navigate>
-                                            Ir a cargar
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                <path d="M5 12h14" />
-                                                <path d="m13 5 7 7-7 7" />
-                                            </svg>
-                                        </a>
+
+                                        @if($hasActiveMembership)
+                                            <a href="{{ route('private.upload-document') }}" class="sp-user-guide-action is-secondary" wire:navigate>
+                                                Ir a cargar
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M5 12h14" />
+                                                    <path d="m13 5 7 7-7 7" />
+                                                </svg>
+                                            </a>
+                                        @else
+                                            <button
+                                                type="button"
+                                                disabled
+                                                aria-disabled="true"
+                                                class="sp-user-guide-action is-secondary cursor-not-allowed border-[#3D5753]/70 bg-[#062B29]/80 text-[#8CA9A4] opacity-65"
+                                            >
+                                                Ir a cargar (bloqueado)
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <rect x="3" y="11" width="18" height="10" rx="2" />
+                                                    <path d="M7 11V8a5 5 0 0 1 10 0v3" />
+                                                </svg>
+                                            </button>
+                                        @endif
                                     </div>
                                     <p class="sp-user-guide-description">
                                         Accede a "Cargar documento". Sube tu archivo y agrega las indicaciones u observaciones especificas que deseas que sean revisadas.
                                     </p>
+                                    @if(! $hasActiveMembership)
+                                        <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-[#F9BC60]">
+                                            Requiere una membresia activa y pagada.
+                                        </p>
+                                    @elseif($activePlanName)
+                                        <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-[#2CC295]">
+                                            Plan activo: {{ $activePlanName }}
+                                        </p>
+                                    @endif
                                 </article>
                             </li>
 

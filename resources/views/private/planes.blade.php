@@ -5,6 +5,12 @@
             : route('private.upload-document');
     @endphp
 
+    @if (session('membership_error'))
+        <div class="mx-auto mt-6 w-full max-w-7xl rounded-xl border border-[#F9BC60]/45 bg-[#F9BC60]/10 px-5 py-4 text-sm text-[#FFE3B8]">
+            {{ session('membership_error') }}
+        </div>
+    @endif
+
     <section class="relative overflow-hidden px-6 pb-16 pt-20">
         <div class="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-[#006A4C] opacity-20 blur-[120px]"></div>
 
