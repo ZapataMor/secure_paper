@@ -8,9 +8,9 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -19,12 +19,22 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Throwable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name',
+    'last_name',
+    'email',
+    'phone',
+    'document_type',
+    'document_number',
+    'password',
+    'profile_photo',
+    'document_additional_information',
+])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -37,11 +47,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
     }
 
     public function documents(): HasMany
@@ -162,7 +167,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role?->name === 'admin';
+        return $this->role === 'admin';
     }
 
     public function fullName(): string
@@ -234,5 +239,15 @@ class User extends Authenticatable
         } catch (Throwable) {
             return null;
         }
+    }
+
+    public function isAdvisor(): bool
+    {
+        return $this->role === 'advisor';
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === 'client';
     }
 }

@@ -3,30 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAdminWorkRequest;
 use App\Models\Document;
-use App\Models\DocumentType;
 use App\Models\User;
 use App\Models\UserMessage;
+use App\Services\DocumentTypeResolver;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class WorkController extends Controller
 {
+    public function __construct(private readonly DocumentTypeResolver $documentTypeResolver)
+    {
+        //
+    }
+
     public function index(): View
     {
         $users = User::query()
             ->with([
-                'role:id,name',
                 'activePaidSubscription.paymentPlan:id,name',
             ])
-            ->whereHas('role', fn ($query) => $query->where('name', 'client'))
+            ->where('role', 'client')
             ->orderBy('name')
             ->orderBy('last_name')
             ->get([
                 'id',
-                'role_id',
+                'role',
                 'name',
                 'last_name',
             ])
@@ -48,7 +52,7 @@ class WorkController extends Controller
 
     public function show(User $user): View
     {
-        abort_unless($user->role?->name === 'client', 404);
+        abort_unless($user->isClient(), 404);
 
         $userDocuments = Document::query()
             ->with('documentType:id,name')
@@ -69,7 +73,7 @@ class WorkController extends Controller
         $adminMessages = UserMessage::query()
             ->with('sender:id,name,last_name')
             ->where('receiver_id', $user->id)
-            ->whereHas('sender.role', fn ($query) => $query->where('name', 'admin'))
+            ->whereHas('sender', fn ($query) => $query->whereIn('role', ['admin', 'advisor']))
             ->latest('sent_at')
             ->latest('id')
             ->get();
@@ -87,15 +91,9 @@ class WorkController extends Controller
         ]);
     }
 
-    public function store(Request $request, User $user): RedirectResponse
+    public function store(StoreAdminWorkRequest $request, User $user): RedirectResponse
     {
-        abort_unless($user->role?->name === 'client', 404);
-
-        $request->validate([
-            'admin_message' => ['nullable', 'string', 'max:8000'],
-            'admin_files' => ['nullable', 'array'],
-            'admin_files.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,webp,bmp', 'max:20480'],
-        ]);
+        abort_unless($user->isClient(), 404);
 
         $admin = $request->user();
         $adminMessage = trim((string) $request->input('admin_message'));
@@ -134,7 +132,7 @@ class WorkController extends Controller
 
             Document::create([
                 'user_id' => $user->id,
-                'document_type_id' => $this->resolveDocumentTypeId($uploadedFile->getClientOriginalExtension()),
+                'document_type_id' => $this->documentTypeResolver->resolveId($uploadedFile->getClientOriginalExtension()),
                 'uploaded_by' => $admin->id,
                 'title' => $title,
                 'description' => $adminMessage,
@@ -173,25 +171,5 @@ class WorkController extends Controller
                 ];
             })
             ->values();
-    }
-
-    private function resolveDocumentTypeId(?string $extension): int
-    {
-        $extension = strtolower((string) $extension);
-
-        [$name, $description] = match ($extension) {
-            'pdf' => ['PDF', 'Documento PDF'],
-            'doc', 'docx' => ['Word', 'Documento de Microsoft Word'],
-            'xls', 'xlsx' => ['Excel', 'Hoja de calculo de Microsoft Excel'],
-            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp' => ['Imagen', 'Archivo de imagen'],
-            default => ['Otro', 'Archivo cargado por usuario'],
-        };
-
-        return DocumentType::query()
-            ->firstOrCreate(
-                ['name' => $name],
-                ['description' => $description]
-            )
-            ->id;
     }
 }

@@ -12,14 +12,13 @@ class UserManagementController extends Controller
     {
         $users = User::query()
             ->with([
-                'role:id,name',
                 'activePaidSubscription.paymentPlan:id,name',
             ])
             ->orderBy('name')
             ->orderBy('last_name')
             ->get([
                 'id',
-                'role_id',
+                'role',
                 'name',
                 'last_name',
                 'email',

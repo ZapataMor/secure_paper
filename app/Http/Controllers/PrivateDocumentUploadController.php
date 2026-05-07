@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePrivateDocumentRequest;
 use App\Models\Document;
-use App\Models\DocumentType;
 use App\Models\UserMessage;
+use App\Services\DocumentTypeResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -12,6 +13,11 @@ use Illuminate\View\View;
 
 class PrivateDocumentUploadController extends Controller
 {
+    public function __construct(private readonly DocumentTypeResolver $documentTypeResolver)
+    {
+        //
+    }
+
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -36,7 +42,7 @@ class PrivateDocumentUploadController extends Controller
 
         $adminMessages = UserMessage::query()
             ->where('receiver_id', $user->id)
-            ->whereHas('sender.role', fn ($query) => $query->where('name', 'admin'))
+            ->whereHas('sender', fn ($query) => $query->whereIn('role', ['admin', 'advisor']))
             ->latest('sent_at')
             ->latest('id')
             ->get();
@@ -53,16 +59,9 @@ class PrivateDocumentUploadController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StorePrivateDocumentRequest $request): RedirectResponse
     {
         $user = $request->user();
-        abort_if($user?->isAdmin(), 403);
-
-        $request->validate([
-            'document_files' => ['nullable', 'array'],
-            'document_files.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,gif,webp,bmp', 'max:20480'],
-            'additional_information' => ['nullable', 'string', 'max:8000'],
-        ]);
 
         $additionalInformation = trim((string) $request->input('additional_information'));
         $additionalInformation = $additionalInformation !== '' ? $additionalInformation : null;
@@ -97,7 +96,7 @@ class PrivateDocumentUploadController extends Controller
 
             Document::create([
                 'user_id' => $user->id,
-                'document_type_id' => $this->resolveDocumentTypeId($uploadedFile->getClientOriginalExtension()),
+                'document_type_id' => $this->documentTypeResolver->resolveId($uploadedFile->getClientOriginalExtension()),
                 'uploaded_by' => $user->id,
                 'title' => $title,
                 'description' => $documentDescription,
@@ -135,25 +134,5 @@ class PrivateDocumentUploadController extends Controller
                 ];
             })
             ->values();
-    }
-
-    private function resolveDocumentTypeId(?string $extension): int
-    {
-        $extension = strtolower((string) $extension);
-
-        [$name, $description] = match ($extension) {
-            'pdf' => ['PDF', 'Documento PDF'],
-            'doc', 'docx' => ['Word', 'Documento de Microsoft Word'],
-            'xls', 'xlsx' => ['Excel', 'Hoja de calculo de Microsoft Excel'],
-            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp' => ['Imagen', 'Archivo de imagen'],
-            default => ['Otro', 'Archivo cargado por usuario'],
-        };
-
-        return DocumentType::query()
-            ->firstOrCreate(
-                ['name' => $name],
-                ['description' => $description]
-            )
-            ->id;
     }
 }
