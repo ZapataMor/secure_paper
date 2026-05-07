@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Hash;
 uses(RefreshDatabase::class);
 
 test('client without paid membership cannot access upload module', function () {
-    $clientRoleId = createRole('client');
-    $client = createUser($clientRoleId, 'Ana', 'Sin Plan', 'ana-sin-plan@securepapers.test');
+    $client = createUser('client', 'Ana', 'Sin Plan', 'ana-sin-plan@securepapers.test');
 
     $uploadResponse = $this
         ->actingAs($client)
@@ -29,8 +28,7 @@ test('client without paid membership cannot access upload module', function () {
 });
 
 test('client with active paid membership can access upload module', function () {
-    $clientRoleId = createRole('client');
-    $client = createUser($clientRoleId, 'Luis', 'Con Plan', 'luis-con-plan@securepapers.test');
+    $client = createUser('client', 'Luis', 'Con Plan', 'luis-con-plan@securepapers.test');
 
     $planId = createPlan('Premium');
     createActivePaidSubscription($client->id, $planId);
@@ -50,13 +48,35 @@ test('client with active paid membership can access upload module', function () 
         ->assertDontSee('Ir a cargar (bloqueado)');
 });
 
-test('admin works view shows plan labels and places clients without membership at the end', function () {
-    $adminRoleId = createRole('admin');
-    $clientRoleId = createRole('client');
+test('client can request a plan without receiving upload access until payment is approved', function () {
+    $client = createUser('client', 'Camila', 'Pendiente', 'camila-plan-pendiente@securepapers.test');
+    $planId = createPlan('Esencial');
 
-    $admin = createUser($adminRoleId, 'Carlos', 'Admin', 'admin-secure@securepapers.test');
-    $clientWithoutPlan = createUser($clientRoleId, 'Ana', 'Sin Plan', 'ana-sin-plan-list@securepapers.test');
-    $clientWithPlan = createUser($clientRoleId, 'Zoe', 'Con Plan', 'zoe-con-plan-list@securepapers.test');
+    $response = $this
+        ->actingAs($client)
+        ->post(route('private.planes.select', $planId));
+
+    $response
+        ->assertRedirect(route('private.planes'))
+        ->assertSessionHas('status');
+
+    $this->assertDatabaseHas('user_subscriptions', [
+        'user_id' => $client->id,
+        'payment_plan_id' => $planId,
+        'status' => 'pending',
+        'payment_status' => 'pending',
+    ]);
+
+    $this
+        ->actingAs($client)
+        ->get(route('private.upload-document'))
+        ->assertRedirect(route('private.planes'));
+});
+
+test('admin works view shows plan labels and places clients without membership at the end', function () {
+    $admin = createUser('admin', 'Carlos', 'Admin', 'admin-secure@securepapers.test');
+    $clientWithoutPlan = createUser('client', 'Ana', 'Sin Plan', 'ana-sin-plan-list@securepapers.test');
+    $clientWithPlan = createUser('client', 'Zoe', 'Con Plan', 'zoe-con-plan-list@securepapers.test');
 
     $planId = createPlan('Correccion Completa');
     createActivePaidSubscription($clientWithPlan->id, $planId);
@@ -75,20 +95,10 @@ test('admin works view shows plan labels and places clients without membership a
         ->assertSee('Sin membresia');
 });
 
-function createRole(string $name): int
-{
-    return DB::table('roles')->insertGetId([
-        'name' => $name,
-        'description' => ucfirst($name),
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-}
-
-function createUser(int $roleId, string $name, string $lastName, string $email): User
+function createUser(string $role, string $name, string $lastName, string $email): User
 {
     DB::table('users')->insert([
-        'role_id' => $roleId,
+        'role' => $role,
         'name' => $name,
         'last_name' => $lastName,
         'email' => $email,

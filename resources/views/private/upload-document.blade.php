@@ -162,10 +162,7 @@
                                         >
                                     @else
                                         <div class="flex h-full w-full items-center justify-center">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-10 w-10 text-[#2CC295]">
-                                                <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/>
-                                                <path d="M14 2v5h5"/>
-                                            </svg>
+                                            <x-document-type-icon :extension="$extension" class="h-12 w-12" />
                                         </div>
                                     @endif
 
@@ -223,10 +220,7 @@
                                         >
                                     @else
                                         <div class="flex h-full w-full items-center justify-center">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-10 w-10 text-[#2CC295]">
-                                                <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/>
-                                                <path d="M14 2v5h5"/>
-                                            </svg>
+                                            <x-document-type-icon :extension="$extension" class="h-12 w-12" />
                                         </div>
                                     @endif
 

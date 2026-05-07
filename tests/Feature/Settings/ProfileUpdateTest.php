@@ -56,7 +56,8 @@ test('user can delete their account', function () {
         ->assertHasNoErrors()
         ->assertRedirect('/');
 
-    expect($user->fresh())->toBeNull();
+    $this->assertSoftDeleted('users', ['id' => $user->id]);
+    expect(User::query()->find($user->id))->toBeNull();
     expect(auth()->check())->toBeFalse();
 });
 
