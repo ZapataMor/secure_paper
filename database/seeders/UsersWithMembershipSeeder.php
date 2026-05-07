@@ -6,24 +6,18 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use RuntimeException;
 
 class UsersWithMembershipSeeder extends Seeder
 {
     public function run(): void
     {
-        $clientRoleId = DB::table('roles')->where('name', 'client')->value('id');
-
-        if (! $clientRoleId) {
-            throw new RuntimeException('No se encontro el rol client para crear usuarios con membresia.');
-        }
 
         $now = now();
         $password = Hash::make('SecurePapers123*');
 
         $users = [
             [
-                'role_id' => $clientRoleId,
+                'role' => 'client',
                 'name' => 'Laura',
                 'last_name' => 'Esencial',
                 'email' => 'cliente-plan-esencial@securepapers.test',
@@ -40,7 +34,7 @@ class UsersWithMembershipSeeder extends Seeder
                 'deleted_at' => null,
             ],
             [
-                'role_id' => $clientRoleId,
+                'role' => 'client',
                 'name' => 'Diego',
                 'last_name' => 'Completa',
                 'email' => 'cliente-plan-completa@securepapers.test',
@@ -57,7 +51,7 @@ class UsersWithMembershipSeeder extends Seeder
                 'deleted_at' => null,
             ],
             [
-                'role_id' => $clientRoleId,
+                'role' => 'client',
                 'name' => 'Valentina',
                 'last_name' => 'Premium',
                 'email' => 'cliente-plan-premium@securepapers.test',
@@ -79,7 +73,7 @@ class UsersWithMembershipSeeder extends Seeder
             $users,
             ['email'],
             [
-                'role_id',
+                'role',
                 'name',
                 'last_name',
                 'phone',
@@ -96,9 +90,9 @@ class UsersWithMembershipSeeder extends Seeder
         );
 
         $planNamesByEmail = [
-            'cliente-plan-esencial@securepapers.test' => 'Esencial',
-            'cliente-plan-completa@securepapers.test' => 'Correccion Completa',
-            'cliente-plan-premium@securepapers.test' => 'Premium',
+            'cliente-plan-esencial@securepapers.test' => 'Paquete Asesoría Esencial',
+            'cliente-plan-completa@securepapers.test' => 'Paquete Corrección Completa',
+            'cliente-plan-premium@securepapers.test' => 'Paquete Premium Publicación Científica',
         ];
 
         $plans = DB::table('payment_plans')

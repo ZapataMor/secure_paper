@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->constrained('roles')->restrictOnDelete();
+            $table->enum('role', ['admin', 'advisor', 'client'])->default('client');
             $table->string('name');
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
@@ -28,8 +28,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('role_id');
+            $table->index('role');
             $table->index('status');
+            $table->text('document_additional_information')->nullable();
             $table->index('document_number');
         });
 
