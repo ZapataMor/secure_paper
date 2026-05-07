@@ -43,10 +43,7 @@
                             >
                         @else
                             <div class="flex h-full w-full flex-col items-center justify-center gap-3 p-3 text-[#D7FFF2]">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-10 w-10">
-                                    <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/>
-                                    <path d="M14 2v5h5"/>
-                                </svg>
+                                <x-document-type-icon :extension="$extension" class="h-12 w-12" />
                                 <span class="rounded-full border border-[#2CC295]/50 bg-[#2CC295]/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#2CC295]">
                                     {{ $extension !== '' ? $extension : 'file' }}
                                 </span>

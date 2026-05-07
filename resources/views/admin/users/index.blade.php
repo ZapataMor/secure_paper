@@ -30,7 +30,7 @@
                     <tbody>
                         @forelse($users as $user)
                             @php
-                                $isClient = $user->role?->name === 'client';
+                                $isClient = $user->role === 'client';
                                 $planName = $isClient ? $user->activePaidSubscription?->paymentPlan?->name : null;
                             @endphp
 
@@ -45,7 +45,7 @@
                                     <p class="sp-users-secondary">{{ $user->email }}</p>
                                 </td>
                                 <td data-label="Rol">
-                                    <span class="sp-role-pill">{{ ucfirst($user->role?->name ?? 'sin rol') }}</span>
+                                    <span class="sp-role-pill">{{ ucfirst($user->role ?? 'sin rol') }}</span>
                                 </td>
                                 <td data-label="Plan">
                                     @if(! $isClient)

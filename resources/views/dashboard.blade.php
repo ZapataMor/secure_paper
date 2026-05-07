@@ -1,6 +1,13 @@
 <x-layouts::app :title="__('Inicio')">
+    @php
+        $currentUser = auth()->user();
+        $isAdmin = $currentUser?->isAdmin() ?? false;
+        $isAdvisor = $currentUser?->isAdvisor() ?? false;
+        $isClient = $currentUser?->isClient() ?? false;
+    @endphp
+
     <section class="sp-admin-page">
-        @if(auth()->user()?->isAdmin())
+        @if($isAdmin || $isAdvisor)
             <header class="sp-admin-page-header">
                 <p class="sp-admin-page-kicker">Panel principal</p>
                 <h1>Modulos del sistema</h1>
@@ -8,19 +15,30 @@
             </header>
 
             <div class="sp-admin-modules-grid">
+                @if($isAdmin)
+                    <article class="sp-admin-module-card">
+                        <span class="sp-admin-module-badge">Modulo 01</span>
+                        <h2>Gestion de usuarios</h2>
+                        <p>Administra la informacion de los usuarios registrados en Secure Papers.</p>
+                        <a href="{{ route('admin.users.index') }}" class="sp-admin-module-action" wire:navigate>
+                            Abrir modulo
+                        </a>
+                    </article>
+                @endif
+
                 <article class="sp-admin-module-card">
-                    <span class="sp-admin-module-badge">Modulo 01</span>
-                    <h2>Gestion de usuarios</h2>
-                    <p>Administra la informacion de los usuarios registrados en Secure Papers.</p>
-                    <a href="{{ route('admin.users.index') }}" class="sp-admin-module-action" wire:navigate>
+                    <span class="sp-admin-module-badge">{{ $isAdmin ? 'Modulo 02' : 'Modulo 01' }}</span>
+                    <h2>Trabajos</h2>
+                    <p>Revisa documentos, informacion adicional y mensajes de seguimiento de los clientes.</p>
+                    <a href="{{ route('admin.works.index') }}" class="sp-admin-module-action" wire:navigate>
                         Abrir modulo
                     </a>
                 </article>
             </div>
-        @else
+        @elseif($isClient)
             @php
-                $hasActiveMembership = auth()->user()?->hasActiveMembership() ?? false;
-                $activePlanName = auth()->user()?->activeMembershipPlanName();
+                $hasActiveMembership = $currentUser?->hasActiveMembership() ?? false;
+                $activePlanName = $currentUser?->activeMembershipPlanName();
             @endphp
 
             <article class="sp-user-home-card animate__animated animate__fadeInDownBig">
@@ -64,7 +82,7 @@
                                         </a>
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Dirigete al modulo "Planes", donde podras revisar y seleccionar el plan que mejor se ajuste a tus necesidades (Esencial, Completa o Premium).
+                                        Dirigete al modulo "Planes", donde podras revisar y seleccionar el servicio que mejor se ajuste a tus necesidades dentro del portafolio oficial de Professional Papers S.A.S.
                                     </p>
                                 </article>
                             </li>
