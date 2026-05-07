@@ -25,7 +25,7 @@
         <nav class="flex w-full flex-wrap items-center justify-center gap-3 text-sm sm:w-auto sm:justify-end sm:gap-6 sm:text-base">
             <a href="{{ route('home') }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Inicio</a>
             <a href="{{ $plansUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Planes</a>
-            <a href="{{ $servicesUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Servicios</a>
+            {{-- <a href="{{ $servicesUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Servicios</a> --}}
             <a href="{{ $aboutUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Nosotros</a>
             <a href="{{ $loginUrl }}" class="whitespace-nowrap rounded-lg bg-[#006A4C] px-4 py-2 font-semibold text-[#F1F7F6] transition-colors hover:bg-[#00BF81] sm:px-6">
                 Iniciar Sesion
