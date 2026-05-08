@@ -19,7 +19,7 @@
 
         @include('partials.public.header')
 
-        <section class="relative overflow-hidden px-6 pb-16 pt-32 md:pt-36">
+        <section class="relative overflow-hidden px-6 pb-16 pt-37 md:pt-36">
             <div class="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-[#006A4C] opacity-20 blur-[120px]"></div>
 
             <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
