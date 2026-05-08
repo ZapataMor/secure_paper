@@ -16,14 +16,15 @@
         <header class="sp-admin-navbar">
             <div class="sp-admin-navbar-inner">
                 <div class="sp-admin-brand" aria-label="Professional Papers">
-                    <span class="sp-admin-brand-mark">
+                    <span class="sp-admin-brand-mark" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2 4 6v6c0 5 3.2 9.4 8 10 4.8-.6 8-5 8-10V6z" />
                             <path d="m9 12 2 2 4-4" />
                         </svg>
                     </span>
-                    <span class="sp-admin-brand-text">
-                        Professional Papers
+                    <span class="sp-admin-brand-copy">
+                        <span class="sp-admin-brand-title">Professional Papers</span>
+                        <span class="sp-admin-brand-subtitle">Academic Excellence & Trust</span>
                     </span>
                 </div>
 
@@ -80,51 +81,10 @@
                 </nav>
 
                 <div class="sp-admin-actions">
-                    <button
-                        type="button"
-                        class="sp-admin-menu-toggle"
-                        id="spModulesToggle"
-                        aria-controls="spModulesPanel"
-                        aria-expanded="false"
-                        aria-label="Abrir modulos"
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M3 12h18M3 18h18" />
-                        </svg>
-                    </button>
-
                     <div class="sp-admin-user-menu">
                         <x-desktop-user-menu />
                     </div>
                 </div>
-            </div>
-
-            <div class="sp-admin-mobile-panel" id="spModulesPanel">
-                <a href="{{ route('dashboard') }}" class="sp-admin-mobile-link" wire:navigate>Inicio</a>
-                @if($isClient)
-                    <a href="{{ route('private.planes') }}" class="sp-admin-mobile-link" wire:navigate>Planes</a>
-                    <a
-                        href="{{ route('private.upload-document') }}"
-                        class="sp-admin-mobile-link {{ $hasActiveMembership ? '' : 'pointer-events-none opacity-55' }}"
-                        wire:navigate
-                        aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
-                        title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
-                    >
-                        Cargar documento{{ $hasActiveMembership ? '' : ' (bloqueado)' }}
-                    </a>
-                @endif
-
-                @if($isAdmin || $isAdvisor)
-                    <a href="{{ route('admin.works.index') }}" class="sp-admin-mobile-link" wire:navigate>
-                        Trabajos
-                    </a>
-                @endif
-
-                @if($isAdmin)
-                    <a href="{{ route('admin.users.index') }}" class="sp-admin-mobile-link" wire:navigate>
-                        Gestion de usuarios
-                    </a>
-                @endif
             </div>
         </header>
         @endpersist
