@@ -155,14 +155,15 @@
         align-items: center;
         justify-content: center;
         border: 0;
-        background: #2cc295;
-        color: #000f1f;
+        background: transparent;
         box-shadow: none;
+        overflow: hidden;
     }
 
-    .sp-admin-brand-mark svg {
-        width: 2rem;
-        height: 2rem;
+    .sp-admin-brand-mark img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
     .sp-admin-brand-copy {
@@ -809,11 +810,6 @@
         .sp-admin-brand-mark {
             width: 2.5rem;
             height: 2.5rem;
-        }
-
-        .sp-admin-brand-mark svg {
-            width: 1.6rem;
-            height: 1.6rem;
         }
 
         .sp-admin-brand-title {

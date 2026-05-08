@@ -17,10 +17,7 @@
             <div class="sp-admin-navbar-inner">
                 <div class="sp-admin-brand" aria-label="Professional Papers">
                     <span class="sp-admin-brand-mark" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2 4 6v6c0 5 3.2 9.4 8 10 4.8-.6 8-5 8-10V6z" />
-                            <path d="m9 12 2 2 4-4" />
-                        </svg>
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="">
                     </span>
                     <span class="sp-admin-brand-copy">
                         <span class="sp-admin-brand-title">Propaps.com</span>

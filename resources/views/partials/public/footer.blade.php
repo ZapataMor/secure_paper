@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="border-t border-[#006A4C] pt-8 text-center text-sm text-[#AAC8C4]">
-            <p>&copy; 2026 Secure Papers. Todos los derechos reservados.</p>
+            <p>Todos los Derechos Reservados © 2026 Professional Papers S.A.S. – PROPAPS S.A.S.</p>
         </div>
     </div>
 </footer>

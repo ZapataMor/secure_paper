@@ -10,9 +10,9 @@
 <header class="sp-public-navbar" data-public-module-urls="{{ $publicModuleUrls }}">
     <div class="sp-public-navbar-inner mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 overflow-hidden text-[#F1F7F6]">
         <div class="flex min-w-0 items-center gap-3">
-            {{-- Aquí va la imagen del logo --}}
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
             <div class="min-w-0">
-                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">Propaps.com</h1>
+                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">Propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
             </div>
         </div>
 
