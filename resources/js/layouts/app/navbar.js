@@ -12,18 +12,6 @@ const getVisibleModuleLinks = (nav) => {
     return Array.from(nav.querySelectorAll('.sp-admin-module-link')).filter((item) => item.offsetParent !== null);
 };
 
-const syncMobileLinks = (activeLink) => {
-    const mobileLinks = Array.from(document.querySelectorAll('.sp-admin-mobile-panel .sp-admin-mobile-link'));
-
-    mobileLinks.forEach((link) => {
-        link.classList.remove('is-active');
-
-        if (normalizePath(link.href) === normalizePath(activeLink.href)) {
-            link.classList.add('is-active');
-        }
-    });
-};
-
 const findActiveLink = (links, forcedLink = null) => {
     if (forcedLink) {
         return forcedLink;
@@ -55,8 +43,11 @@ const moveIndicator = (nav, indicator, target) => {
     const navRect = nav.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
     const left = targetRect.left - navRect.left;
+    const top = targetRect.top - navRect.top + targetRect.height / 2;
 
     indicator.style.width = `${targetRect.width}px`;
+    indicator.style.height = `${targetRect.height}px`;
+    indicator.style.top = `${top}px`;
     indicator.style.transform = `translate3d(${left}px, -50%, 0)`;
     indicator.style.opacity = '1';
 };
@@ -71,32 +62,8 @@ const syncActiveLinks = (links, forcedLink = null) => {
 
     activeLink.classList.add('is-active');
     activeLink.setAttribute('aria-current', 'page');
-    syncMobileLinks(activeLink);
 
     return activeLink;
-};
-
-const bindModulesDropdown = () => {
-    const toggle = document.getElementById('spModulesToggle');
-    const panel = document.getElementById('spModulesPanel');
-
-    if (!toggle || !panel || toggle.dataset.bound === 'true') {
-        return;
-    }
-
-    toggle.dataset.bound = 'true';
-
-    toggle.addEventListener('click', () => {
-        const isOpen = panel.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', String(isOpen));
-    });
-
-    panel.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
-            panel.classList.remove('is-open');
-            toggle.setAttribute('aria-expanded', 'false');
-        });
-    });
 };
 
 const bindNavIndicator = () => {
@@ -142,7 +109,6 @@ const refreshIndicatorPosition = () => {
 };
 
 const initAdminNavbar = () => {
-    bindModulesDropdown();
     bindNavIndicator();
 };
 
