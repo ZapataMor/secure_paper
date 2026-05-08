@@ -10,15 +10,9 @@
 <header class="sp-public-navbar" data-public-module-urls="{{ $publicModuleUrls }}">
     <div class="sp-public-navbar-inner mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 overflow-hidden text-[#F1F7F6]">
         <div class="flex min-w-0 items-center gap-3">
-            <div class="rounded-lg bg-[#2CC295] p-2">
-                <svg class="h-8 w-8 text-[#000F1F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2 4 6v6c0 5 3.2 9.4 8 10 4.8-.6 8-5 8-10V6z" />
-                    <path d="m9 12 2 2 4-4" />
-                </svg>
-            </div>
+            {{-- Aquí va la imagen del logo --}}
             <div class="min-w-0">
-                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">Professional Papers</h1>
-                <p class="text-sm text-[#AAC8C4]">Academic Excellence & Trust</p>
+                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">Propaps.com</h1>
             </div>
         </div>
 
