@@ -23,8 +23,7 @@
                         </svg>
                     </span>
                     <span class="sp-admin-brand-copy">
-                        <span class="sp-admin-brand-title">Professional Papers</span>
-                        <span class="sp-admin-brand-subtitle">Academic Excellence & Trust</span>
+                        <span class="sp-admin-brand-title">Propaps.com</span>
                     </span>
                 </div>
 
@@ -53,7 +52,7 @@
                             aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
                             title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
                         >
-                            Cargar documento
+                            Cargar documentos
                         </a>
                     @endif
 
