@@ -210,13 +210,13 @@
 
         @include('partials.public.header')
 
-        <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-24 pt-35 text-[#F1F7F6] md:pb-28 md:pt-36">
+        <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-18 pt-30 text-[#F1F7F6] md:pb-20 md:pt-32">
             <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
                 <h2 class="mx-auto mb-2 max-w-xs text-3xl font-bold leading-tight sm:max-w-4xl sm:text-4xl md:text-5xl">
                     Somos una nueva empresa 
                 </h2>
-                <h3 class="mx-auto mb-6 max-w-xs text-[#2CC295] text-2xl font-bold leading-tight sm:max-w-2xl sm:text-2xl md:text-4xl">en busca de la excelencia</h3>
-                <p class="mx-auto mb-8 max-w-xs text-lg text-[#AAC8C4] sm:max-w-3xl md:text-2xl">
+                <h3 class="mx-auto mb-4 max-w-xs text-[#2CC295] text-2xl font-bold leading-tight sm:max-w-2xl sm:text-2xl md:text-4xl">en busca de la excelencia</h3>
+                <p class="mx-auto mb-4 max-w-xs text-lg text-[#AAC8C4] sm:max-w-3xl md:text-2xl">
                     Acompañamos tu proceso en publicaciones académicas y científicas
                 </p>
             </div>
