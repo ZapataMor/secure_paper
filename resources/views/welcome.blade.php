@@ -35,7 +35,7 @@
             }
 
             .plan-card-home {
-                flex: 0 0 calc((min(100vw, 80rem) - 6rem) / 3);
+                flex: 0 0 calc((min(100vw, 88rem) - 4.5rem) / 2.55);
                 min-width: 0;
             }
 
@@ -104,13 +104,13 @@
 
             @media (max-width: 1024px) {
                 .plan-card-home {
-                    flex-basis: calc((100vw - 4.5rem) / 2);
+                    flex-basis: calc((100vw - 3rem) / 1.45);
                 }
             }
 
             @media (max-width: 640px) {
                 .plan-card-home {
-                    flex-basis: min(85vw, 22rem);
+                    flex-basis: min(92vw, 30rem);
                 }
             }
         </style>
