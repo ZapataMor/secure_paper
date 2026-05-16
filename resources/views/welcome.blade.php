@@ -216,7 +216,7 @@
                     Somos una nueva empresa 
                 </h2>
                 <h3 class="mx-auto mb-6 max-w-xs text-[#2CC295] text-2xl font-bold leading-tight sm:max-w-2xl sm:text-2xl md:text-4xl">en busca de la excelencia</h3>
-                <p class="mx-auto mb-8 max-w-xs text-lg text-[#AAC8C4] sm:max-w-3xl md:text-xl">
+                <p class="mx-auto mb-8 max-w-xs text-lg text-[#AAC8C4] sm:max-w-3xl md:text-2xl">
                     Acompañamos tu proceso en publicaciones académicas y científicas
                 </p>
             </div>
