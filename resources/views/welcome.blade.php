@@ -115,7 +115,7 @@
             }
         </style>
     </head>
-    <body class="min-h-screen overflow-x-hidden bg-[#F1F7F6]">
+    <body class="min-h-screen overflow-x-hidden bg-[#F1F7F6] text-[17px]">
         @php
             $loginUrl = Route::has('login') ? route('login') : '#';
             $plansUrl = Route::has('plans') ? route('plans') : url('/planes');
@@ -309,28 +309,28 @@
                                 <article class="plan-card-home {{ $cardClasses }} flex h-full flex-col overflow-hidden rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-xl">
                                     <div class="mb-5 flex min-h-16 flex-wrap items-start justify-between gap-2">
                                         <div class="flex flex-wrap gap-2">
-                                            <span class="inline-flex rounded-full bg-[#2CC295]/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#006A4C]">
+                                            <span class="inline-flex rounded-full bg-[#2CC295]/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
                                                 {{ $card['tag'] }}
                                             </span>
-                                            <span class="inline-flex rounded-full bg-[#006A4C]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#006A4C]">
+                                            <span class="inline-flex rounded-full bg-[#006A4C]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
                                                 Inteligencia Híbrida
                                             </span>
                                         </div>
 
                                         @if (! empty($card['secondary_badge']))
-                                            <span class="inline-flex rounded-full {{ $isFeatured ? 'bg-[#000F1F] text-[#2CC295]' : 'bg-[#F1F7F6] text-[#006A4C]' }} px-3 py-1 text-xs font-bold uppercase tracking-wide">
+                                            <span class="inline-flex rounded-full {{ $isFeatured ? 'bg-[#2CC295]' : 'bg-[#F1F7F6]' }} px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
                                                 {{ $card['secondary_badge'] }}
                                             </span>
                                         @endif
                                     </div>
 
                                     <div class="mb-5">
-                                        <h3 class="mb-3 break-words text-2xl font-bold leading-tight text-[#000F1F]">{{ $card['name'] }}</h3>
-                                        <p class="break-words text-sm leading-6 text-[#707D7D]">{{ $card['description'] }}</p>
+                                        <h3 class="mb-3 break-words text-[1.7rem] font-bold leading-tight text-[#000F1F]">{{ $card['name'] }}</h3>
+                                        <p class="break-words text-lg leading-8 text-[#000F1F]">{{ $card['description'] }}</p>
                                     </div>
 
                                     <div class="mb-5 rounded-xl border border-[#AAC8C4]/30 bg-[#F1F7F6] p-4">
-                                        <p class="break-words text-2xl font-bold leading-tight text-[#000F1F]">{{ $card['price'] }}</p>
+                                        <p class="break-words text-[1.65rem] font-bold leading-tight text-[#000F1F]">{{ $card['price'] }}</p>
                                         @if (! empty($card['discount']))
                                             <span class="mt-3 inline-flex rounded-full bg-[#006A4C]/10 px-3 py-1 text-xs font-bold text-[#006A4C]">
                                                 {{ $card['discount'] }}
@@ -338,7 +338,7 @@
                                         @endif
                                     </div>
 
-                                    <ul class="mb-6 space-y-3 text-sm text-[#000F1F]">
+                                    <ul class="mb-6 space-y-3 text-lg leading-8 text-[#000F1F]">
                                         @foreach ($card['benefits'] as $benefit)
                                             <li class="flex gap-3">
                                                 <span class="mt-0.5 font-bold text-[#2CC295]">&#10003;</span>
