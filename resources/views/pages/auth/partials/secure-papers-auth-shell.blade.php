@@ -24,10 +24,7 @@
         <div class="sp-auth-pane sp-auth-pane--signup">
             <div class="sp-auth-form-inner">
                 <h1 class="sp-auth-title">
-                    <svg class="sp-auth-title-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 3l7 3v5c0 5-3.4 8.9-7 10-3.6-1.1-7-5-7-10V6l7-3z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
-                        <path d="M9.5 12.5l1.8 1.8 3.3-3.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
-                    </svg>
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
                     Crear cuenta
                 </h1>
 
@@ -180,10 +177,7 @@
         <div class="sp-auth-pane sp-auth-pane--signin">
             <div class="sp-auth-form-inner">
                 <h1 class="sp-auth-title">
-                    <svg class="sp-auth-title-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 3l7 3v5c0 5-3.4 8.9-7 10-3.6-1.1-7-5-7-10V6l7-3z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
-                        <path d="M9.5 12.5l1.8 1.8 3.3-3.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
-                    </svg>
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
                     Iniciar sesion
                 </h1>
 
@@ -295,7 +289,7 @@
             </div>
 
             <div class="sp-auth-toggle-panel sp-auth-toggle-panel--right">
-                <h2 class="sp-auth-toggle-title">Nuevo en Secure Papers?</h2>
+                <h2 class="sp-auth-toggle-title">¿Nuevo en Professional Papers?</h2>
                 <p class="sp-auth-toggle-text">
                     Crea tu cuenta y comienza a validar tus investigaciones con revisores especializados.
                 </p>

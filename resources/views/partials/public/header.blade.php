@@ -12,7 +12,7 @@
         <div class="flex min-w-0 items-center gap-3">
             <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
             <div class="min-w-0">
-                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">Propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
+                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
             </div>
         </div>
 
