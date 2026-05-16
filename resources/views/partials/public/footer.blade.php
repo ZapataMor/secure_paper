@@ -1,6 +1,6 @@
 <footer class="bg-[#000F1F] px-6 py-12 text-[#F1F7F6]">
     <div class="mx-auto max-w-7xl">
-        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
             <div>
                 <h4 class="mb-4 font-semibold">Legal</h4>
                 <ul class="space-y-2 text-sm text-[#AAC8C4]">
@@ -42,7 +42,13 @@
                     <li>Guias de Publicacion</li>
                     <li>Blog Academico</li>
                     <li>Preguntas Frecuentes</li>
-                    <li>Contacto</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="mb-4 font-semibold">Contacto</h4>
+                <ul class="space-y-2 text-sm text-[#AAC8C4]">
+                    <li>Correo: comunicaciones@propaps.com</li>
+                    <li>Línea de atención: +57 3332358329</li>
                 </ul>
             </div>
         </div>
