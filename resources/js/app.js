@@ -1,38 +1,45 @@
 import 'animate.css';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.querySelector('[data-terms-modal]');
+    const openButtons = document.querySelectorAll('[data-public-modal-open]');
+    const modals = document.querySelectorAll('dialog.sp-terms-modal');
 
-    if (!(modal instanceof HTMLDialogElement)) {
+    if (!openButtons.length || !modals.length) {
         return;
     }
 
-    const openButtons = document.querySelectorAll('[data-terms-modal-open]');
-    const closeButtons = modal.querySelectorAll('[data-terms-modal-close]');
-
-    const openModal = () => {
-        if (!modal.open) {
-            modal.showModal();
-        }
-    };
-
-    const closeModal = () => {
+    const closeModal = (modal) => {
         if (modal.open) {
             modal.close();
         }
     };
 
-    openButtons.forEach((button) => {
-        button.addEventListener('click', openModal);
-    });
-
-    closeButtons.forEach((button) => {
-        button.addEventListener('click', closeModal);
-    });
-
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            closeModal();
+    const openModal = (modal) => {
+        if (!modal.open) {
+            modal.showModal();
         }
+    };
+
+    openButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-public-modal-open');
+            const modal = targetId ? document.getElementById(targetId) : null;
+
+            if (modal instanceof HTMLDialogElement) {
+                openModal(modal);
+            }
+        });
+    });
+
+    modals.forEach((modal) => {
+        modal.querySelectorAll('[data-public-modal-close]').forEach((button) => {
+            button.addEventListener('click', () => closeModal(modal));
+        });
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal(modal);
+            }
+        });
     });
 });

@@ -295,7 +295,7 @@
                                     <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
                                         {{ optional($adminMessage->sent_at)->format('H:i') }}
                                     </span>
-                                    <span class="ml-auto text-[#AAC8C4]">Administracion Secure Papers</span>
+                                    <span class="ml-auto text-[#AAC8C4]">Administracion propaps.com</span>
                                 </div>
                                 <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
                                     {{ $adminMessage->message }}

@@ -339,7 +339,7 @@
             <div class="mx-auto max-w-4xl text-center">
                 <h2 class="mb-6 text-4xl font-bold">Listo para Asegurar la Calidad de tu Investigacion?</h2>
                 <p class="mb-8 text-xl text-[#F1F7F6]/90">
-                    Unete a cientos de investigadores que confian en Secure Papers para llevar su trabajo al siguiente nivel
+                    Unete a cientos de investigadores que confian en propaps.com para llevar su trabajo al siguiente nivel
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="{{ $loginUrl }}" class="rounded-lg bg-[#F1F7F6] px-8 py-4 text-lg font-semibold text-[#006A4C] shadow-lg transition-colors hover:bg-white">

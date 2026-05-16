@@ -19,7 +19,7 @@
                     <article class="sp-admin-module-card">
                         <span class="sp-admin-module-badge">Modulo 01</span>
                         <h2>Gestion de usuarios</h2>
-                        <p>Administra la informacion de los usuarios registrados en Secure Papers.</p>
+                        <p>Administra la informacion de los usuarios registrados en propaps.com.</p>
                         <a href="{{ route('admin.users.index') }}" class="sp-admin-module-action" wire:navigate>
                             Abrir modulo
                         </a>

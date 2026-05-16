@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Nosotros - Secure Papers</title>
+        <title>Nosotros - propaps.com</title>
 
         <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/png">
         <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
@@ -29,7 +29,7 @@
                 <div>
                     <h3 class="mb-6 text-3xl font-bold text-[#000F1F]">Nuestra Mision</h3>
                     <p class="mb-6 text-lg leading-relaxed text-[#707D7D]">
-                        En Secure Papers creemos que el conocimiento cientifico debe ser accesible y de alta calidad. Trabajamos junto a investigadores,
+                        En propaps.com creemos que el conocimiento cientifico debe ser accesible y de alta calidad. Trabajamos junto a investigadores,
                         academicos y estudiantes para asegurar que sus contribuciones cumplan con exigencias del panorama cientifico actual.
                     </p>
                     <p class="text-lg leading-relaxed text-[#707D7D]">
