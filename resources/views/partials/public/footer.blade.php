@@ -47,7 +47,7 @@
             <div>
                 <h4 class="mb-4 font-semibold">Contacto</h4>
                 <ul class="space-y-2 text-sm text-[#AAC8C4]">
-                    <li>Correo: comunicaciones@propaps.com</li>
+                    <li>comunicaciones@propaps.com</li>
                     <li>Línea de atención: +57 3332358329</li>
                 </ul>
             </div>
