@@ -41,7 +41,15 @@
                 <ul class="space-y-2 text-sm text-[#AAC8C4]">
                     <li>Guias de Publicacion</li>
                     <li>Blog Academico</li>
-                    <li>Preguntas Frecuentes</li>
+                    <li>
+                        <button
+                            type="button"
+                            class="sp-public-footer-link"
+                            data-public-modal-open="faq-modal"
+                        >
+                            Preguntas Frecuentes
+                        </button>
+                    </li>
                 </ul>
             </div>
             <div>
@@ -152,6 +160,150 @@
                 <h3>11. Contacto</h3>
                 <p>Para consultas, quejas o reclamos: comunicaciones@propaps.com</p>
             </section>
+        </div>
+    </div>
+</dialog>
+
+<dialog class="sp-terms-modal" id="faq-modal" aria-labelledby="faq-modal-title">
+    <div class="sp-terms-modal__panel">
+        <div class="sp-terms-modal__header">
+            <h2 id="faq-modal-title">Preguntas Frecuentes</h2>
+            <button
+                type="button"
+                class="sp-terms-modal__close"
+                data-public-modal-close
+                aria-label="Cerrar preguntas frecuentes"
+            >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="sp-terms-modal__content sp-faq-modal__content">
+            <p><strong>Preguntas Frecuentes - PROPAPS S.A.S.</strong></p>
+
+            <div class="sp-faq-list">
+                <details class="sp-faq-item">
+                    <summary>1. ¿Puedo negociar los terminos economicos de mi contrato con propaps.com?</summary>
+                    <div>
+                        <p>Si, estamos abiertos a dialogar. Para contratos de varios paquetes, acompanamientos trimestrales o clientes corporativos (universidades o grupos de investigacion) evaluamos condiciones especiales. Nuestro equipo de atencion al cliente revisara su caso de forma personalizada y le propondra la mejor opcion posible manteniendo siempre la calidad y la transparencia que nos caracteriza.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>2. ¿El servicio basico "Estandar" ofrece calidad y resultados suficientes para aprobacion y/o publicacion?</summary>
+                    <div>
+                        <p>Absolutamente si. La Linea Estandar esta disenada con los mismos estandares de excelencia academica que la Premium. Incluye correccion completa, apoyo en ideas fuerza y una sesion sincronica estrategica. Gracias a nuestra Inteligencia Hibrida (humana + IA de vanguardia), miles de estudiantes han aprobado sus trabajos y publicado articulos con esta modalidad. La diferencia principal con la Premium es el nivel de acompanamiento personalizado, no la calidad del resultado final.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>3. ¿Puedo solicitar reembolso despues de hacer el contrato?</summary>
+                    <div>
+                        <p>No realizamos reembolsos una vez iniciado el servicio, ya que asignamos de inmediato un asesor experto y comenzamos el trabajo con recursos dedicados. La unica excepcion es si el asesor asignado abandona el proyecto y no logramos asignar un reemplazo calificado en un plazo maximo de 7 dias. En ese caso excepcional, evaluaremos el reembolso proporcional correspondiente.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>4. ¿Los precios que ofrece propaps.com son justos con relacion al mercado?</summary>
+                    <div>
+                        <p>Si, nuestros precios son altamente competitivos y justos. La Linea Estandar parte de un valor accesible (57 % del SMMLV 2026) y la Premium de un salario minimo completo, lo que nos permite pagar dignamente a nuestros freelancers y garantizar calidad premium. Comparado con el mercado de servicios academicos en Colombia y LatAm, ofrecemos una relacion valor-precio superior gracias a la Inteligencia Hibrida, la garantia real en paquetes Premium y la etica en nuestros procesos.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>5. ¿Puedo cambiar de plan despues de hacer un pago?</summary>
+                    <div>
+                        <p>Si. Somos flexibles. Si despues de contratar un paquete desea subir o bajar de Linea Estandar a Premium (o viceversa), simplemente nos avisa y ajustamos la diferencia a favor o en contra de inmediato. El saldo a favor se aplica al siguiente servicio o se devuelve segun su preferencia.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>6. ¿Por que propaps.com es la mejor opcion de acompanamiento academico?</summary>
+                    <div>
+                        <p>Porque combinamos lo mejor de dos mundos: Inteligencia Humana + Inteligencia Artificial = Inteligencia Hibrida. Ofrecemos resultados de excelencia academica con garantia real (en paquetes Premium), precios eticos y transparentes, atencion personalizada al mejor estilo antioqueno (calida, directa y comprometida) y un modelo que respeta tanto al cliente como a nuestros colaboradores. Nadie mas en el mercado entrega esta combinacion de calidad, flexibilidad y respaldo real.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>7. ¿Los trabajos resultantes pasaran una prueba de redaccion con IA y que garantiza la Inteligencia Hibrida al respecto?</summary>
+                    <div>
+                        <p>Si, pasaran cualquier detector de IA disponible en el mercado. Nuestra Inteligencia Hibrida garantiza que todo el contenido sea revisado, enriquecido y validado por asesores humanos de alto nivel (maestria o trayectoria destacada). La IA acelera el proceso, pero la inteligencia humana asegura originalidad, rigor academico, voz propia del cliente y coherencia argumentativa. El resultado final es 100 % humano en esencia.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>8. ¿Que nivel academico tienen los asesores de propaps.com?</summary>
+                    <div>
+                        <p>Todos nuestros asesores y tutores poseen minimo titulo de maestria en areas afines a Ciencias Sociales y Educacion, o cuentan con una trayectoria academica y profesional consolidada (publicaciones indexadas, experiencia como jurados o docentes universitarios). Seleccionamos solo a los mejores para garantizar la mas alta calidad.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>9. ¿Como garantiza propaps.com la calidad y excelencia en sus trabajos?</summary>
+                    <div>
+                        <p>Nuestra calidad se basa en cuatro pilares fundamentales:</p>
+                        <ul>
+                            <li>Experiencia comprobada de nuestros asesores (maestria o trayectoria destacada).</li>
+                            <li>Dedicado servicio al cliente al mejor estilo antioqueno: calido, cercano y siempre disponible.</li>
+                            <li>Dominio avanzado de herramientas de Inteligencia Artificial combinado con revision humana constante.</li>
+                            <li>Actitud critica permanente y revision exhaustiva de los resultados generados por IA.</li>
+                        </ul>
+                        <p>Ademas, aplicamos rubricas internas de evaluacion y revisiones por pares en los paquetes Premium.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>10. ¿Es posible contratar varios servicios de propaps.com a la vez?</summary>
+                    <div>
+                        <p>Si, totalmente. Puede combinar paquetes (por ejemplo, Correccion Completa + Segundo Tutor) y recibir descuentos por volumen o un plan integrado a medida. Nuestro equipo le ayudara a estructurar la mejor combinacion segun sus necesidades y plazos.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>11. ¿Las sesiones sincronicas permiten horarios flexibles?</summary>
+                    <div>
+                        <p>Si. Entendemos que nuestros clientes son estudiantes y profesionales con agendas exigentes. Las sesiones se programan de mutuo acuerdo, buscando siempre el horario que mejor se ajuste a su disponibilidad.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>12. ¿En que huso horario se programan las sesiones sincronicas?</summary>
+                    <div>
+                        <p>Todas las sesiones se programan en hora Colombia (GMT-5 / COT). Si usted se encuentra en otro pais, le indicaremos la equivalencia en su zona horaria para evitar confusiones.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>13. ¿Por que los precios de los valores y servicios se expresan en dolares?</summary>
+                    <div>
+                        <p>Expresamos los precios en dolares por tres razones principales: estabilidad cambiaria (protegemos tanto a usted como a nosotros de las fluctuaciones del peso), transparencia internacional y alineacion con estandares globales del mercado academico. Esto nos permite mantener precios justos y predecibles a lo largo del ano.</p>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>14. ¿De que manera me afecta el pago en dolares en la plataforma?</summary>
+                    <div>
+                        <p>De ninguna manera negativa. Al contrario, le trae ventajas:</p>
+                        <ul>
+                            <li>Puede pagar con tarjeta de credito o debito internacional (la plataforma hace la conversion automatica al peso colombiano al tipo de cambio del dia).</li>
+                            <li>No hay cobros adicionales por conversion de moneda.</li>
+                            <li>Su extracto bancario reflejara el pago en pesos locales de forma clara y transparente.</li>
+                            <li>Evita riesgos de variaciones cambiarias entre el momento de la cotizacion y el pago.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="sp-faq-item">
+                    <summary>15. ¿Como puedo comunicarme con propaps.com?</summary>
+                    <div>
+                        <p>Para comunicarse con nosotros, haga uso de nuestro medio de atencion asincronico personalizado.</p>
+                        <p><a href="mailto:comunicaciones@propaps.com">comunicaciones@propaps.com</a></p>
+                    </div>
+                </details>
+            </div>
         </div>
     </div>
 </dialog>

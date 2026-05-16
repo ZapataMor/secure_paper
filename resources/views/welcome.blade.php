@@ -210,7 +210,7 @@
 
         @include('partials.public.header')
 
-        <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-18 pt-30 text-[#F1F7F6] md:pb-20 md:pt-32">
+        <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-18 pt-40 text-[#F1F7F6] sm:pt-34 md:pb-20 md:pt-32">
             <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
                 <h2 class="mx-auto mb-2 max-w-xs text-3xl font-bold leading-tight sm:max-w-4xl sm:text-4xl md:text-5xl">
                     Somos una nueva empresa 

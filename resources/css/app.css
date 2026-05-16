@@ -206,6 +206,80 @@
         margin-top: 0.28rem;
     }
 
+    .sp-faq-list {
+        display: grid;
+        gap: 0.7rem;
+        margin-top: 1rem;
+    }
+
+    .sp-faq-item {
+        border: 1px solid rgba(0, 106, 76, 0.18);
+        border-radius: 0.85rem;
+        background: #f1f7f6;
+        overflow: hidden;
+    }
+
+    .sp-faq-item summary {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.95rem 1rem;
+        color: #000f1f;
+        font-size: 0.98rem;
+        font-weight: 800;
+        line-height: 1.45;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .sp-faq-item summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .sp-faq-item summary::after {
+        content: '+';
+        display: inline-flex;
+        width: 1.55rem;
+        height: 1.55rem;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: #2cc295;
+        color: #000f1f;
+        font-size: 1.15rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .sp-faq-item[open] summary {
+        border-bottom: 1px solid rgba(0, 106, 76, 0.16);
+        background: rgba(44, 194, 149, 0.12);
+    }
+
+    .sp-faq-item[open] summary::after {
+        content: '-';
+    }
+
+    .sp-faq-item summary:focus-visible {
+        outline: 2px solid #2cc295;
+        outline-offset: -2px;
+    }
+
+    .sp-faq-item > div {
+        padding: 0.95rem 1rem 1rem;
+        background: #ffffff;
+    }
+
+    .sp-faq-item a {
+        color: #006a4c;
+        font-weight: 800;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
     .sp-public-navbar-inner {
         padding: 1rem 1.5rem;
     }
