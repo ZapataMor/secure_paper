@@ -12,11 +12,11 @@
         <div class="flex min-w-0 items-center gap-3">
             <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
             <div class="min-w-0">
-                <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
+                <h1 class="truncate text-2xl font-bold tracking-tight sm:text-3xl">propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
             </div>
         </div>
 
-        <nav class="flex w-full flex-wrap items-center justify-center gap-3 text-sm sm:w-auto sm:justify-end sm:gap-6 sm:text-base">
+        <nav class="flex w-full flex-wrap items-center justify-center gap-3 text-base sm:w-auto sm:justify-end sm:gap-6 sm:text-lg">
             <a href="{{ route('home') }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Inicio</a>
             <a href="{{ $plansUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Planes</a>
             {{-- <a href="{{ $servicesUrl }}" class="font-medium text-[#F1F7F6] transition-colors hover:text-[#2CC295]">Servicios</a> --}}

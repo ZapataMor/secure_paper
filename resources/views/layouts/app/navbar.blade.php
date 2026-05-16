@@ -20,7 +20,7 @@
                         <img src="{{ asset('assets/images/logo.png') }}" alt="">
                     </span>
                     <span class="sp-admin-brand-copy">
-                        <h1 class="truncate text-xl font-bold tracking-tight sm:text-2xl">propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
+                        <h1 class="truncate text-2xl font-bold tracking-tight sm:text-3xl">propaps<span class="block text-[#2CC295] sm:inline">.com</span></h1>
                     </span>
                 </div>
 
