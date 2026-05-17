@@ -56,5 +56,4 @@
         ])
     </section>
 
-    @include('partials.plans.details', ['plans' => $plans])
 </x-layouts::app>

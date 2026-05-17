@@ -359,47 +359,41 @@
         </section>
 
         <section class="mx-auto max-w-7xl px-6 py-16">
-            <div class="mb-12 text-center">
-                <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Lo Que Dicen Nuestros Clientes</h2>
-                <p class="text-lg text-[#707D7D]">La confianza de investigadores de todo el mundo</p>
+            <div class="mb-10 text-center">
+                <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Opina sobre nuestro proyecto</h2>
+                <p class="mx-auto max-w-3xl text-lg leading-8 text-[#000F1F]">
+                    Nos interesa lo que piensas. Opina sobre nuestro proyecto. Inteligencia Hibrida al servicio de la ciencia y el conocimiento.
+                </p>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <article class="rounded-xl border-l-4 border-[#2CC295] bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
-                    <div class="mb-4 flex gap-1 text-[#2CC295]">
-                        <span>*****</span>
-                    </div>
-                    <p class="mb-4 italic text-[#000F1F]">"La revision fue extraordinariamente detallada. Las sugerencias mejoraron significativamente la calidad de mi articulo. Publicado en Q1."</p>
-                    <div class="border-t border-[#AAC8C4] pt-4">
-                        <div class="font-semibold text-[#000F1F]">Dr. Maria Gonzalez</div>
-                        <div class="text-sm text-[#707D7D]">Investigadora Senior</div>
-                        <div class="text-sm text-[#006A4C]">Universidad Nacional</div>
-                    </div>
-                </article>
+            <div class="mx-auto grid max-w-5xl gap-8 rounded-2xl border border-[#006A4C]/15 bg-white p-6 shadow-lg md:grid-cols-[0.8fr_1.2fr] md:p-8">
+                <div>
+                    <span class="mb-4 inline-flex rounded-full bg-[#2CC295]/15 px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-[#000F1F]">
+                        Registro de opiniones
+                    </span>
+                    <h3 class="mb-4 text-2xl font-bold leading-tight text-[#000F1F]">Tu voz ayuda a mejorar propaps.com</h3>
+                    <p class="text-base leading-7 text-[#000F1F]">
+                        Los comentarios se revisan antes de publicarse. Las opiniones honestas y respetuosas podran aparecer en la pagina cuando el proyecto cuente con clientes y registros validados.
+                    </p>
+                </div>
 
-                <article class="rounded-xl border-l-4 border-[#2CC295] bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
-                    <div class="mb-4 flex gap-1 text-[#2CC295]">
-                        <span>*****</span>
-                    </div>
-                    <p class="mb-4 italic text-[#000F1F]">"Profesionalismo absoluto. El equipo identifico aspectos metodologicos que habiamos pasado por alto. Muy recomendado."</p>
-                    <div class="border-t border-[#AAC8C4] pt-4">
-                        <div class="font-semibold text-[#000F1F]">Prof. Carlos Ramirez</div>
-                        <div class="text-sm text-[#707D7D]">Director de Investigacion</div>
-                        <div class="text-sm text-[#006A4C]">Instituto Tecnologico</div>
-                    </div>
-                </article>
-
-                <article class="rounded-xl border-l-4 border-[#2CC295] bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
-                    <div class="mb-4 flex gap-1 text-[#2CC295]">
-                        <span>*****</span>
-                    </div>
-                    <p class="mb-4 italic text-[#000F1F]">"Excelente servicio. La retroalimentacion fue constructiva y me ayudo a fortalecer mi marco teorico considerablemente."</p>
-                    <div class="border-t border-[#AAC8C4] pt-4">
-                        <div class="font-semibold text-[#000F1F]">Dra. Ana Patricia Silva</div>
-                        <div class="text-sm text-[#707D7D]">Candidata Doctoral</div>
-                        <div class="text-sm text-[#006A4C]">Universidad de Chile</div>
-                    </div>
-                </article>
+                <form action="mailto:comunicaciones@propaps.com" method="POST" enctype="text/plain" class="grid gap-4">
+                    <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
+                        Nombre
+                        <input type="text" name="nombre" required class="rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30">
+                    </label>
+                    <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
+                        Correo electronico
+                        <input type="email" name="correo" required class="rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30">
+                    </label>
+                    <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
+                        Comentario
+                        <textarea name="comentario" rows="5" required class="resize-y rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30"></textarea>
+                    </label>
+                    <button type="submit" class="rounded-xl bg-[#006A4C] px-6 py-3 text-base font-bold text-[#F1F7F6] transition-colors hover:bg-[#00BF81]">
+                        Enviar opinion
+                    </button>
+                </form>
             </div>
         </section>
 

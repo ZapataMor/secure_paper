@@ -41,8 +41,6 @@
             @include('partials.plans.cards', ['plans' => $plans, 'mode' => 'public'])
         </section>
 
-        @include('partials.plans.details', ['plans' => $plans])
-
         <div class="border-t border-white/5">
             @include('partials.public.footer')
         </div>
