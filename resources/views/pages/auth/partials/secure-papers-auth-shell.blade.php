@@ -176,6 +176,9 @@
                         src="https://www.svgrepo.com/show/475656/google-color.svg"
                         alt=""
                         class="sp-auth-google-icon"
+                        width="20"
+                        height="20"
+                        style="width: 20px; height: 20px; max-width: 20px; flex: none;"
                     >
                     <span>Registrarme con Google</span>
                 </a>
@@ -290,6 +293,9 @@
                         src="https://www.svgrepo.com/show/475656/google-color.svg"
                         alt=""
                         class="sp-auth-google-icon"
+                        width="20"
+                        height="20"
+                        style="width: 20px; height: 20px; max-width: 20px; flex: none;"
                     >
                     <span>Continuar con Google</span>
                 </a>
