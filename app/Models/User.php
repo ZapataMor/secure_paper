@@ -27,6 +27,10 @@ use Throwable;
     'document_type',
     'document_number',
     'password',
+    'role',
+    'google_id',
+    'avatar',
+    'email_verified_at',
     'profile_photo',
     'document_additional_information',
 ])]

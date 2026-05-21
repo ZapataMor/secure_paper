@@ -67,6 +67,12 @@ class GoogleAuthController extends Controller
                 'role' => 'client',
                 'email_verified_at' => now(),
             ]);
+        } else {
+            $user->forceFill([
+                'google_id' => $user->google_id ?: $googleUser->id,
+                'avatar' => $googleUser->avatar,
+                'email_verified_at' => $user->email_verified_at ?: now(),
+            ])->save();
         }
 
         Auth::login($user);
