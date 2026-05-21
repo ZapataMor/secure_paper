@@ -53,26 +53,39 @@ class GoogleAuthController extends Controller
                 ->with('status', 'No pudimos completar el inicio de sesion con Google.');
         }
 
-        $user = User::where('google_id', $googleUser->id)
-            ->orWhere('email', $googleUser->email)
-            ->first();
+        try {
+            $user = User::where('google_id', $googleUser->id)
+                ->orWhere('email', $googleUser->email)
+                ->first();
 
-        if (!$user) {
-            $user = User::create([
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
+            if (!$user) {
+                $user = User::create([
+                    'name' => $googleUser->name,
+                    'email' => $googleUser->email,
+                    'google_id' => $googleUser->id,
+                    'avatar' => $googleUser->avatar,
+                    'password' => bcrypt(Str::random(24)),
+                    'role' => 'client',
+                    'email_verified_at' => now(),
+                ]);
+            } else {
+                $user->forceFill([
+                    'google_id' => $user->google_id ?: $googleUser->id,
+                    'avatar' => $googleUser->avatar,
+                    'email_verified_at' => $user->email_verified_at ?: now(),
+                ])->save();
+            }
+        } catch (Throwable $exception) {
+            Log::error('Google OAuth user sync failed.', [
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
                 'google_id' => $googleUser->id,
-                'avatar' => $googleUser->avatar,
-                'password' => bcrypt(Str::random(24)),
-                'role' => 'client',
-                'email_verified_at' => now(),
+                'email' => $googleUser->email,
             ]);
-        } else {
-            $user->forceFill([
-                'google_id' => $user->google_id ?: $googleUser->id,
-                'avatar' => $googleUser->avatar,
-                'email_verified_at' => $user->email_verified_at ?: now(),
-            ])->save();
+
+            return redirect()
+                ->route('login')
+                ->with('status', 'No pudimos crear o vincular tu usuario con Google.');
         }
 
         Auth::login($user);
