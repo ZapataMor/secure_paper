@@ -23,10 +23,12 @@ class GoogleAuthController extends Controller
         }
 
         try {
-            return Socialite::driver('google')->redirect();
+            return Socialite::driver('google')->stateless()->redirect();
         } catch (Throwable $exception) {
             Log::error('Google OAuth redirect failed.', [
+                'exception' => $exception::class,
                 'message' => $exception->getMessage(),
+                'redirect_uri' => config('services.google.redirect'),
             ]);
 
             return redirect()
@@ -38,10 +40,12 @@ class GoogleAuthController extends Controller
     public function callback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
         } catch (Throwable $exception) {
             Log::error('Google OAuth callback failed.', [
+                'exception' => $exception::class,
                 'message' => $exception->getMessage(),
+                'redirect_uri' => config('services.google.redirect'),
             ]);
 
             return redirect()
