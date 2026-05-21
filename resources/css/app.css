@@ -1430,6 +1430,60 @@ select:focus[data-flux-control] {
         box-shadow: inset 4px 4px 8px #004733, inset -4px -4px 8px #008d65;
     }
 
+    .sp-auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 1.15rem 0;
+        color: #aac8c4;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .sp-auth-divider::before,
+    .sp-auth-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(170, 200, 196, 0.28);
+    }
+
+    .sp-auth-google-btn {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        border: 1px solid rgba(241, 247, 246, 0.45);
+        border-radius: 1rem;
+        background: #ffffff;
+        padding: 0.88rem 1rem;
+        color: #24413c;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 6px 6px 14px rgba(0, 71, 51, 0.38);
+        transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sp-auth-google-btn:hover {
+        background: #f6faf9;
+        transform: translateY(-1px);
+        box-shadow: 8px 8px 16px rgba(0, 71, 51, 0.42);
+    }
+
+    .sp-auth-google-btn:active {
+        transform: translateY(0);
+        box-shadow: 3px 3px 8px rgba(0, 71, 51, 0.34);
+    }
+
+    .sp-auth-google-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex: none;
+    }
+
     .sp-auth-toggle-shell {
         position: absolute;
         top: 0;

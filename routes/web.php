@@ -6,6 +6,7 @@ use App\Http\Controllers\DocumentFileController;
 use App\Http\Controllers\PrivateDocumentUploadController;
 use App\Http\Controllers\PrivatePlanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\GoogleAuthController;
 
 Route::view('/', 'welcome')->name('home');
 Route::view('/servicios', 'servicios')->name('services');
@@ -47,5 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('trabajos/{user}/enviar', [WorkController::class, 'store'])->name('works.store');
         });
 });
+
+    Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+        ->name('google.redirect');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+        ->name('google.callback');
 
 require __DIR__.'/settings.php';

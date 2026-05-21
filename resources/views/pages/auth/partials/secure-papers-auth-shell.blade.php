@@ -167,6 +167,19 @@
                     </button>
                 </form>
 
+                <div class="sp-auth-divider">
+                    <span>o</span>
+                </div>
+
+                <a href="{{ route('google.redirect') }}" class="sp-auth-google-btn">
+                    <img
+                        src="https://www.svgrepo.com/show/475656/google-color.svg"
+                        alt=""
+                        class="sp-auth-google-icon"
+                    >
+                    <span>Registrarme con Google</span>
+                </a>
+
                 <div class="sp-auth-mobile-switch">
                     <span>Ya tienes una cuenta?</span>
                     <button type="button" data-auth-switch="signin" class="sp-auth-link-btn">Iniciar sesion</button>
@@ -267,6 +280,19 @@
                         Ingresar
                     </button>
                 </form>
+
+                <div class="sp-auth-divider">
+                    <span>o</span>
+                </div>
+
+                <a href="{{ route('google.redirect') }}" class="sp-auth-google-btn">
+                    <img
+                        src="https://www.svgrepo.com/show/475656/google-color.svg"
+                        alt=""
+                        class="sp-auth-google-icon"
+                    >
+                    <span>Continuar con Google</span>
+                </a>
 
                 <div class="sp-auth-mobile-switch">
                     <span>No tienes cuenta?</span>
