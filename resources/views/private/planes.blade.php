@@ -22,11 +22,11 @@
 
     @if ($pendingSubscription)
         <div class="mx-auto mt-6 w-full max-w-7xl rounded-xl border border-[#F9BC60]/45 bg-[#F9BC60]/10 px-5 py-4 text-sm text-[#FFE3B8]">
-            Tienes una solicitud pendiente para el plan {{ $pendingSubscription->paymentPlan?->name ?? 'seleccionado' }}. El modulo de carga se habilitara cuando el pago quede aprobado.
+            Tienes una solicitud pendiente para el plan {{ $pendingSubscription->paymentPlan?->name ?? 'selecciónado' }}. El modulo de carga se habilitara cuando el pago quede aprobado.
         </div>
     @elseif ($hasActiveMembership)
         <div class="mx-auto mt-6 w-full max-w-7xl rounded-xl border border-[#2CC295]/50 bg-[#2CC295]/15 px-5 py-4 text-sm text-[#D7FFF2]">
-            Tu plan activo es {{ $activePlanName ?? 'una membresia vigente' }}. Ya puedes cargar documentos.
+            Tu plan activo es {{ $activePlanName ?? 'una membresía vigente' }}. Ya puedes cargar documentos.
         </div>
     @endif
 

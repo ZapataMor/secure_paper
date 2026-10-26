@@ -1,9 +1,9 @@
 <x-layouts::app :title="__('Trabajos')">
     <section class="sp-admin-page">
         <header class="sp-admin-page-header">
-            <p class="sp-admin-page-kicker">Modulo administrador</p>
+            <p class="sp-admin-page-kicker">Módulo administrador</p>
             <h1>Trabajos</h1>
-            <p>Selecciona un usuario para revisar sus archivos y su informacion adicional.</p>
+            <p>Selecciona un usuario para revisar sus archivos y su información adicional.</p>
         </header>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -24,12 +24,12 @@
                         {{ $hasMembership ? 'Plan activo' : 'Sin plan activo' }}
                     </p>
                     <span class="mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold {{ $hasMembership ? 'border-[#2CC295]/50 bg-[#2CC295]/20 text-[#2CC295]' : 'border-[#F9BC60]/50 bg-[#F9BC60]/20 text-[#FAD7A0]' }}">
-                        {{ $planName ?? 'Sin membresia' }}
+                        {{ $planName ?? 'Sin membresía' }}
                     </span>
                 </a>
             @empty
                 <p class="rounded-2xl border border-[#006A4C] bg-[#032221]/80 px-5 py-6 text-sm text-[#AAC8C4] sm:col-span-2 lg:col-span-3 xl:col-span-4">
-                    No hay usuarios disponibles para este modulo.
+                    No hay usuarios disponibles para este módulo.
                 </p>
             @endforelse
         </div>

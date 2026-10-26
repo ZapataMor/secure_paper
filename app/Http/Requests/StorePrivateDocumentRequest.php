@@ -33,10 +33,10 @@ class StorePrivateDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'document_files.*.uploaded' => 'No se pudo subir uno de los archivos. Verifica que no supere 20 MB y vuelve a intentarlo.',
-            'document_files.*.file' => 'Uno de los archivos no es valido.',
-            'document_files.*.mimes' => 'Solo puedes cargar archivos PDF, Word, Excel o imagenes.',
-            'document_files.*.max' => 'Cada archivo puede pesar maximo 20 MB.',
+            'document_files.*.uploaded' => 'No se pudo subir uno de los archivos. Verifica que no supere los 20 MB y vuelve a intentarlo.',
+            'document_files.*.file' => 'Uno de los archivos no es válido.',
+            'document_files.*.mimes' => 'Solo puedes cargar archivos PDF, Word, Excel o imágenes.',
+            'document_files.*.max' => 'Cada archivo puede pesar máximo 20 MB.',
         ];
     }
 }

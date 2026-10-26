@@ -1,10 +1,10 @@
-<x-layouts::app :title="__('Gestion de usuarios')">
+<x-layouts::app :title="__('Gestión de usuarios')">
     <section class="sp-admin-page">
         <header class="sp-admin-page-header">
-            <p class="sp-admin-page-kicker">Modulo administrador</p>
-            <h1>Gestion de usuarios</h1>
+            <p class="sp-admin-page-kicker">Módulo administrador</p>
+            <h1>Gestión de usuarios</h1>
             <p>
-                Consulta la informacion principal de los usuarios registrados en la plataforma.
+                Consulta la información principal de los usuarios registrados en la plataforma.
             </p>
         </header>
 

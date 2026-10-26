@@ -16,7 +16,7 @@
 
     <section class="sp-admin-page mx-auto w-full max-w-6xl">
         <header class="sp-admin-page-header">
-            <p class="sp-admin-page-kicker">Modulo administrador</p>
+            <p class="sp-admin-page-kicker">Módulo administrador</p>
             <h1>Trabajo de {{ $targetUser->fullName() }}</h1>
             <p>Gestiona archivos y mensajes de seguimiento para este usuario.</p>
         </header>
@@ -65,7 +65,7 @@
 
                     <div class="p-5">
                         <p class="text-sm text-[#AAC8C4]">
-                            Carga archivos para este usuario. Formatos permitidos: Word, PDF, Excel e imagenes.
+                            Carga archivos para este usuario. Formatos permitidos: Word, PDF, Excel e imágenes.
                         </p>
 
                         <div class="mt-4 rounded-xl border-2 border-dashed border-[#2CC295]/45 bg-[#000F1F]/35 px-4 py-6 text-center">
@@ -79,8 +79,8 @@
 
                             <p class="text-base font-semibold text-[#F1F7F6]">Selecciona uno o varios archivos para enviar</p>
                             <p class="mt-2 text-sm text-[#AAC8C4]">
-                                Formatos permitidos: Word, PDF, Excel e imagenes.<br>
-                                Tamano maximo por archivo: 20 MB.
+                                Formatos permitidos: Word, PDF, Excel e imágenes.<br>
+                                Tamaño máximo por archivo: 20 MB.
                             </p>
 
                             <input
@@ -113,7 +113,7 @@
                             id="admin_message"
                             name="admin_message"
                             rows="6"
-                            placeholder="Escribe aqui la informacion que deseas compartir, incluyendo links si aplica."
+                            placeholder="Escribe aquí la información que deseas compartir, incluyendo links si aplica."
                             class="mt-4 min-h-[196px] w-full rounded-xl border border-[#006A4C]/55 bg-[#011E15]/95 px-4 py-3 text-sm text-[#F1F7F6] placeholder:text-[#AAC8C4]/55 focus:border-[#2CC295] focus:outline-none"
                         >{{ old('admin_message') }}</textarea>
 
@@ -142,7 +142,7 @@
             </div>
 
             @if ($userDocuments->isEmpty())
-                <p class="mt-3 text-sm text-[#AAC8C4]">Este usuario aun no ha cargado archivos.</p>
+                <p class="mt-3 text-sm text-[#AAC8C4]">Este usuario aún no ha cargado archivos.</p>
             @else
                 <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
                     @foreach ($userDocuments as $document)
@@ -193,14 +193,14 @@
 
         <article class="overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos enviados por administracion</h2>
+                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos enviados por administración</h2>
                 <span class="inline-flex items-center rounded-full border border-[#2CC295]/45 bg-[#2CC295]/18 px-2.5 py-1 text-xs font-semibold text-[#2CC295]">
                     {{ $adminDocuments->count() }}
                 </span>
             </div>
 
             @if ($adminDocuments->isEmpty())
-                <p class="mt-3 text-sm text-[#AAC8C4]">Aun no has enviado archivos a este usuario.</p>
+                <p class="mt-3 text-sm text-[#AAC8C4]">Aún no has enviado archivos a este usuario.</p>
             @else
                 <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
                     @foreach ($adminDocuments as $document)
@@ -251,7 +251,7 @@
 
         <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <article class="rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-                <h2 class="text-lg font-semibold text-[#F1F7F6]">Informacion adicional del usuario</h2>
+                <h2 class="text-lg font-semibold text-[#F1F7F6]">Información adicional del usuario</h2>
 
                 @if ($additionalInformationEntries->isNotEmpty())
                     <ul class="mt-4 space-y-3">
@@ -273,7 +273,7 @@
                     </ul>
                 @else
                     <p class="mt-3 text-sm text-[#AAC8C4]">
-                        El usuario aun no ha agregado informacion adicional.
+                        El usuario aún no ha agregado información adicional.
                     </p>
                 @endif
             </article>
@@ -282,7 +282,7 @@
                 <h2 class="text-lg font-semibold text-[#F1F7F6]">Mensajes enviados al usuario</h2>
 
                 @if ($adminMessages->isEmpty())
-                    <p class="mt-3 text-sm text-[#AAC8C4]">Aun no hay mensajes enviados.</p>
+                    <p class="mt-3 text-sm text-[#AAC8C4]">Aún no hay mensajes enviados.</p>
                 @else
                     <ul class="mt-4 space-y-3">
                         @foreach ($adminMessages as $adminMessage)
@@ -295,7 +295,7 @@
                                     <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
                                         {{ optional($adminMessage->sent_at)->format('H:i') }}
                                     </span>
-                                    <span class="ml-auto text-[#AAC8C4]">Administracion propaps.com</span>
+                                    <span class="ml-auto text-[#AAC8C4]">Administración propaps.com</span>
                                 </div>
                                 <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
                                     {{ $adminMessage->message }}
