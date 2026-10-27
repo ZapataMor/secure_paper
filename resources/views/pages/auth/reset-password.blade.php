@@ -1,52 +1,22 @@
-<x-layouts::auth :title="__('Reset password')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Reset password')" :description="__('Please enter your new password below')" />
-
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
-
-        <form method="POST" action="{{ route('password.update') }}" class="flex flex-col gap-6">
+<x-layouts::auth.secure-papers :title="'Restablecer contraseña'">
+    @include('pages::auth.partials.account-style')
+    <section class="sp-account">
+        <span class="brand">Professional Papers</span>
+        <h1>Crea una nueva contraseña</h1>
+        <p>Confirma tu correo y escribe la misma contraseña en ambos campos.</p>
+        <form method="POST" action="{{ route('password.update') }}">
             @csrf
-            <!-- Token -->
             <input type="hidden" name="token" value="{{ request()->route('token') }}">
-
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                value="{{ request('email') }}"
-                :label="__('Email')"
-                type="email"
-                required
-                autocomplete="email"
-            />
-
-            <!-- Password -->
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Password')"
-                viewable
-            />
-
-            <!-- Confirm Password -->
-            <flux:input
-                name="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                viewable
-            />
-
-            <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full" data-test="reset-password-button">
-                    {{ __('Reset password') }}
-                </flux:button>
-            </div>
+            <label for="reset-email">Correo electrónico</label>
+            <input id="reset-email" name="email" type="email" value="{{ old('email', request('email')) }}" required autocomplete="email">
+            @error('email')<p class="error" role="alert">{{ $message }}</p>@enderror
+            <label for="reset-password">Nueva contraseña</label>
+            <input id="reset-password" name="password" type="password" required autocomplete="new-password">
+            @error('password')<p class="error" role="alert">{{ $message }}</p>@enderror
+            <label for="reset-confirmation">Confirmar contraseña</label>
+            <input id="reset-confirmation" name="password_confirmation" type="password" required autocomplete="new-password">
+            <button type="submit">Restablecer contraseña</button>
         </form>
-    </div>
-</x-layouts::auth>
+        <a class="back" href="{{ route('login') }}">Volver al inicio de sesión</a>
+    </section>
+</x-layouts::auth.secure-papers>

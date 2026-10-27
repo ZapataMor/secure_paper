@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->preventRequestForgery(except: ['pagos/wompi/eventos/*']);
         $middleware->alias([
+            'verified' => \App\Http\Middleware\EnsureConfiguredEmailVerification::class,
             'admin' => EnsureUserIsAdmin::class,
             'role' => RoleMiddleware::class,
             'membership' => EnsureUserHasActiveMembership::class,

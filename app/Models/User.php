@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\AccountEmailVerification;
+use App\Notifications\AccountPasswordReset;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -35,10 +37,22 @@ use Throwable;
     'document_additional_information',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
+
+    public function sendEmailVerificationNotification(): void
+    {
+        if (config('accounts.email_verification_required')) {
+            $this->notify(new AccountEmailVerification);
+        }
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new AccountPasswordReset($token));
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -56,6 +70,11 @@ class User extends Authenticatable
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function projectAssignment(): HasOne
+    {
+        return $this->hasOne(ProjectAssignment::class, 'client_id');
     }
 
     public function userSubscriptions(): HasMany

@@ -1,4 +1,13 @@
-<x-layouts::app :title="__('Trabajos de usuario')">
+<x-layouts::app :title="__('Expediente del proyecto')">
+
+    <style>
+    .sp-work-show,.sp-work-show form,.sp-work-show article,.sp-work-show section,.sp-work-show .grid>*{min-width:0;max-width:100%}
+    .sp-work-show h1,.sp-work-show h2,.sp-work-show p,.sp-work-show label,.sp-work-show span{overflow-wrap:anywhere}
+    .sp-work-show input,.sp-work-show textarea,.sp-work-show select{min-width:0;max-width:100%;box-sizing:border-box}
+    .sp-work-show input[type=file]{width:100%;font-size:13px}
+    .sp-work-show a:focus-visible,.sp-work-show button:focus-visible,.sp-work-show input:focus-visible{outline:2px solid #2cc295;outline-offset:3px}
+    @media(max-width:440px){.sp-work-show .sp-work-files{grid-template-columns:1fr}.sp-work-show input[type=file]::file-selector-button{display:block;margin-bottom:8px}.sp-work-show button{white-space:normal}}
+    </style>
     @php
         $additionalInformationEntries = collect($additionalInformationEntries ?? []);
         $formatFileSize = static function (int $bytes): string {
@@ -14,18 +23,18 @@
         };
     @endphp
 
-    <section class="sp-admin-page mx-auto w-full max-w-6xl">
+    <section class="sp-admin-page sp-work-show mx-auto w-full max-w-6xl">
         <header class="sp-admin-page-header">
-            <p class="sp-admin-page-kicker">Modulo administrador</p>
-            <h1>Trabajo de {{ $targetUser->fullName() }}</h1>
-            <p>Gestiona archivos y mensajes de seguimiento para este usuario.</p>
+            <p class="sp-admin-page-kicker">{{ auth()->user()->isAdmin() ? 'Administración' : 'Panel del asesor' }}</p>
+            <h1>Proyecto de {{ $targetUser->fullName() }}</h1>
+            <p>Consulta el expediente completo y comparte correcciones y mensajes de seguimiento.</p>
         </header>
 
         <a
             href="{{ route('admin.works.index') }}"
             class="inline-flex w-fit items-center rounded-lg border border-[#AAC8C4]/35 bg-[#000F1F]/35 px-3 py-2 text-xs font-semibold text-[#F1F7F6] transition hover:border-[#2CC295]/65 hover:bg-[#032221]"
         >
-            Volver a trabajos
+            Volver a proyectos
         </a>
 
         @if (session('status'))
@@ -44,6 +53,8 @@
             </div>
         @endif
 
+        @include('partials.project-card',['projectEditable'=>true])
+
         <form
             method="POST"
             action="{{ route('admin.works.store', $targetUser) }}"
@@ -60,12 +71,12 @@
                             <path d="m17 8-5-5-5 5"/>
                             <path d="M12 3v12"/>
                         </svg>
-                        <h2 class="text-lg font-semibold text-[#F1F7F6]">Contenedor de carga de archivos</h2>
+                        <h2 class="text-lg font-semibold text-[#F1F7F6]">Compartir documentos</h2>
                     </div>
 
                     <div class="p-5">
                         <p class="text-sm text-[#AAC8C4]">
-                            Carga archivos para este usuario. Formatos permitidos: Word, PDF, Excel e imagenes.
+                            Comparte correcciones o materiales del proyecto con el cliente.
                         </p>
 
                         <div class="mt-4 rounded-xl border-2 border-dashed border-[#2CC295]/45 bg-[#000F1F]/35 px-4 py-6 text-center">
@@ -77,12 +88,13 @@
                                 </svg>
                             </div>
 
-                            <p class="text-base font-semibold text-[#F1F7F6]">Selecciona uno o varios archivos para enviar</p>
+                            <p class="text-base font-semibold text-[#F1F7F6]">Selecciona los documentos que deseas compartir</p>
                             <p class="mt-2 text-sm text-[#AAC8C4]">
-                                Formatos permitidos: Word, PDF, Excel e imagenes.<br>
-                                Tamano maximo por archivo: 20 MB.
+                                Formatos permitidos: Word, PDF, Excel e imágenes.<br>
+                                Tamaño máximo por archivo: 20 MB.
                             </p>
 
+                            <label for="admin_files" class="sr-only">Documentos para compartir con el cliente</label>
                             <input
                                 id="admin_files"
                                 type="file"
@@ -105,17 +117,20 @@
 
                     <div class="p-5">
                         <p class="text-sm text-[#AAC8C4]">
-                            Escribe indicaciones, observaciones o links para guiar el proceso del usuario.
+                            Escribe observaciones o próximos pasos para orientar al cliente.
                         </p>
 
-                        <label for="admin_message" class="sr-only">Mensaje para el usuario</label>
+                        <label for="admin_message" class="sr-only">Mensaje para el cliente</label>
                         <textarea
                             id="admin_message"
                             name="admin_message"
+                            maxlength="8000"
+                            aria-describedby="message-help"
                             rows="6"
-                            placeholder="Escribe aqui la informacion que deseas compartir, incluyendo links si aplica."
+                            placeholder="Escribe tus indicaciones e incluye enlaces si son necesarios."
                             class="mt-4 min-h-[196px] w-full rounded-xl border border-[#006A4C]/55 bg-[#011E15]/95 px-4 py-3 text-sm text-[#F1F7F6] placeholder:text-[#AAC8C4]/55 focus:border-[#2CC295] focus:outline-none"
                         >{{ old('admin_message') }}</textarea>
+                        <p id="message-help" class="mt-2 text-xs text-[#AAC8C4]">Hasta 8.000 caracteres, incluidos espacios. Puedes compartir archivos, un mensaje o ambos.</p>
 
                         <button
                             type="submit"
@@ -124,7 +139,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
                                 <path d="M20 6 9 17l-5-5"/>
                             </svg>
-                            Enviar al usuario
+                            Compartir con el cliente
                         </button>
                     </div>
                 </article>
@@ -135,16 +150,16 @@
 
         <article class="overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos cargados por el usuario</h2>
+                <h2 class="text-xl font-semibold text-[#F1F7F6]">Documentos del cliente</h2>
                 <span class="inline-flex items-center rounded-full border border-[#006A4C]/55 bg-[#006A4C]/25 px-2.5 py-1 text-xs font-semibold text-[#2CC295]">
                     {{ $userDocuments->count() }}
                 </span>
             </div>
 
             @if ($userDocuments->isEmpty())
-                <p class="mt-3 text-sm text-[#AAC8C4]">Este usuario aun no ha cargado archivos.</p>
+                <p class="mt-3 text-sm text-[#AAC8C4]">Todavía no hay documentos del cliente en este expediente. Aparecerán aquí cuando los cargue.</p>
             @else
-                <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+                <ul class="sp-work-files mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
                     @foreach ($userDocuments as $document)
                         @php
                             $mimeType = strtolower((string) $document->mime_type);
@@ -193,16 +208,16 @@
 
         <article class="overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="text-xl font-semibold text-[#F1F7F6]">Archivos enviados por administracion</h2>
+                <h2 class="text-xl font-semibold text-[#F1F7F6]">Documentos compartidos por el equipo</h2>
                 <span class="inline-flex items-center rounded-full border border-[#2CC295]/45 bg-[#2CC295]/18 px-2.5 py-1 text-xs font-semibold text-[#2CC295]">
                     {{ $adminDocuments->count() }}
                 </span>
             </div>
 
             @if ($adminDocuments->isEmpty())
-                <p class="mt-3 text-sm text-[#AAC8C4]">Aun no has enviado archivos a este usuario.</p>
+                <p class="mt-3 text-sm text-[#AAC8C4]">El equipo aún no ha compartido documentos. Usa el formulario superior para enviar correcciones o materiales.</p>
             @else
-                <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+                <ul class="sp-work-files mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
                     @foreach ($adminDocuments as $document)
                         @php
                             $mimeType = strtolower((string) $document->mime_type);
@@ -229,7 +244,7 @@
                                     @endif
 
                                     <span class="absolute right-2 top-2 rounded-full bg-[#2CC295] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#000F1F]">
-                                        Nuevo
+                                        Compartido
                                     </span>
                                 </div>
 
@@ -251,7 +266,7 @@
 
         <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <article class="rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-                <h2 class="text-lg font-semibold text-[#F1F7F6]">Informacion adicional del usuario</h2>
+                <h2 class="text-lg font-semibold text-[#F1F7F6]">Indicaciones del cliente</h2>
 
                 @if ($additionalInformationEntries->isNotEmpty())
                     <ul class="mt-4 space-y-3">
@@ -273,16 +288,16 @@
                     </ul>
                 @else
                     <p class="mt-3 text-sm text-[#AAC8C4]">
-                        El usuario aun no ha agregado informacion adicional.
+                        Todavía no hay indicaciones del cliente. Cuando las agregue, podrás consultarlas aquí con su fecha.
                     </p>
                 @endif
             </article>
 
             <article class="rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 p-5 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
-                <h2 class="text-lg font-semibold text-[#F1F7F6]">Mensajes enviados al usuario</h2>
+                <h2 class="text-lg font-semibold text-[#F1F7F6]">Historial de mensajes del equipo</h2>
 
                 @if ($adminMessages->isEmpty())
-                    <p class="mt-3 text-sm text-[#AAC8C4]">Aun no hay mensajes enviados.</p>
+                    <p class="mt-3 text-sm text-[#AAC8C4]">Todavía no se han enviado mensajes. Los que compartas aparecerán aquí con su fecha y remitente.</p>
                 @else
                     <ul class="mt-4 space-y-3">
                         @foreach ($adminMessages as $adminMessage)
@@ -295,7 +310,7 @@
                                     <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
                                         {{ optional($adminMessage->sent_at)->format('H:i') }}
                                     </span>
-                                    <span class="ml-auto text-[#AAC8C4]">Administracion propaps.com</span>
+                                    <span class="ml-auto text-[#AAC8C4]">{{ $adminMessage->sender?->fullName() ?? 'Equipo propaps.com' }}</span>
                                 </div>
                                 <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-[#F1F7F6]">
                                     {{ $adminMessage->message }}

@@ -2,6 +2,62 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+        <style>
+            /* Controles legibles y cómodos al tacto en el espacio de trabajo. */
+            @media (max-width: 640px) {
+                .sp-admin-actions,
+                .sp-admin-user-menu,
+                .sp-admin-user-menu > [data-flux-dropdown] {
+                    min-width: 0;
+                    max-width: 100%;
+                }
+                .sp-admin-user-menu [data-test="user-menu-button"] {
+                    min-width: 0;
+                    max-width: 100%;
+                    min-height: 44px;
+                }
+                .sp-admin-user-menu [data-test="user-menu-button"] > span {
+                    min-width: 0;
+                }
+                .sp-admin-user-menu [data-flux-menu] {
+                    max-width: calc(100vw - 2rem);
+                }
+                .sp-admin-content input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+                .sp-admin-content select,
+                .sp-admin-content textarea {
+                    font-size: 1rem !important;
+                    max-width: 100%;
+                    min-width: 0;
+                }
+                .sp-admin-content input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+                .sp-admin-content select,
+                .sp-admin-content button {
+                    min-height: 44px;
+                }
+                .sp-admin-content button {
+                    max-width: 100%;
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+                }
+            }
+            @media (max-width: 480px) {
+                .sp-admin-navbar .sp-admin-brand { max-width: 100%; }
+                .sp-admin-modules-nav {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: .35rem;
+                }
+                .sp-admin-modules-nav .sp-admin-module-link {
+                    justify-content: center;
+                    min-width: 0;
+                    min-height: 44px;
+                    padding: .4rem .5rem;
+                    font-size: .875rem;
+                    text-align: center;
+                    white-space: normal;
+                }
+            }
+        </style>
     </head>
     <body class="sp-admin-shell">
         @php
@@ -33,6 +89,9 @@
                         Inicio
                     </a>
 
+                    @if($isAdmin)
+                        <a href="{{ route('admin.payment-quotes') }}" class="sp-admin-module-link">Cotizaciones</a>
+                    @endif
                     @if($isClient)
                         <a
                             href="{{ route('private.planes') }}"
@@ -59,7 +118,7 @@
                             wire:navigate
                             class="sp-admin-module-link {{ request()->routeIs('admin.works.*') ? 'is-active' : '' }}"
                         >
-                            Trabajos
+                            Proyectos
                         </a>
                     @endif
 

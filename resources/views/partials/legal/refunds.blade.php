@@ -1,0 +1,3 @@
+<p>Antes del inicio del servicio y ante incumplimientos, las solicitudes se atenderán conforme a los derechos legales aplicables.</p>
+<p>Una vez iniciado el servicio, puede solicitarse la devolución proporcional del trabajo no ejecutado dentro de las primeras 48 horas, siempre que aún no se haya entregado un borrador o avance. Esta condición comercial no limita el retracto, la garantía ni los demás derechos que resulten aplicables por ley.</p>
+<p>Escribe a <a href="mailto:comunicaciones@propaps.com">comunicaciones@propaps.com</a> e indica el servicio, la referencia de pago y el motivo de la solicitud. Se revisarán el estado del trabajo y los soportes disponibles; la respuesta explicará la decisión y, cuando corresponda, el valor y procedimiento de devolución.</p>

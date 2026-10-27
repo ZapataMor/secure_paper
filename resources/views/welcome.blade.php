@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Professional Papers</title>
+        <title>Propaps.com · Escritura y acompañamiento académico</title>
+        <meta name="description" content="Escritura, corrección y preparación de manuscritos académicos y científicos con Inteligencia Híbrida. Conoce los servicios de Propaps.com.">
 
         <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/png">
         <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
@@ -113,6 +114,113 @@
                     flex-basis: min(92vw, 30rem);
                 }
             }
+
+            .sp-home-accompaniment { font-size: calc(1.125rem + 2pt); }
+            @media (min-width: 768px) {
+                .sp-home-accompaniment { font-size: calc(1.5rem + 2pt); }
+            }
+
+            .sp-service-carousel { overflow: hidden; position: relative; max-width: 1084px; margin: 0 auto; padding: 8px 0 18px; }
+            .sp-service-track { display: flex; width: max-content; animation: sp-service-scroll 42s linear 7s infinite; }
+            .sp-service-set { display: flex; align-items: stretch; gap: 20px; padding-right: 20px; }
+            .sp-service-carousel:hover .sp-service-track,
+            .sp-service-carousel:focus-within .sp-service-track,
+            .sp-service-carousel[data-paused="true"] .sp-service-track { animation-play-state: paused; }
+            .sp-service-card { display: flex; flex-direction: column; flex: 0 0 348px; width: 348px; padding: 24px;
+                border: 1px solid #d5e4e0; border-radius: 18px; background: #fff;
+                box-shadow: 0 6px 18px #000f1f08; color: #000f1f; }
+            .sp-service-card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 19px; }
+            .sp-service-icon { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0;
+                border-radius: 12px; background: #edf7f3; color: #006a4c; }
+            .sp-service-icon svg { width: 23px; height: 23px; }
+            .sp-service-tag { font-size: 12px; font-weight: 600; letter-spacing: .035em; color: #006a4c; }
+            .sp-service-card h3 { margin: 0 0 10px; font-size: 23px; font-weight: 650; line-height: 1.25; letter-spacing: -.025em; }
+            .sp-service-description { min-height: 66px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; color: #425c60; }
+            .sp-service-benefits { display: grid; gap: 9px; padding: 0; margin: 0 0 22px; list-style: none; font-size: 13px; line-height: 1.5; }
+            .sp-service-benefits li { display: flex; align-items: flex-start; gap: 9px; }
+            .sp-service-check { color: #00815d; font-weight: 700; }
+            .sp-service-price { border-top: 1px solid #e2ece8; padding-top: 17px; margin-top: auto; }
+            .sp-service-amount { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -.035em; }
+            .sp-service-price-prefix { font-size: 12px; color: #425c60; margin-bottom: 3px; min-height: 18px; }
+            .sp-service-currency { font-size: 12px; font-weight: 500; letter-spacing: 0; color: #425c60; }
+            .sp-service-price-note { font-size: 11px; line-height: 1.55; color: #536b70; margin: 7px 0 17px; min-height: 34px; }
+            .sp-service-cta { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px;
+                border: 1px solid #c9ded6; border-radius: 10px; background: #f2f8f5; color: #006a4c;
+                font-size: 13px; font-weight: 650; text-decoration: none; transition: background .2s; }
+            .sp-service-cta:hover { background: #e2f2e9; }
+            .sp-service-cta:focus-visible, .sp-service-pause:focus-visible { outline: 2px solid #006a4c; outline-offset: 4px; }
+            .sp-service-pause { display: block; margin: 0 auto; padding: 7px 12px; border: 1px solid #c9ded6;
+                border-radius: 20px; color: #425c60; font-size: 12px; background: transparent; cursor: pointer; }
+            .sp-service-footnote { text-align: center; color: #536b70; font-size: 12px; margin: 18px 0 0; }
+            .sp-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+            .sp-footer-contact { justify-self: end; }
+            @keyframes sp-service-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+            @media (max-width: 640px) {
+                .sp-service-card { flex-basis: min(82vw, 328px); width: min(82vw, 328px); padding: 21px; }
+                .sp-service-card h3 { font-size: 21px; }
+                .sp-service-set { gap: 16px; padding-right: 16px; }
+                .sp-footer-grid { grid-template-columns: 1fr; gap: 28px; }
+                .sp-footer-contact { justify-self: start; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .sp-service-carousel { overflow-x: auto; }
+                .sp-service-track { animation: none; }
+                .sp-service-set[aria-hidden="true"] { display: none; }
+                .sp-service-pause { display: none; }
+            }
+
+            /* Versión fija: todos los paquetes disponibles para comparar. */
+            .sp-service-carousel { overflow: visible; max-width: 1060px; padding: 6px 0; }
+            .sp-service-track { display: block; width: 100%; animation: none; }
+            .sp-service-set { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; padding: 0; }
+            .sp-service-card { width: auto; flex: none; padding: 22px; }
+            .sp-service-description { min-height: 68px; margin-bottom: 14px; }
+            .sp-service-benefits { gap: 8px; margin-bottom: 18px; }
+            .sp-service-price-note { margin-bottom: 14px; }
+            .sp-home-services, .sp-home-comments { max-width: 1108px; margin-left: auto; margin-right: auto; padding: 28px 24px; }
+            .sp-home-services { margin-top: 0; margin-bottom: 0; }
+            .sp-home-services > div:first-child { margin-bottom: 22px; }
+            .sp-home-services h2 { font-size: 30px; margin-bottom: 10px; }
+            .sp-home-services .home-service-phrases { min-height: 52px; margin-top: 0; }
+            .sp-home-services .home-service-phrase { font-size: 16px; line-height: 1.65; }
+            .sp-home-comments > div:first-child { margin-bottom: 20px; }
+            .sp-home-comments > div:first-child h2 { font-size: 28px; margin-bottom: 10px; }
+            .sp-home-comments > div:first-child p { font-size: 16px; line-height: 1.65; }
+            .sp-home-comments > div:last-child { padding: 22px; gap: 24px; }
+            .sp-home-comments textarea { min-height: 96px; }
+            .sp-home-comments button[type="submit"] { margin-top: 16px; }
+            .sp-home-hero-grid-bg { padding-top: 120px; padding-bottom: 34px; }
+            .sp-public-navbar-inner { max-width: 1060px; }
+            .sp-service-footnote { font-size: 15px; line-height: 1.65; margin-top: 22px; color: #006a4c; font-weight: 500; }
+            .sp-reference-link { font-size: 11px; padding: 0 3px; text-decoration: underline; text-underline-offset: 2px; }
+            .sp-reference-link:focus-visible { outline: 2px solid #006a4c; outline-offset: 3px; }
+            @media (max-width: 960px) {
+                .sp-service-set { grid-template-columns: minmax(0,1fr); max-width: 560px; margin: 0 auto; gap: 16px; }
+                .sp-service-description { min-height: 0; }
+                .sp-service-price-note { min-height: 0; }
+                .sp-service-card { padding: 22px; }
+                .sp-service-card__top { margin-bottom: 12px; }
+                .sp-service-card h3 { font-size: 22px; }
+            }
+            @media (max-width: 640px) {
+                .sp-home-services, .sp-home-comments { padding: 24px 20px; }
+                .sp-home-hero-grid-bg { padding-top: 160px; padding-bottom: 26px; }
+                .sp-home-comments > div:last-child { padding: 20px; }
+                .sp-service-footnote { font-size: 14px; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .sp-service-carousel { overflow: visible; }
+            }
+
+            .sp-home-services .home-service-phrase { animation: none; opacity: 1; transform: none; }
+            .sp-home-services .home-service-phrase:not(:first-child) { display: none; }
+
+            #concepto-inteligencia-hibrida { scroll-margin-top: 120px; }
+            #concepto-inteligencia-hibrida:target { background: #e4f2ec; border-radius: 8px; }
+            #concepto-inteligencia-hibrida:focus-visible { outline: 2px solid #006a4c; outline-offset: 5px; }
+            @media (max-width: 640px) {
+                #concepto-inteligencia-hibrida { scroll-margin-top: 180px; }
+            }
         </style>
     </head>
     <body class="min-h-screen overflow-x-hidden bg-[#F1F7F6] text-[17px]">
@@ -121,104 +229,50 @@
             $plansUrl = Route::has('plans') ? route('plans') : url('/planes');
             $homePlanCards = [
                 [
-                    'name' => 'Paquete Asesoría Face to Face',
-                    'anchor' => 'asesoria-esencial',
-                    'tag' => 'Ideal para iniciar',
-                    'secondary_badge' => 'Más accesible',
-                    'price' => 'Desde 225 USD + IVA',
-                    'discount' => '25% OFF',
-                    'description' => 'Ordena tus ideas, recibe feedback experto y avanza con confianza en el momento clave de tu proyecto.',
-                    'benefits' => [
-                        'Sesión sincrónica estratégica de 60 minutos',
-                        'Feedback experto con Inteligencia Híbrida',
-                        'Identificación y desarrollo de ideas fuerza',
-                        'Transcripción completa con comentarios',
-                        'Mapa conceptual y plan de acción inmediato',
-                    ],
-                    'featured' => false,
+                    'name' => 'Corrección Completa',
+                    'tag' => 'Manuscritos académicos',
+                    'icon' => 'document',
+                    'description' => 'Pulimos tu manuscrito para que tus ideas expresen claridad y rigor académico.',
+                    'benefits' => ['Ortografía, estilo y argumentación', 'Formato APA 7 o el de tu universidad', 'Feedback abierto para optimización de resultados'],
+                    'price' => '550',
+                    'prefix' => '',
+                    'note' => 'Hasta 40.000 palabras por documento.',
+                    'detail' => 'Por cada bloque adicional de hasta 2.000 palabras: 50 USD + IVA.',
                 ],
                 [
-                    'name' => 'Paquete Corrección Completa',
-                    'anchor' => 'correccion-completa',
-                    'tag' => 'Más demandado',
-                    'secondary_badge' => null,
-                    'price' => 'Desde 650 USD + IVA',
-                    'discount' => null,
-                    'description' => 'Pulimos y perfeccionamos tu manuscrito hasta alcanzar los estándares académicos más exigentes.',
-                    'benefits' => [
-                        'Corrección completa (ortografía, estilo, coherencia y argumentación)',
-                        'Formato APA 7 o el exigido por tu universidad',
-                        'Comentarios detallados del experto',
-                        'Sesión sincrónica de retroalimentación',
-                        'Plazos Estándar, Express o Turbo',
-                    ],
-                    'featured' => false,
+                    'name' => 'Modo Indexación',
+                    'tag' => 'Publicaciones científicas',
+                    'icon' => 'journal',
+                    'description' => 'Preparamos tu artículo y te acompañamos en el proceso de publicación científica.',
+                    'benefits' => ['Selección estratégica de revista', 'Redacción y optimización del artículo', 'Un año de acompañamiento editorial'],
+                    'price' => '510',
+                    'prefix' => 'Desde',
+                    'note' => 'Pregrado: 510 · Maestría: 540 · Doctorado: 570 USD.',
+                    'detail' => 'El acompañamiento incluye adaptación y envío a nuevas revistas si es necesario.',
                 ],
                 [
-                    'name' => 'Paquete Redacción Profesional',
-                    'anchor' => 'redaccion-express-profesional',
-                    'tag' => 'Desde cero',
-                    'secondary_badge' => null,
-                    'price' => 'Desde 0,14 USD por palabra (Pregrado)',
-                    'discount' => null,
-                    'description' => 'Redacción experta y de alto nivel a partir de tus ideas, datos y materiales.',
-                    'benefits' => [
-                        'Redacción completa con Inteligencia Híbrida',
-                        'Estructura académica impecable',
-                        'Corrección y optimización integral',
-                        'Sesión sincrónica de planeación',
-                        'Versión lista para sustentación o envío',
-                    ],
-                    'featured' => false,
-                ],
-                [
-                    'name' => 'Paquete Segundo Tutor',
-                    'anchor' => 'segundo-tutor',
-                    'tag' => 'Acompañamiento continuo',
-                    'secondary_badge' => null,
-                    'price' => 'Desde 900 USD/mes (Pregrado) + IVA',
-                    'discount' => '10% OFF',
-                    'description' => 'Apoyo mensual estructurado durante 3 meses para tesis, monografías y trabajos de grado.',
-                    'benefits' => [
-                        'Sesiones sincrónicas mensuales',
-                        'Corrección completa de capítulos',
-                        'Desarrollo de ideas fuerza y rigor metodológico',
-                        'Productos tangibles cada mes',
-                        'Alineación total con tu tutor y facultad',
-                    ],
-                    'featured' => false,
-                ],
-                [
-                    'name' => 'Paquete Modo Indexación Publicación Científica',
-                    'anchor' => 'premium-publicacion-cientifica',
-                    'tag' => 'Más completo',
-                    'secondary_badge' => 'Recomendado',
-                    'price' => 'Desde 950 USD + IVA',
-                    'discount' => '10% OFF',
-                    'description' => 'Acompañamiento integral para preparar, optimizar y enviar tu manuscrito a publicación en revistas indexadas.',
-                    'benefits' => [
-                        'Selección estratégica de revista',
-                        'Texto corregido y optimizado',
-                        'Revisión simulada por pares',
-                        'Ajustes post-revisión',
-                        'Acompañamiento hasta publicación (1 año en Línea Premium)',
-                    ],
-                    'featured' => true,
+                    'name' => 'Grandes Volúmenes',
+                    'tag' => 'Libros académicos',
+                    'icon' => 'book',
+                    'description' => 'Damos estructura y calidad editorial a tu libro científico o académico.',
+                    'benefits' => ['Redacción con Inteligencia Híbrida', 'Estructura y optimización integral', 'Versión lista para maquetación y envío'],
+                    'price' => '650',
+                    'prefix' => 'Desde',
+                    'note' => 'Desde 100 páginas por documento.',
+                    'detail' => 'De 100 a 200 páginas: 720 USD + IVA. Más de 200 páginas: 800 USD + IVA.',
                 ],
             ];
         @endphp
 
         @include('partials.public.header')
 
+        <main id="contenido-principal">
+
         <section class="sp-home-hero-grid-bg relative z-0 bg-gradient-to-br from-[#000F1F] via-[#032221] to-[#006A4C] px-6 pb-18 pt-40 text-[#F1F7F6] sm:pt-34 md:pb-20 md:pt-32">
             <div class="relative z-10 mx-auto max-w-7xl text-center sp-private-plans-hero animate__animated animate__fadeIn" style="--animate-duration: 3s;">
-                <h2 class="mx-auto mb-2 max-w-xs text-3xl font-bold leading-tight sm:max-w-4xl sm:text-4xl md:text-5xl">
-                    Somos una nueva empresa 
+                <h2 class="sp-home-accompaniment mx-auto mb-4 max-w-xs font-normal text-[#AAC8C4] sm:max-w-3xl">
+                    Acompañamos tu proceso de publicación académica y científica en ciencias sociales
                 </h2>
-                <h3 class="mx-auto mb-4 max-w-xs text-[#2CC295] text-2xl font-bold leading-tight sm:max-w-2xl sm:text-2xl md:text-4xl">en busca de la excelencia</h3>
-                <p class="mx-auto mb-4 max-w-xs text-lg text-[#AAC8C4] sm:max-w-3xl md:text-2xl">
-                    Acompañamos tu proceso en publicaciones académicas y científicas
-                </p>
             </div>
         </section>
         
@@ -275,7 +329,7 @@
         </section>
         --}}
 
-        <section class="relative z-20 mx-auto -mt-12 mb-16 w-full max-w-7xl px-6 py-16">
+        <section class="sp-home-services relative z-20" id="servicios">
             <div class="mb-12 text-center">
                 <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Nuestros servicios</h2>
                 <div class="home-service-phrases mx-auto mt-6 max-w-xs sm:max-w-3xl" aria-live="polite">
@@ -291,78 +345,54 @@
                 </div>
             </div>
 
-            <div class="plans-carousel">
-                <div class="plans-track">
-                    @foreach ([false, true] as $isDuplicateSet)
-                        <div class="plans-carousel-set" @if ($isDuplicateSet) aria-hidden="true" @endif>
+            <div class="sp-service-carousel" id="servicios-carrusel" aria-label="Paquetes de servicios">
+                <div class="sp-service-track">
+                        <div class="sp-service-set">
                             @foreach ($homePlanCards as $card)
-                                @php
-                                    $isFeatured = $card['featured'];
-                                    $cardClasses = $isFeatured
-                                        ? 'relative border-[#2CC295] bg-white shadow-xl shadow-[#006A4C]/10 ring-1 ring-[#2CC295]/25'
-                                        : 'border-[#AAC8C4]/35 bg-white shadow-md';
-                                    $buttonClasses = $isFeatured
-                                        ? 'bg-[#2CC295] text-[#000F1F] hover:bg-[#00BF81]'
-                                        : 'bg-[#006A4C] text-[#F1F7F6] hover:bg-[#00BF81]';
-                                @endphp
-
-                                <article class="plan-card-home {{ $cardClasses }} flex h-full flex-col overflow-hidden rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-xl">
-                                    <div class="mb-5 flex min-h-16 flex-wrap items-start justify-between gap-2">
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="inline-flex rounded-full bg-[#2CC295]/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
-                                                {{ $card['tag'] }}
-                                            </span>
-                                            <span class="inline-flex rounded-full bg-[#006A4C]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
-                                                Inteligencia Híbrida
-                                            </span>
-                                        </div>
-
-                                        @if (! empty($card['secondary_badge']))
-                                            <span class="inline-flex rounded-full {{ $isFeatured ? 'bg-[#2CC295]' : 'bg-[#F1F7F6]' }} px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#000F1F]">
-                                                {{ $card['secondary_badge'] }}
-                                            </span>
-                                        @endif
+                                
+                                <article class="sp-service-card">
+                                    <div class="sp-service-card__top">
+                                        <span class="sp-service-icon">
+                                            @if ($card['icon'] === 'document')
+                                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 12h8M8 16h5"/></svg>
+                                            @elseif ($card['icon'] === 'journal')
+                                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h3M8 18h8M15 15h1"/></svg>
+                                            @else
+                                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V5c-4-1-7-1-10 1ZM12 6v15"/></svg>
+                                            @endif
+                                        </span>
+                                        <span class="sp-service-tag">{{ $card['tag'] }}</span>
                                     </div>
-
-                                    <div class="mb-5">
-                                        <h3 class="mb-3 break-words text-[1.7rem] font-bold leading-tight text-[#000F1F]">{{ $card['name'] }}</h3>
-                                        <p class="break-words text-lg leading-8 text-[#000F1F]">{{ $card['description'] }}</p>
-                                    </div>
-
-                                    <div class="mb-5 rounded-xl border border-[#AAC8C4]/30 bg-[#F1F7F6] p-4">
-                                        <p class="break-words text-[1.65rem] font-bold leading-tight text-[#000F1F]">{{ $card['price'] }}</p>
-                                        @if (! empty($card['discount']))
-                                            <span class="mt-3 inline-flex rounded-full bg-[#006A4C]/10 px-3 py-1 text-xs font-bold text-[#006A4C]">
-                                                {{ $card['discount'] }}
-                                            </span>
-                                        @endif
-                                    </div>
-
-                                    <ul class="mb-6 space-y-3 text-lg leading-8 text-[#000F1F]">
+                                    <h3>{{ $card['name'] }}</h3>
+                                    <p class="sp-service-description">{{ $card['description'] }}</p>
+                                    <ul class="sp-service-benefits">
                                         @foreach ($card['benefits'] as $benefit)
-                                            <li class="flex gap-3">
-                                                <span class="mt-0.5 font-bold text-[#2CC295]">&#10003;</span>
-                                                <span>{{ $benefit }}</span>
-                                            </li>
+                                            <li><span class="sp-service-check" aria-hidden="true">✓</span><span>{{ $benefit }}</span></li>
                                         @endforeach
                                     </ul>
-
-                                    <a href="{{ $plansUrl }}#{{ $card['anchor'] }}-detalle" class="mt-auto block rounded-lg px-5 py-3 text-center font-semibold shadow-sm transition-colors {{ $buttonClasses }}" @if ($isDuplicateSet) tabindex="-1" @endif>
-                                        Ver detalle
+                                    <div class="sp-service-price">
+                                        <p class="sp-service-price-prefix">{{ $card['prefix'] ?: 'Precio por documento' }}</p>
+                                        <p class="sp-service-amount">{{ $card['price'] }} <span class="sp-service-currency">USD + IVA</span></p>
+                                        <p class="sp-service-price-note">{{ $card['note'] }}</p>
+                                    </div>
+                                    <a class="sp-service-cta" href="https://wa.me/573122851357?text={{ rawurlencode('Hola, me interesa el paquete ' . $card['name'] . '. Quisiera conocer más información.') }}" target="_blank" rel="noopener noreferrer" aria-label="Consultar el paquete {{ $card['name'] }} por WhatsApp">
+                                        Consultar este paquete <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px"><path d="M7 17 17 7M7 7h10v10"/></svg>
                                     </a>
                                 </article>
+
                             @endforeach
                         </div>
-                    @endforeach
                 </div>
             </div>
+            <p class="sp-service-footnote" id="concepto-inteligencia-hibrida" tabindex="-1">Inteligencia Humana + Inteligencia Artificial = Inteligencia Híbrida<sup><a class="sp-reference-link" href="#nota-inteligencia-hibrida" aria-label="Leer referencia académica de inteligencia híbrida">1</a></sup></p>
+
         </section>
 
-        <section class="mx-auto max-w-7xl px-6 py-16">
+        <section class="sp-home-comments" id="comentarios">
             <div class="mb-10 text-center">
-                <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Opina sobre nuestro proyecto</h2>
+                <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Comentarios sobre nuestro proyecto</h2>
                 <p class="mx-auto max-w-3xl text-lg leading-8 text-[#000F1F]">
-                    Nos interesa lo que piensas. Opina sobre nuestro proyecto. Inteligencia Hibrida al servicio de la ciencia y el conocimiento.
+                    Nos interesa lo que piensas. Opina sobre nuestro proyecto. Inteligencia Híbrida al servicio de la ciencia y el conocimiento.
                 </p>
             </div>
 
@@ -388,7 +418,7 @@
                     </label>
                     <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
                         Comentario
-                        <textarea name="comentario" rows="5" required class="resize-y rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30"></textarea>
+                        <textarea name="comentario" rows="3" required class="resize-y rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30"></textarea>
                     </label>
                     <button type="submit" class="rounded-xl bg-[#006A4C] px-6 py-3 text-base font-bold text-[#F1F7F6] transition-colors hover:bg-[#00BF81]">
                         Enviar opinion
@@ -397,6 +427,10 @@
             </div>
         </section>
 
+        </main>
+
         @include('partials.public.footer')
+
+        
     </body>
 </html>

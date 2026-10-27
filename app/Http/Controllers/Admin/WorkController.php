@@ -11,6 +11,9 @@ use App\Services\DocumentTypeResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use App\Services\ProjectAccess;
+use App\Models\ProjectAssignment;
 
 class WorkController extends Controller
 {
@@ -19,13 +22,18 @@ class WorkController extends Controller
         //
     }
 
-    public function index(): View
+    public function index(Request $request, ProjectAccess $access): View
     {
         $users = User::query()
             ->with([
                 'activePaidSubscription.paymentPlan:id,name',
             ])
             ->where('role', 'client')
+            ->when($request->user()->isAdvisor(), function($query)use($request,$access): void {
+                if(!$access->ready() || $request->user()->status!=='active') { $query->whereRaw('1 = 0'); return; }
+                $query->whereHas('projectAssignment',fn($project)=>$project->where('advisor_id',$request->user()->id));
+            })
+            ->when($access->ready(),fn($query)=>$query->with('projectAssignment.advisor:id,name,last_name'))
             ->orderBy('name')
             ->orderBy('last_name')
             ->get([
@@ -47,12 +55,14 @@ class WorkController extends Controller
 
         return view('admin.works.index', [
             'users' => $users,
+            'assignmentReady' => $access->ready(),
         ]);
     }
 
-    public function show(User $user): View
+    public function show(User $user, Request $request, ProjectAccess $access): View
     {
         abort_unless($user->isClient(), 404);
+        abort_unless($access->allows($request->user(),$user->id),403);
 
         $userDocuments = Document::query()
             ->with('documentType:id,name')
@@ -88,13 +98,21 @@ class WorkController extends Controller
             'adminDocuments' => $adminDocuments,
             'adminMessages' => $adminMessages,
             'additionalInformationEntries' => $additionalInformationEntries,
+            'assignmentReady' => $access->ready(),
+            'projectAssignment' => $access->ready() ? $user->projectAssignment()->with('advisor:id,name,last_name')->first() : null,
+            'advisors' => $request->user()->isAdmin() ? User::where('role','advisor')->where('status','active')->orderBy('name')->get(['id','name','last_name']) : collect(),
         ]);
     }
 
     public function store(StoreAdminWorkRequest $request, User $user): RedirectResponse
     {
+        $storedPaths=[];
+        try {
+            return \Illuminate\Support\Facades\DB::transaction(function() use ($request, $user, &$storedPaths) {
         abort_unless($user->isClient(), 404);
 
+        \App\Models\User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+        abort_unless(app(\App\Services\ProjectAccess::class)->allows($request->user(),$user->id),403);
         $admin = $request->user();
         $adminMessage = trim((string) $request->input('admin_message'));
         $adminMessage = $adminMessage !== '' ? $adminMessage : null;
@@ -129,6 +147,8 @@ class WorkController extends Controller
                 'documents/user-'.$user->id.'/admin-'.$admin->id,
                 'local'
             );
+            if (!$path) throw new \RuntimeException('No fue posible guardar el archivo.');
+            $storedPaths[]=$path;
 
             Document::create([
                 'user_id' => $user->id,
@@ -151,9 +171,16 @@ class WorkController extends Controller
             ? ($uploadedCount === 1 ? 'Archivo enviado al usuario correctamente.' : 'Archivos enviados al usuario correctamente.')
             : 'Mensaje enviado al usuario correctamente.';
 
+        if (config('project_notifications.enabled')) app(\App\Services\ProjectEmailNotices::class)->schedule($user->id, 'return');
+
         return redirect()
             ->route('admin.works.show', $user)
             ->with('status', $status);
+            });
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($storedPaths);
+            throw $exception;
+        }
     }
 
     private function formatAdditionalInformationEntries(Collection $entries): Collection

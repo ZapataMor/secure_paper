@@ -10,7 +10,7 @@ class DocumentPolicy
     public function view(User $user, Document $document): bool
     {
         if ($user->isAdmin() || $user->isAdvisor()) {
-            return true;
+            return app(\App\Services\ProjectAccess::class)->allows($user, $document->user_id);
         }
 
         if (! $user->hasActiveMembership()) {

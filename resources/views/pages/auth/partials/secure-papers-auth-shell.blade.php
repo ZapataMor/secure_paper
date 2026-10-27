@@ -19,6 +19,20 @@
     $registerPasswordConfirmationError = $isSignUp ? $errors->first('password_confirmation') : null;
 @endphp
 
+<style>
+    .sp-auth-help { margin: .65rem 0 1rem; color: #c5ddd5; font-size: .875rem; line-height: 1.6; }
+    .sp-auth-help strong { color: #f1f7f6; font-weight: 600; }
+    .sp-auth-field-help { margin: .5rem 0 0; color: #c5ddd5; font-size: .8rem; line-height: 1.6; }
+    .sp-auth-row { flex-wrap: wrap; gap: .65rem; }
+    @media (max-width: 640px) { .sp-auth-input { font-size: 1rem; } }
+    @media (min-width: 1024px) {
+        .sp-auth-shell.is-sign-up,
+        .sp-auth-shell.is-sign-up .sp-auth-form-stage { min-height: 52rem; }
+        .sp-auth-pane { overflow-y: auto; align-items: flex-start; }
+        .sp-auth-form-inner { margin: auto 0; }
+    }
+</style>
+
 <section class="sp-auth-shell {{ $isSignUp ? 'is-sign-up' : '' }}" data-auth-shell data-auth-initial="{{ $isSignUp ? 'signup' : 'signin' }}">
     <div class="sp-auth-form-stage">
         <div class="sp-auth-pane sp-auth-pane--signup">
@@ -56,7 +70,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-email" class="sp-auth-label">Correo electronico</label>
+                        <label for="register-email" class="sp-auth-label">Correo electrónico</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.75" />
@@ -79,7 +93,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-password" class="sp-auth-label">Contrasena</label>
+                        <label for="register-password" class="sp-auth-label">Contraseña de Propaps</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -91,10 +105,10 @@
                                 type="password"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Crea una contrasena segura"
+                                placeholder="Crea tu contraseña para Propaps"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $registerPasswordError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password" aria-label="Mostrar contrasena">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password" aria-label="Mostrar contraseña">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -117,7 +131,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-password-confirmation" class="sp-auth-label">Confirmar contrasena</label>
+                        <label for="register-password-confirmation" class="sp-auth-label">Confirmar contraseña</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -129,10 +143,10 @@
                                 type="password"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Confirma tu contrasena"
+                                placeholder="Confirma tu contraseña"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $registerPasswordConfirmationError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password-confirmation" aria-label="Mostrar contrasena">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password-confirmation" aria-label="Mostrar contraseña">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -155,12 +169,14 @@
                     </div>
 
                     <label class="sp-auth-checkline">
-                        <input type="checkbox" name="terms" @checked(old('terms')) />
+                        <input type="checkbox" name="terms" value="1" required aria-describedby="register-terms-error" @checked(old('terms')) />
                         <p>
-                            Acepto los <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>terminos</a> y la
-                            <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>politica de privacidad</a>.
+                            Acepto los <a href="{{ route('legal.terms') }}" class="sp-auth-link" target="_blank" rel="noopener">términos</a> y la
+                            <a href="{{ route('legal.privacy') }}" class="sp-auth-link" target="_blank" rel="noopener">política de privacidad</a> (se abren en otra pestaña).
                         </p>
                     </label>
+
+                    <p id="register-terms-error" class="sp-auth-error">{{ $errors->first('terms') }}</p>
 
                     <button type="submit" class="sp-auth-submit-btn" data-test="register-user-button">
                         Registrarme
@@ -182,10 +198,11 @@
                     >
                     <span>Registrarme con Google</span>
                 </a>
+                <p class="sp-auth-field-help">Con Google no necesitas crear una contraseña de Propaps para ingresar.</p>
 
                 <div class="sp-auth-mobile-switch">
-                    <span>Ya tienes una cuenta?</span>
-                    <button type="button" data-auth-switch="signin" class="sp-auth-link-btn">Iniciar sesion</button>
+                    <span>¿Ya tienes una cuenta?</span>
+                    <button type="button" data-auth-switch="signin" class="sp-auth-link-btn">Iniciar sesión</button>
                 </div>
             </div>
         </div>
@@ -194,18 +211,33 @@
             <div class="sp-auth-form-inner">
                 <h1 class="sp-auth-title">
                     <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
-                    Iniciar sesion
+                    Iniciar sesión
                 </h1>
 
                 @if (session('status') && ! $isSignUp)
                     <p class="sp-auth-status">{{ session('status') }}</p>
                 @endif
 
+                <p class="sp-auth-help"><strong>¿Te registraste con Google?</strong> Ingresa con este botón y elige la misma cuenta.</p>
+                <a href="{{ route('google.redirect') }}" class="sp-auth-google-btn">
+                    <img
+                        src="https://www.svgrepo.com/show/475656/google-color.svg"
+                        alt=""
+                        class="sp-auth-google-icon"
+                        width="20"
+                        height="20"
+                        style="width: 20px; height: 20px; max-width: 20px; flex: none;"
+                    >
+                    <span>Continuar con Google</span>
+                </a>
+
+                <div class="sp-auth-divider"><span>o con tu correo</span></div>
+
                 <form method="POST" action="{{ route('login.store') }}" class="sp-auth-form">
                     @csrf
 
                     <div class="sp-auth-input-block">
-                        <label for="login-email" class="sp-auth-label">Correo electronico</label>
+                        <label for="login-email" class="sp-auth-label">Correo electrónico</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.75" />
@@ -217,7 +249,6 @@
                                 type="email"
                                 value="{{ $loginEmailValue }}"
                                 required
-                                @if (! $isSignUp) autofocus @endif
                                 autocomplete="email"
                                 placeholder="correo@ejemplo.com"
                                 class="sp-auth-input {{ $loginEmailError ? 'sp-auth-input--error' : '' }}"
@@ -229,7 +260,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="login-password" class="sp-auth-label">Contrasena</label>
+                        <label for="login-password" class="sp-auth-label">Contraseña de Propaps</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -241,10 +272,11 @@
                                 type="password"
                                 required
                                 autocomplete="current-password"
-                                placeholder="Ingresa tu contrasena"
+                                placeholder="Tu contraseña de Propaps"
+                                aria-describedby="login-password-help"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $loginPasswordError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="login-password" aria-label="Mostrar contrasena">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="login-password" aria-label="Mostrar contraseña">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -261,6 +293,7 @@
                                 </span>
                             </button>
                         </div>
+                        <p id="login-password-help" class="sp-auth-field-help">Usa la contraseña que creaste en Propaps; es independiente de la contraseña de tu correo.</p>
                         @if ($loginPasswordError)
                             <p class="sp-auth-error">{{ $loginPasswordError }}</p>
                         @endif
@@ -274,7 +307,7 @@
 
                         @if (Route::has('password.request'))
                             <a class="sp-auth-link" href="{{ route('password.request') }}" wire:navigate>
-                                Olvide mi contrasena
+                                Crear o recuperar contraseña
                             </a>
                         @endif
                     </div>
@@ -284,24 +317,8 @@
                     </button>
                 </form>
 
-                <div class="sp-auth-divider">
-                    <span>o</span>
-                </div>
-
-                <a href="{{ route('google.redirect') }}" class="sp-auth-google-btn">
-                    <img
-                        src="https://www.svgrepo.com/show/475656/google-color.svg"
-                        alt=""
-                        class="sp-auth-google-icon"
-                        width="20"
-                        height="20"
-                        style="width: 20px; height: 20px; max-width: 20px; flex: none;"
-                    >
-                    <span>Continuar con Google</span>
-                </a>
-
                 <div class="sp-auth-mobile-switch">
-                    <span>No tienes cuenta?</span>
+                    <span>¿No tienes cuenta?</span>
                     <button type="button" data-auth-switch="signup" class="sp-auth-link-btn">Crear cuenta</button>
                 </div>
             </div>
@@ -313,17 +330,17 @@
             <div class="sp-auth-toggle-panel sp-auth-toggle-panel--left">
                 <h2 class="sp-auth-toggle-title">Bienvenido de nuevo</h2>
                 <p class="sp-auth-toggle-text">
-                    Si ya tienes una cuenta, inicia sesion y continua gestionando tus documentos en segundos.
+                    Si ya tienes una cuenta, inicia sesión y continúa gestionando tus documentos en segundos.
                 </p>
                 <button type="button" data-auth-switch="signin" class="sp-auth-ghost-btn">
-                    Iniciar sesion
+                    Iniciar sesión
                 </button>
             </div>
 
             <div class="sp-auth-toggle-panel sp-auth-toggle-panel--right">
-                <h2 class="sp-auth-toggle-title">¿Nuevo en Professional Papers?</h2>
+                <h2 class="sp-auth-toggle-title">¿Nuevo en Propaps.com?</h2>
                 <p class="sp-auth-toggle-text">
-                    Crea tu cuenta y comienza a validar tus investigaciones con revisores especializados.
+                    Crea tu cuenta y recibe acompañamiento para la escritura, corrección y preparación de tu manuscrito.
                 </p>
                 <button type="button" data-auth-switch="signup" class="sp-auth-ghost-btn">
                     Crear cuenta

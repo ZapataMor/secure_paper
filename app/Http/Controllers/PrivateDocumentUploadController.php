@@ -56,12 +56,16 @@ class PrivateDocumentUploadController extends Controller
             'adminDocuments' => $adminDocuments,
             'adminMessages' => $adminMessages,
             'additionalInformationEntries' => $additionalInformationEntries,
+            'projectAssignment' => app(\App\Services\ProjectAccess::class)->ready() ? $user->projectAssignment()->with('advisor:id,name,last_name')->first() : null,
         ]);
     }
 
     public function store(StorePrivateDocumentRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        $storedPaths=[];
+        try {
+            return \Illuminate\Support\Facades\DB::transaction(function() use ($request, &$storedPaths) {
+        $user = \App\Models\User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
 
         $additionalInformation = trim((string) $request->input('additional_information'));
         $additionalInformation = $additionalInformation !== '' ? $additionalInformation : null;
@@ -93,6 +97,8 @@ class PrivateDocumentUploadController extends Controller
                 'documents/user-'.$user->id,
                 'local'
             );
+            if (!$path) throw new \RuntimeException('No fue posible guardar el archivo.');
+            $storedPaths[]=$path;
 
             Document::create([
                 'user_id' => $user->id,
@@ -114,9 +120,16 @@ class PrivateDocumentUploadController extends Controller
             ? ($uploadedCount === 1 ? 'Archivo cargado correctamente.' : 'Archivos cargados correctamente.')
             : 'Informacion adicional guardada correctamente.';
 
+        if (config('project_notifications.enabled')) app(\App\Services\ProjectEmailNotices::class)->schedule($user->id, 'upload');
+
         return redirect()
             ->route('private.upload-document')
             ->with('status', $status);
+            });
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($storedPaths);
+            throw $exception;
+        }
     }
 
     private function formatAdditionalInformationEntries(Collection $entries): Collection

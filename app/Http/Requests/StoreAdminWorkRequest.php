@@ -14,7 +14,8 @@ class StoreAdminWorkRequest extends FormRequest
 
         return ($user?->isAdmin() === true || $user?->isAdvisor() === true)
             && $targetUser instanceof User
-            && $targetUser->isClient();
+            && $targetUser->isClient()
+            && app(\App\Services\ProjectAccess::class)->allows($user, $targetUser->id);
     }
 
     /**
