@@ -4,10 +4,10 @@
 
 <section class="relative z-10 mx-auto max-w-7xl px-6 pb-24">
     <div class="mb-12 text-center">
-        <span class="mb-3 block text-sm font-semibold uppercase tracking-wider text-[#2CC295]">Líneas de servicio</span>
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-wider text-[#2CC295]">Lineas de servicio</span>
         <h2 class="mb-4 text-3xl font-bold">Conoce en detalle cada servicio</h2>
         <p class="mx-auto max-w-3xl text-[#AAC8C4]">
-            Cada paquete cuenta con Línea Estándar y Línea Premium para adaptar el acompañamiento al alcance, plazo y nivel académico de su proyecto.
+            Cada paquete cuenta con Linea Estandar y Linea Premium para adaptar el acompanamiento al alcance, plazo y nivel academico de su proyecto.
         </p>
     </div>
 

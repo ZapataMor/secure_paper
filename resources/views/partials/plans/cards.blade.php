@@ -48,7 +48,7 @@
                 <div class="flex min-w-0 flex-col rounded-2xl border border-white/10 bg-black/10 p-5">
                     <p class="text-sm font-semibold uppercase tracking-wider text-[#AAC8C4]">Precio teaser</p>
                     <p class="mt-3 break-words text-3xl font-bold leading-tight text-[#F1F7F6] md:text-4xl">{{ $plan['headline_price'] }}</p>
-                    <p class="mt-3 text-sm leading-6 text-[#AAC8C4]">El precio exacto se define según linea, nivel académico, extension y plazo requerido.</p>
+                    <p class="mt-3 text-sm leading-6 text-[#AAC8C4]">El precio exacto se define segun linea, nivel academico, extension y plazo requerido.</p>
 
                     <div class="mt-auto pt-6">
                         @if ($mode === 'private')

@@ -47,7 +47,7 @@
                             wire:navigate
                             class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }} {{ $hasActiveMembership ? '' : 'pointer-events-none opacity-55' }}"
                             aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
-                            title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresía pagada' }}"
+                            title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
                         >
                             Cargar documentos
                         </a>
@@ -69,7 +69,7 @@
                             wire:navigate
                             class="sp-admin-module-link {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}"
                         >
-                            Gestión de usuarios
+                            Gestion de usuarios
                         </a>
                     @endif
 

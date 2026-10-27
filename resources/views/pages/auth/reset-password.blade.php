@@ -1,6 +1,6 @@
-<x-layouts::auth :title="__('Restablecer contraseña')">
+<x-layouts::auth :title="__('Reset password')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Restablecer contraseña')" :description="__('Ingresa tu nueva contraseña a continuación')" />
+        <x-auth-header :title="__('Reset password')" :description="__('Please enter your new password below')" />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
@@ -14,7 +14,7 @@
             <flux:input
                 name="email"
                 value="{{ request('email') }}"
-                :label="__('Correo electrónico')"
+                :label="__('Email')"
                 type="email"
                 required
                 autocomplete="email"
@@ -23,28 +23,28 @@
             <!-- Password -->
             <flux:input
                 name="password"
-                :label="__('Contraseña')"
+                :label="__('Password')"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Contraseña')"
+                :placeholder="__('Password')"
                 viewable
             />
 
             <!-- Confirm Password -->
             <flux:input
                 name="password_confirmation"
-                :label="__('Confirmar contraseña')"
+                :label="__('Confirm password')"
                 type="password"
                 required
                 autocomplete="new-password"
-                :placeholder="__('Confirmar contraseña')"
+                :placeholder="__('Confirm password')"
                 viewable
             />
 
             <div class="flex items-center justify-end">
                 <flux:button type="submit" variant="primary" class="w-full" data-test="reset-password-button">
-                    {{ __('Restablecer contraseña') }}
+                    {{ __('Reset password') }}
                 </flux:button>
             </div>
         </form>

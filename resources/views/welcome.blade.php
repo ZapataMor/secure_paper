@@ -233,7 +233,7 @@
                         </svg>
                     </div>
                     <div class="mb-1 text-3xl font-bold text-[#000F1F]">2,847</div>
-                    <div class="text-sm text-[#707D7D]">Artículos Revisados</div>
+                    <div class="text-sm text-[#707D7D]">Articulos Revisados</div>
                 </article>
 
                 <article class="rounded-xl border border-[#AAC8C4]/30 bg-white p-6 shadow-md transition-shadow hover:shadow-xl">
@@ -362,7 +362,7 @@
             <div class="mb-10 text-center">
                 <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Opina sobre nuestro proyecto</h2>
                 <p class="mx-auto max-w-3xl text-lg leading-8 text-[#000F1F]">
-                    Nos interesa lo que piensas. Opina sobre nuestro proyecto. Inteligencia Híbrida al servicio de la ciencia y el conocimiento.
+                    Nos interesa lo que piensas. Opina sobre nuestro proyecto. Inteligencia Hibrida al servicio de la ciencia y el conocimiento.
                 </p>
             </div>
 
@@ -373,7 +373,7 @@
                     </span>
                     <h3 class="mb-4 text-2xl font-bold leading-tight text-[#000F1F]">Tu voz ayuda a mejorar propaps.com</h3>
                     <p class="text-base leading-7 text-[#000F1F]">
-                        Los comentarios se revisan antes de publicarse. Las opiniones honestas y respetuosas podrán aparecer en la página cuando el proyecto cuente con clientes y registros validados.
+                        Los comentarios se revisan antes de publicarse. Las opiniones honestas y respetuosas podran aparecer en la pagina cuando el proyecto cuente con clientes y registros validados.
                     </p>
                 </div>
 
@@ -383,7 +383,7 @@
                         <input type="text" name="nombre" required class="rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30">
                     </label>
                     <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
-                        Correo electrónico
+                        Correo electronico
                         <input type="email" name="correo" required class="rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30">
                     </label>
                     <label class="grid gap-2 text-sm font-semibold text-[#000F1F]">
@@ -391,7 +391,7 @@
                         <textarea name="comentario" rows="5" required class="resize-y rounded-xl border border-[#AAC8C4] px-4 py-3 text-base font-normal text-[#000F1F] outline-none transition focus:border-[#2CC295] focus:ring-2 focus:ring-[#2CC295]/30"></textarea>
                     </label>
                     <button type="submit" class="rounded-xl bg-[#006A4C] px-6 py-3 text-base font-bold text-[#F1F7F6] transition-colors hover:bg-[#00BF81]">
-                        Enviar opinión
+                        Enviar opinion
                     </button>
                 </form>
             </div>

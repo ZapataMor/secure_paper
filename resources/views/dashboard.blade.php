@@ -10,28 +10,28 @@
         @if($isAdmin || $isAdvisor)
             <header class="sp-admin-page-header">
                 <p class="sp-admin-page-kicker">Panel principal</p>
-                <h1>Módulos del sistema</h1>
-                <p>Selecciona el módulo que deseas gestionar desde la barra superior o desde las tarjetas.</p>
+                <h1>Modulos del sistema</h1>
+                <p>Selecciona el modulo que deseas gestionar desde la barra superior o desde las tarjetas.</p>
             </header>
 
             <div class="sp-admin-modules-grid">
                 @if($isAdmin)
                     <article class="sp-admin-module-card">
-                        <span class="sp-admin-module-badge">Módulo 01</span>
-                        <h2>Gestión de usuarios</h2>
-                        <p>Administra la información de los usuarios registrados en propaps.com.</p>
+                        <span class="sp-admin-module-badge">Modulo 01</span>
+                        <h2>Gestion de usuarios</h2>
+                        <p>Administra la informacion de los usuarios registrados en propaps.com.</p>
                         <a href="{{ route('admin.users.index') }}" class="sp-admin-module-action" wire:navigate>
-                            Abrir módulo
+                            Abrir modulo
                         </a>
                     </article>
                 @endif
 
                 <article class="sp-admin-module-card">
-                    <span class="sp-admin-module-badge">{{ $isAdmin ? 'Módulo 02' : 'Módulo 01' }}</span>
+                    <span class="sp-admin-module-badge">{{ $isAdmin ? 'Modulo 02' : 'Modulo 01' }}</span>
                     <h2>Trabajos</h2>
-                    <p>Revisa documentos, información adicional y mensajes de seguimiento de los clientes.</p>
+                    <p>Revisa documentos, informacion adicional y mensajes de seguimiento de los clientes.</p>
                     <a href="{{ route('admin.works.index') }}" class="sp-admin-module-action" wire:navigate>
-                        Abrir módulo
+                        Abrir modulo
                     </a>
                 </article>
             </div>
@@ -48,14 +48,14 @@
                         Professional Papers
                     </span>
                 </h1>
-                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Si te encuentras en el desarrollo de tu proyecto y necesitas apoyo, ideas, revisiones u orientación, estás en el lugar indicado.</p>
-                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Para comenzar, dirígete al módulo "Planes" y elige la opción que mejor se adapte a tus necesidades. Luego, podrás cargar tu proyecto en el módulo "Cargue de documentos" y empezar a recibir acompañamiento en cada etapa de tu proceso.</p>
+                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Si te encuentras en el desarrollo de tu proyecto y necesitas apoyo, ideas, revisiones u orientacion, estas en el lugar indicado.</p>
+                <p class="mx-auto max-w-2xl text-xl text-[#AAC8C4]">Para comenzar, dirigete al modulo "Planes" y elige la opcion que mejor se adapte a tus necesidades. Luego, podras cargar tu proyecto en el modulo "Cargue de documentos" y empezar a recibir acompanamiento en cada etapa de tu proceso.</p>
 
                 <section class="sp-user-guide" aria-labelledby="sp-user-guide-title">
                     <div class="sp-user-guide-shell">
                         <header class="sp-user-guide-header">
-                            <h2 id="sp-user-guide-title">Guía de uso inicial</h2>
-                            <p>Sigue esta secuencia sencilla para comenzar el proceso de acompañamiento de tu proyecto.</p>
+                            <h2 id="sp-user-guide-title">Guia de uso inicial</h2>
+                            <p>Sigue esta secuencia sencilla para comenzar el proceso de acompanamiento de tu proyecto.</p>
                         </header>
 
                         <ol class="sp-user-guide-list">
@@ -82,7 +82,7 @@
                                         </a>
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Dirígete al módulo "Planes", donde podrás revisar y seleccionar el servicio que mejor se ajuste a tus necesidades dentro del portafolio oficial de Professional Papers S.A.S.
+                                        Dirigete al modulo "Planes", donde podras revisar y seleccionar el servicio que mejor se ajuste a tus necesidades dentro del portafolio oficial de Professional Papers S.A.S.
                                     </p>
                                 </article>
                             </li>
@@ -127,11 +127,11 @@
                                         @endif
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Accede a "Cargar documento". Sube tu archivo y agrega las indicaciones u observaciones específicas que deseas que sean revisadas.
+                                        Accede a "Cargar documento". Sube tu archivo y agrega las indicaciones u observaciones especificas que deseas que sean revisadas.
                                     </p>
                                     @if(! $hasActiveMembership)
                                         <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-[#F9BC60]">
-                                            Requiere una membresía activa y pagada.
+                                            Requiere una membresia activa y pagada.
                                         </p>
                                     @elseif($activePlanName)
                                         <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-[#2CC295]">
@@ -152,10 +152,10 @@
                                 <article class="sp-user-guide-card">
                                     <div class="sp-user-guide-title-wrap">
                                         <p class="sp-user-guide-step-label">Paso 3</p>
-                                        <h3 class="sp-user-guide-title">Análisis experto</h3>
+                                        <h3 class="sp-user-guide-title">Analisis experto</h3>
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Una vez enviado, nuestro equipo iniciará el proceso de análisis según el plan elegido. Te notificaremos cuando haya avances.
+                                        Una vez enviado, nuestro equipo iniciara el proceso de analisis segun el plan elegido. Te notificaremos cuando haya avances.
                                     </p>
                                 </article>
                             </li>
@@ -170,10 +170,10 @@
                                 <article class="sp-user-guide-card">
                                     <div class="sp-user-guide-title-wrap">
                                         <p class="sp-user-guide-step-label">Paso 4</p>
-                                        <h3 class="sp-user-guide-title">Retroalimentación y reunión</h3>
+                                        <h3 class="sp-user-guide-title">Retroalimentacion y reunion</h3>
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Recibirás las correcciones, comentarios detallados y la programación de una reunión con tu asesor (dependiendo del plan).
+                                        Recibiras las correcciones, comentarios detallados y la programacion de una reunion con tu asesor (dependiendo del plan).
                                     </p>
                                 </article>
                             </li>
@@ -188,10 +188,10 @@
                                 <article class="sp-user-guide-card">
                                     <div class="sp-user-guide-title-wrap">
                                         <p class="sp-user-guide-step-label">Paso 5</p>
-                                        <h3 class="sp-user-guide-title">Garantía y acompañamiento</h3>
+                                        <h3 class="sp-user-guide-title">Garantia y acompanamiento</h3>
                                     </div>
                                     <p class="sp-user-guide-description">
-                                        Este flujo garantiza una atención organizada hasta alcanzar tus objetivos académicos.
+                                        Este flujo garantiza una atencion organizada hasta alcanzar tus objetivos academicos.
                                     </p>
                                 </article>
                             </li>

@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-email" class="sp-auth-label">Correo electrónico</label>
+                        <label for="register-email" class="sp-auth-label">Correo electronico</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.75" />
@@ -79,7 +79,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-password" class="sp-auth-label">Contraseña</label>
+                        <label for="register-password" class="sp-auth-label">Contrasena</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -91,10 +91,10 @@
                                 type="password"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Crea una contraseña segura"
+                                placeholder="Crea una contrasena segura"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $registerPasswordError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password" aria-label="Mostrar contraseña">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password" aria-label="Mostrar contrasena">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -117,7 +117,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="register-password-confirmation" class="sp-auth-label">Confirmar contraseña</label>
+                        <label for="register-password-confirmation" class="sp-auth-label">Confirmar contrasena</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -129,10 +129,10 @@
                                 type="password"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Confirma tu contraseña"
+                                placeholder="Confirma tu contrasena"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $registerPasswordConfirmationError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password-confirmation" aria-label="Mostrar contraseña">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="register-password-confirmation" aria-label="Mostrar contrasena">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -157,8 +157,8 @@
                     <label class="sp-auth-checkline">
                         <input type="checkbox" name="terms" @checked(old('terms')) />
                         <p>
-                            Acepto los <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>términos</a> y la
-                            <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>política de privacidad</a>.
+                            Acepto los <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>terminos</a> y la
+                            <a href="{{ route('home') }}" class="sp-auth-link" wire:navigate>politica de privacidad</a>.
                         </p>
                     </label>
 
@@ -184,8 +184,8 @@
                 </a>
 
                 <div class="sp-auth-mobile-switch">
-                    <span>¿Ya tienes una cuenta?</span>
-                    <button type="button" data-auth-switch="signin" class="sp-auth-link-btn">Iniciar sesión</button>
+                    <span>Ya tienes una cuenta?</span>
+                    <button type="button" data-auth-switch="signin" class="sp-auth-link-btn">Iniciar sesion</button>
                 </div>
             </div>
         </div>
@@ -194,7 +194,7 @@
             <div class="sp-auth-form-inner">
                 <h1 class="sp-auth-title">
                     <img src="{{ asset('assets/images/logo.png') }}" alt="Propaps.com" class="h-12 w-12 flex-none rounded-lg object-contain">
-                    Iniciar sesión
+                    Iniciar sesion
                 </h1>
 
                 @if (session('status') && ! $isSignUp)
@@ -205,7 +205,7 @@
                     @csrf
 
                     <div class="sp-auth-input-block">
-                        <label for="login-email" class="sp-auth-label">Correo electrónico</label>
+                        <label for="login-email" class="sp-auth-label">Correo electronico</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.75" />
@@ -229,7 +229,7 @@
                     </div>
 
                     <div class="sp-auth-input-block">
-                        <label for="login-password" class="sp-auth-label">Contraseña</label>
+                        <label for="login-password" class="sp-auth-label">Contrasena</label>
                         <div class="sp-auth-input-frame">
                             <svg class="sp-auth-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.75" />
@@ -241,10 +241,10 @@
                                 type="password"
                                 required
                                 autocomplete="current-password"
-                                placeholder="Ingresa tu contraseña"
+                                placeholder="Ingresa tu contrasena"
                                 class="sp-auth-input sp-auth-input--with-toggle {{ $loginPasswordError ? 'sp-auth-input--error' : '' }}"
                             />
-                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="login-password" aria-label="Mostrar contraseña">
+                            <button type="button" class="sp-auth-password-toggle" data-password-toggle="login-password" aria-label="Mostrar contrasena">
                                 <span data-icon="show">
                                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M2 12s3.7-6 10-6 10 6 10 6-3.7 6-10 6-10-6-10-6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
@@ -274,7 +274,7 @@
 
                         @if (Route::has('password.request'))
                             <a class="sp-auth-link" href="{{ route('password.request') }}" wire:navigate>
-                                Olvidé mi contraseña
+                                Olvide mi contrasena
                             </a>
                         @endif
                     </div>
@@ -301,7 +301,7 @@
                 </a>
 
                 <div class="sp-auth-mobile-switch">
-                    <span>¿No tienes cuenta?</span>
+                    <span>No tienes cuenta?</span>
                     <button type="button" data-auth-switch="signup" class="sp-auth-link-btn">Crear cuenta</button>
                 </div>
             </div>
@@ -313,17 +313,17 @@
             <div class="sp-auth-toggle-panel sp-auth-toggle-panel--left">
                 <h2 class="sp-auth-toggle-title">Bienvenido de nuevo</h2>
                 <p class="sp-auth-toggle-text">
-                    Si ya tienes una cuenta, inicia sesión y continúa gestionando tus documentos en segundos.
+                    Si ya tienes una cuenta, inicia sesion y continua gestionando tus documentos en segundos.
                 </p>
                 <button type="button" data-auth-switch="signin" class="sp-auth-ghost-btn">
-                    Iniciar sesión
+                    Iniciar sesion
                 </button>
             </div>
 
             <div class="sp-auth-toggle-panel sp-auth-toggle-panel--right">
                 <h2 class="sp-auth-toggle-title">¿Nuevo en Professional Papers?</h2>
                 <p class="sp-auth-toggle-text">
-                    Crea tu cuenta y comienza a validar tus investigaciónes con revisores especializados.
+                    Crea tu cuenta y comienza a validar tus investigaciones con revisores especializados.
                 </p>
                 <button type="button" data-auth-switch="signup" class="sp-auth-ghost-btn">
                     Crear cuenta

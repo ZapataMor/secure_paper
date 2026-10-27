@@ -19,7 +19,7 @@
                     Sobre <span class="text-[#2CC295]">Nosotros</span>
                 </h2>
                 <p class="mx-auto max-w-3xl text-lg text-[#AAC8C4] md:text-xl">
-                    Somos un equipo de expertos comprometidos con la excelencia académica, impulsando la diseminacion del conocimiento.
+                    Somos un equipo de expertos comprometidos con la excelencia academica, impulsando la diseminacion del conocimiento.
                 </p>
             </div>
         </section>
@@ -29,11 +29,11 @@
                 <div>
                     <h3 class="mb-6 text-3xl font-bold text-[#000F1F]">Nuestra Mision</h3>
                     <p class="mb-6 text-lg leading-relaxed text-[#707D7D]">
-                        En propaps.com creemos que el conocimiento científico debe ser accesible y de alta calidad. Trabajamos junto a investigadores,
-                        académicos y estudiantes para asegurar que sus contribuciones cumplan con exigencias del panorama científico actual.
+                        En propaps.com creemos que el conocimiento cientifico debe ser accesible y de alta calidad. Trabajamos junto a investigadores,
+                        academicos y estudiantes para asegurar que sus contribuciones cumplan con exigencias del panorama cientifico actual.
                     </p>
                     <p class="text-lg leading-relaxed text-[#707D7D]">
-                        Garantizamos confidencialidad absoluta y aplicamos rigor técnico para mejorar cada manuscrito, buscando su éxito en revistas prestigiosas.
+                        Garantizamos confidencialidad absoluta y aplicamos rigor tecnico para mejorar cada manuscrito, buscando su exito en revistas prestigiosas.
                     </p>
                 </div>
 
@@ -63,8 +63,8 @@
                             <rect x="2" y="7" width="20" height="14" rx="2" />
                             <path d="M16 7V5a4 4 0 0 0-8 0v2" />
                         </svg>
-                        <h4 class="font-bold text-[#000F1F]">10+ Años de Experiencia</h4>
-                        <p class="mt-2 text-sm text-[#707D7D]">Apoyando a la comunidad científica internacional.</p>
+                        <h4 class="font-bold text-[#000F1F]">10+ Anos de Experiencia</h4>
+                        <p class="mt-2 text-sm text-[#707D7D]">Apoyando a la comunidad cientifica internacional.</p>
                     </article>
                 </div>
             </div>
@@ -73,8 +73,8 @@
         <section class="bg-white px-6 py-20">
             <div class="mx-auto max-w-7xl">
                 <div class="mb-16 text-center">
-                    <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Nuestro Proceso de revisión</h2>
-                    <p class="text-lg text-[#707D7D]">Un proceso sistemático y transparente en 4 pasos fundamentales</p>
+                    <h2 class="mb-4 text-4xl font-bold text-[#000F1F]">Nuestro Proceso de Revision</h2>
+                    <p class="text-lg text-[#707D7D]">Un proceso sistematico y transparente en 4 pasos fundamentales</p>
                 </div>
 
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
@@ -88,8 +88,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <h3 class="mb-2 text-center text-xl font-semibold text-[#000F1F]">Envío seguro</h3>
-                        <p class="text-center text-[#707D7D]">Sube tu documento en una plataforma encriptada de forma ágil y segura.</p>
+                        <h3 class="mb-2 text-center text-xl font-semibold text-[#000F1F]">Envio Seguro</h3>
+                        <p class="text-center text-[#707D7D]">Sube tu documento en una plataforma encriptada de forma agil y segura.</p>
                     </article>
 
                     <article class="group relative rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
@@ -102,8 +102,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <h3 class="mb-2 text-center text-xl font-semibold text-[#000F1F]">Análisis profundo</h3>
-                        <p class="text-center text-[#707D7D]">Revisión exhaustiva por especialistas en tu area de investigación.</p>
+                        <h3 class="mb-2 text-center text-xl font-semibold text-[#000F1F]">Analisis Profundo</h3>
+                        <p class="text-center text-[#707D7D]">Revision exhaustiva por especialistas en tu area de investigacion.</p>
                     </article>
 
                     <article class="group relative rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg">
@@ -131,7 +131,7 @@
                             </div>
                         </div>
                         <h3 class="mb-2 text-center text-xl font-semibold text-[#000F1F]">Seguimiento</h3>
-                        <p class="text-center text-[#707D7D]">Acompañamiento y resolución de dudas hasta la versión final.</p>
+                        <p class="text-center text-[#707D7D]">Acompanamiento y resolucion de dudas hasta la version final.</p>
                     </article>
                 </div>
             </div>
