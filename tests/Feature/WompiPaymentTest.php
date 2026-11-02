@@ -2,7 +2,10 @@
 
 use App\Models\User;
 use App\Models\WompiOrder;
+use App\Services\AdditionalQuotePricing;
+use App\Services\TrmService;
 use App\Services\WompiGateway;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -87,6 +90,37 @@ test('la firma de integridad sigue la fórmula de Wompi', function () {
     $expected = hash('sha256', $order->reference.$order->amount_in_cents.'COP'.$order->expires_at->copy()->utc()->toIso8601String().'prod_integrity_fake');
 
     expect(app(WompiGateway::class)->integrity($order))->toBe($expected);
+});
+
+test('la conversión a COP cobra pesos enteros, sin centavos', function () {
+    $trm = app(TrmService::class);
+    // 606,90 USD con TRM 3.182,99 = 1.931.756,63 COP: Wompi lo rechazó por los centavos.
+    expect($trm->convert(60690, ['units' => 31829900]))->toBe(193175700)
+        ->and($trm->convert(60690, ['units' => 31829100]))->toBe(193170800)
+        ->and($trm->convert(100, ['units' => 40005000]))->toBe(400100);
+});
+
+test('el pedido de Modo Indexación se crea con un monto sin centavos', function () {
+    $client = wompiClient();
+    $client->forceFill(['payment_billing_country' => 'CO', 'payment_tax_basis_points' => 1900, 'payment_billing_verified_at' => now()])->save();
+    Cache::put('propaps-trm-'.now('America/Bogota')->toDateString(), [
+        'units' => 31829900, 'from' => now('America/Bogota')->toDateString(),
+        'until' => now('America/Bogota')->toDateString(), 'source' => 'prueba',
+    ], 300);
+
+    $order = app(WompiGateway::class)->createOrder($client->id, ['package' => 'modo-indexacion', 'option' => 'pregrado']);
+
+    expect($order->amount_in_cents)->toBe(193175700)
+        ->and($order->amount_in_cents % 100)->toBe(0);
+});
+
+test('las cotizaciones adicionales también se cobran en pesos enteros', function () {
+    $quote = app(AdditionalQuotePricing::class)->calculate([
+        'additional_type' => 'peer_review', 'package' => 'modo-indexacion', 'billing_country' => 'CO',
+        'tax_treatment' => 'standard', 'cop_per_usd' => '3182.99',
+    ]);
+
+    expect($quote['amount_in_cents'] % 100)->toBe(0);
 });
 
 function wompiClient(): User

@@ -47,7 +47,8 @@ class TrmService
 
     public function convert(int $usdCents, array $rate): int
     {
-        $amount = intdiv($usdCents * $rate['units'] + 5000, 10000);
+        // Wompi rechaza montos con centavos en varios medios de pago: se cobra en pesos enteros.
+        $amount = intdiv($usdCents * $rate['units'] + 500000, 1000000) * 100;
         if ($amount < 10000 || $amount > 10000000000) {
             throw ValidationException::withMessages(['payment' => 'El importe está fuera del rango de cobro permitido.']);
         }

@@ -27,7 +27,8 @@ class AdditionalQuotePricing
         $tax = intdiv($subtotal * $taxBps + 5000, 10000);
         $total = $subtotal + $tax;
         $rate = $this->decimalUnits($data['cop_per_usd'], 4);
-        $copCents = intdiv($total * $rate + 5000, 10000);
+        // Igual que TrmService::convert(): pesos enteros, porque Wompi rechaza centavos en varios medios.
+        $copCents = intdiv($total * $rate + 500000, 1000000) * 100;
         if ($rate <= 0 || $rate > 1000000000 || $copCents < 10000 || $copCents > 10000000000) {
             throw ValidationException::withMessages(['cop_per_usd' => 'Revisa la tasa y el importe final en COP.']);
         }
