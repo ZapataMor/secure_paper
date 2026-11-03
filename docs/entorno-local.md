@@ -182,3 +182,35 @@ El estado del proyecto permanece **Recibido**: compartir documentos no cambia au
 Los respaldos SQLite fueron verificados con `PRAGMA integrity_check`; los adjuntos permanecen en el almacenamiento privado local. La sesión del cliente queda abierta en su expediente.
 
 Observación de interfaz: el cliente ve **Equipo propaps.com** como remitente, aunque administración y la base de datos identifican a **Asesor de Prueba**. Propuesta para un bloque posterior: mostrar el nombre del remitente para aclarar quién responde. Queda también por probar el cambio de estado y su reflejo en el panel del cliente, además de la respuesta posterior del cliente.
+## Bloque 5: estados reflejados en el cliente (3 de noviembre de 2026)
+
+Se recorrió **Recibido → En revisión → En ajustes → Entregado** en el expediente ficticio. Cada cambio se envió por HTTP a la ruta normal de actualización, con una sesión independiente autenticada como `asesor@propaps.test` y el token CSRF del formulario. El servidor confirmó cada cambio y se comprobó su persistencia al volver a cargar la vista del asesor. No se editaron directamente los estados en SQLite ni se modificó código de la aplicación.
+
+La cuenta del cliente permaneció abierta en Brave. Se comprobaron visualmente tanto Inicio como el expediente después de cada cambio:
+
+| Estado del expediente | Orientación en Inicio | Acción disponible |
+| --- | --- | --- |
+| En revisión | Proyecto en revisión / Sigue el avance de tu manuscrito | Ver seguimiento |
+| En ajustes | Proyecto en ajustes / Revisa las observaciones | Consultar ajustes |
+| Entregado | Proyecto entregado / Consulta tu entrega | Ver documentos entregados |
+
+**Consultar ajustes** lleva a Seguimiento y comunicación. **Ver documentos entregados** lleva a Documentos del proyecto, donde se mantienen el manuscrito y la devolución. Los cambios se observaron después de recargar o navegar; no se probó una actualización automática en tiempo real.
+
+### Integridad y aislamiento
+
+- Tres entradas de auditoría registran la secuencia completa con el asesor ficticio como actor.
+- Los dos PDF mantienen sus huellas SHA-256; se conserva el mensaje del asesor y la indicación original del cliente.
+- Los recuentos de pagos, órdenes Wompi y trabajos de cola permanecen en cero.
+- El correo sigue en `log` y los avisos automáticos están desactivados: no se enviaron correos reales.
+- Las fechas y el pago ficticio del servicio no cambiaron. **Entregado** no cierra la carga; esta sigue vinculada a la vigencia del servicio, hasta el 02/12/2026 inclusive.
+- Estado final conservado: **Entregado**. Hostinger permanece sin cambios.
+
+### Evidencias
+
+- Respaldo previo verificado: `.local/backups/antes-estados-20261103-174147.sqlite`.
+- Respaldo posterior verificado: `.local/backups/despues-estados-20261103-174345.sqlite`.
+- Resultado: `.local/logs/comprobacion-estados-cliente.json`.
+- Procedimiento HTTP local: `.local/probar-estado.ps1` (usa las protecciones locales y las credenciales ficticias sin imprimirlas).
+- Capturas: `.local/logs/estado-en-revision-cliente.jpg`, `.local/logs/estado-en-ajustes-cliente.jpg`, `.local/logs/estado-entregado-cliente.jpg` y `.local/logs/estado-entregado-inicio-cliente.jpg`.
+
+Este bloque verifica la presentación de los tres estados con insumos y una devolución existentes. Quedan para otro bloque las respuestas posteriores del cliente y los permisos entre expedientes de distintos clientes/asesores.
