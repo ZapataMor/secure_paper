@@ -41,6 +41,7 @@ class PrivateDocumentUploadController extends Controller
             ->get();
 
         $adminMessages = UserMessage::query()
+            ->with('sender:id,name,last_name')
             ->where('receiver_id', $user->id)
             ->whereHas('sender', fn ($query) => $query->whereIn('role', ['admin', 'advisor']))
             ->latest('sent_at')

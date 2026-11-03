@@ -275,3 +275,19 @@ $env:PROPAPS_PROJECT_EMAIL_ENABLED = 'false'
 ```
 
 Estas variables corresponden a la sesión de terminal de pruebas; abrir otra terminal para el servidor local. No se ejecutó nuevamente toda la suite: los siete fallos antiguos documentados en el primer bloque siguen pendientes. Esta comprobación de permisos no equivale a una auditoría integral de seguridad o de producción. Hostinger permanece sin cambios.
+## Bloque 8: remitente visible y acceso para responder (3 de noviembre de 2026)
+
+Se mejoró la comunicación en el expediente del cliente:
+
+- Cada mensaje muestra el nombre completo de quien lo envió. La consulta carga los remitentes junto con los mensajes y mantiene el filtro por destinatario. Se conserva **Equipo propaps.com** como texto de respaldo si falta un nombre.
+- Cuando hay mensajes, aparece **Responder al asesor** si existe un asesor responsable disponible; en caso contrario, **Responder al equipo**. El enlace lleva al campo de texto y coloca allí el cursor.
+- El campo ahora se llama **Indicaciones y respuestas** y explica que se puede enviar solo texto. El historial se titula **Tus indicaciones y respuestas**.
+- El acceso no envía el formulario ni borra lo escrito. El envío conserva su botón **Enviar al equipo** y agrega la respuesta al historial del expediente; no crea un hilo privado separado con el autor de un mensaje anterior.
+
+### Validación
+
+Se revisó en Brave con la cuenta local del cliente: nombre **Asesor de Prueba** visible, enlace operativo con clic y con Enter, foco en `additional_information` y conservación de un borrador. El borrador se retiró sin enviarlo. Permanecen dos indicaciones, dos PDF y un mensaje; no se crearon trabajos de correo.
+
+Las 19 pruebas de aislamiento y documentos volvieron a aprobar, con 227 comprobaciones. Evidencias: `.local/logs/pruebas-comunicacion-cliente.xml`, `.local/logs/comprobacion-comunicacion-cliente.json` y `.local/logs/comunicacion-cliente-mejorada.jpg`.
+
+Archivos de aplicación modificados: `app/Http/Controllers/PrivateDocumentUploadController.php` y `resources/views/private/upload-document.blade.php`. No se cambiaron las reglas de autorización, el almacenamiento de respuestas ni la configuración de correo. La mejora está únicamente en la copia local y no se desplegó en Hostinger.

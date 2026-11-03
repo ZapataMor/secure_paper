@@ -25,6 +25,7 @@
         .sp-upload h1 { margin-top: 14px; font-size: clamp(30px, 3.7vw, 44px); font-weight: 700; line-height: 1.15; letter-spacing: -.035em; }
         .sp-upload-intro { max-width: 660px; margin-top: 15px !important; color: var(--up-muted); font-size: 16px; line-height: 1.7; }
         .sp-upload-link { color: var(--up-accent); font-size: 13px; font-weight: 600; }
+        .sp-upload-reply { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; padding: 10px 15px; border: 1px solid #2cc29580; border-radius: 9px; background: #006a4c30; }
         .sp-upload-link:hover { text-decoration: underline; text-underline-offset: 4px; }
         .sp-upload-service { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 22px; padding: 13px 17px; border: 1px solid #2cc29530; border-radius: 11px; background: #006a4c20; font-size: 13px; }
         .sp-upload-service strong { color: var(--up-accent); font-weight: 600; }
@@ -172,6 +173,7 @@
             x-init="notes = $refs.notes.value"
             x-on:submit="send($event)"
             x-on:pageshow.window="submitting = false"
+            x-on:sp-upload-reply.window="$refs.notes.focus()"
             x-bind:aria-busy="submitting"
         >
             @csrf
@@ -202,14 +204,14 @@
                     </div>
                 </section>
                 <section class="sp-upload-field" aria-labelledby="sp-upload-notes-title">
-                    <div class="sp-upload-heading"><span class="sp-upload-number" aria-hidden="true">02</span><h2 id="sp-upload-notes-title"><label for="additional_information">Indicaciones para la revisión</label></h2></div>
-                    <p class="sp-upload-description">Explica el objetivo del documento, las prioridades y los requisitos de tu universidad o revista.</p>
+                    <div class="sp-upload-heading"><span class="sp-upload-number" aria-hidden="true">02</span><h2 id="sp-upload-notes-title"><label for="additional_information">Indicaciones y respuestas</label></h2></div>
+                    <p class="sp-upload-description">Comparte las indicaciones de tu proyecto o responde a las observaciones del equipo. Puedes enviar solo texto.</p>
                     <textarea id="additional_information" name="additional_information" rows="7" maxlength="8000" class="sp-upload-textarea"
                         x-ref="notes" x-on:input="notes = $event.target.value; error = ''"
                         placeholder="Por ejemplo: revisar la coherencia de los objetivos, ajustar las citas a APA 7 y priorizar el capítulo de metodología. Puedes incluir enlaces de referencia."
                         aria-describedby="sp-upload-notes-help">{{ old('additional_information') }}</textarea>
                     <div id="sp-upload-notes-help" class="sp-upload-help"><span>Hasta 8.000 caracteres</span><span x-cloak x-text="notes.length.toLocaleString('es-CO') + ' / 8.000'"></span></div>
-                    <p class="sp-upload-hint">Puedes enviar archivos, indicaciones o ambos. Tus notas quedarán guardadas para el seguimiento del proyecto.</p>
+                    <p class="sp-upload-hint">Puedes enviar archivos, indicaciones o ambos. Cada respuesta se añade al historial del expediente y conserva tus indicaciones anteriores.</p>
                 </section>
             </div>
             <div class="sp-upload-alert is-error" role="alert" x-show="error" x-text="error" x-cloak></div>
@@ -262,7 +264,7 @@
             <header class="sp-upload-section-head"><h2 id="sp-upload-followup-title">Seguimiento y comunicación</h2><p>Conserva el contexto de tu trabajo y consulta las respuestas del equipo.</p></header>
             <div class="sp-upload-grid">
                 <article class="sp-upload-card">
-                    <div class="sp-upload-card-head"><h3>Tus indicaciones guardadas</h3><span class="sp-upload-count" aria-label="{{ $additionalInformationEntries->count() }} indicaciones">{{ $additionalInformationEntries->count() }}</span></div>
+                    <div class="sp-upload-card-head"><h3>Tus indicaciones y respuestas</h3><span class="sp-upload-count" aria-label="{{ $additionalInformationEntries->count() }} indicaciones">{{ $additionalInformationEntries->count() }}</span></div>
                     @if($additionalInformationEntries->isEmpty())
                         <div class="sp-upload-empty">Las indicaciones que envíes quedarán registradas aquí para consultarlas después.</div>
                     @else
@@ -275,12 +277,17 @@
                 </article>
                 <article class="sp-upload-card">
                     <div class="sp-upload-card-head"><h3>Mensajes del equipo</h3><span class="sp-upload-count" aria-label="{{ $adminMessages->count() }} mensajes">{{ $adminMessages->count() }}</span></div>
+                    @if($adminMessages->isNotEmpty())
+                        <a href="#additional_information" class="sp-upload-link sp-upload-reply" x-data x-on:click="$dispatch('sp-upload-reply')">
+                            {{ ($projectAssignment ?? null)?->advisor ? 'Responder al asesor' : 'Responder al equipo' }}
+                        </a>
+                    @endif
                     @if($adminMessages->isEmpty())
                         <div class="sp-upload-empty">Aquí recibirás los mensajes de administración y de tu asesor.</div>
                     @else
                         <ul class="sp-upload-history">
                             @foreach($adminMessages as $adminMessage)
-                                <li><div class="sp-upload-history-meta"><span>{{ optional($adminMessage->sent_at)->format('d/m/Y') }}</span><span>{{ optional($adminMessage->sent_at)->format('H:i') }}</span><span>Equipo propaps.com</span></div><p>{{ $adminMessage->message }}</p></li>
+                                <li><div class="sp-upload-history-meta"><span>{{ optional($adminMessage->sent_at)->format('d/m/Y') }}</span><span>{{ optional($adminMessage->sent_at)->format('H:i') }}</span><span>{{ $adminMessage->sender?->fullName() ?: 'Equipo propaps.com' }}</span></div><p>{{ $adminMessage->message }}</p></li>
                             @endforeach
                         </ul>
                     @endif
