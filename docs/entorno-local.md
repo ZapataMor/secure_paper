@@ -291,3 +291,17 @@ Se revisó en Brave con la cuenta local del cliente: nombre **Asesor de Prueba**
 Las 19 pruebas de aislamiento y documentos volvieron a aprobar, con 227 comprobaciones. Evidencias: `.local/logs/pruebas-comunicacion-cliente.xml`, `.local/logs/comprobacion-comunicacion-cliente.json` y `.local/logs/comunicacion-cliente-mejorada.jpg`.
 
 Archivos de aplicación modificados: `app/Http/Controllers/PrivateDocumentUploadController.php` y `resources/views/private/upload-document.blade.php`. No se cambiaron las reglas de autorización, el almacenamiento de respuestas ni la configuración de correo. La mejora está únicamente en la copia local y no se desplegó en Hostinger.
+## Bloque 9: expediente en pantallas de celular (3 de noviembre de 2026)
+
+Se revisó el expediente del cliente en Brave con tamaños solicitados de 390 x 844 y 320 x 720. El navegador reportó un ancho efectivo de 391 y 321 píxeles, respectivamente. También se comprobó Inicio a 320 x 720. Es una revisión de escritorio con ventana reducida; no sustituye una prueba en un teléfono físico y su teclado virtual.
+
+- El expediente, sus tarjetas de documentos, nombres de PDF, indicaciones y mensajes se adaptan sin desbordamiento horizontal en los tamaños comprobados.
+- El menú del cliente abre y muestra Configuración y Cerrar sesión dentro de la pantalla.
+- Se amplió a 44 píxeles la altura mínima de las opciones del menú en pantallas de hasta 640 píxeles: antes medían 32.
+- Se amplió a 44 píxeles la zona de pulsación de los enlaces secundarios del expediente en pantallas de hasta 540 píxeles: antes algunos medían entre 15 y 19.
+- Responder al asesor lleva el foco a Indicaciones y respuestas en la pantalla pequeña. El campo quedó vacío; no se envió ningún formulario ni se añadieron mensajes o documentos.
+- Se restauró el tamaño normal del navegador al terminar.
+
+Cambios limitados a estilos en `resources/views/layouts/app/navbar.blade.php` y `resources/views/private/upload-document.blade.php`. Verificación visual, geometría del DOM, comprobación sintáctica PHP y `git diff --check` satisfactorias. No se repitieron pruebas de negocio porque este bloque solo modifica CSS. El control del entorno local confirmó SQLite en D, correo en archivos y pagos externos desactivados. Sin despliegue en Hostinger ni publicación en GitHub.
+
+Evidencia: `.local/logs/expediente-movil.jpg`. Siguiente bloque propuesto: mostrar las fechas y horas del expediente con la zona horaria acordada para el cliente; actualmente se presentan en UTC.

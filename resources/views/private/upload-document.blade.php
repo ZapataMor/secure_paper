@@ -100,6 +100,7 @@
             .sp-upload-hero { align-items: flex-start; flex-direction: column; gap: 15px; }
         }
         @media (max-width: 540px) {
+            .sp-upload-link { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; }
             .sp-upload { margin-top: 0; }
             .sp-upload-hero { padding-top: 9px; padding-bottom: 23px; }
             .sp-upload-intro { font-size: 15px; }

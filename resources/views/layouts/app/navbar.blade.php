@@ -19,6 +19,9 @@
                 .sp-admin-user-menu [data-test="user-menu-button"] > span {
                     min-width: 0;
                 }
+                .sp-admin-user-menu [role="menuitem"] {
+                    min-height: 44px;
+                }
                 .sp-admin-user-menu [data-flux-menu] {
                     max-width: calc(100vw - 2rem);
                 }
