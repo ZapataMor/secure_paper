@@ -27,7 +27,7 @@
         <header class="sp-admin-page-header">
             <p class="sp-admin-page-kicker">{{ auth()->user()->isAdmin() ? 'Administración' : 'Panel del asesor' }}</p>
             <h1>Proyecto de {{ $targetUser->fullName() }}</h1>
-            <p>Consulta el expediente completo y comparte correcciones y mensajes de seguimiento.</p>
+            <p>Consulta el expediente completo y comparte correcciones y mensajes de seguimiento. Las fechas y horas del expediente se muestran en horario de Colombia (UTC−5).</p>
         </header>
 
         <a
@@ -305,10 +305,10 @@
                                 <span class="absolute inset-y-0 left-0 w-1 bg-[#2CC295]"></span>
                                 <div class="flex flex-wrap items-center gap-2 text-xs">
                                     <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
-                                        {{ optional($adminMessage->sent_at)->format('d/m/Y') }}
+                                        {{ $adminMessage->sent_at?->copy()->setTimezone(config('app.display_timezone'))->format('d/m/Y') ?? 'Sin fecha' }}
                                     </span>
                                     <span class="rounded-md bg-[#006A4C]/25 px-2 py-1 text-[#2CC295]">
-                                        {{ optional($adminMessage->sent_at)->format('H:i') }}
+                                        {{ $adminMessage->sent_at?->copy()->setTimezone(config('app.display_timezone'))->format('H:i') }}
                                     </span>
                                     <span class="ml-auto text-[#AAC8C4]">{{ $adminMessage->sender?->fullName() ?? 'Equipo propaps.com' }}</span>
                                 </div>

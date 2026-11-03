@@ -119,7 +119,7 @@
             <div>
                 <p class="sp-upload-kicker">Tu espacio de trabajo · Cargar documentos</p>
                 <h1 id="sp-upload-title">Tu expediente de trabajo</h1>
-                <p class="sp-upload-intro">Reúne los archivos de tu proyecto y cuéntanos qué necesitas trabajar. Aquí también encontrarás las devoluciones y los mensajes para continuar el proceso.</p>
+                <p class="sp-upload-intro">Reúne los archivos de tu proyecto y cuéntanos qué necesitas trabajar. Aquí también encontrarás las devoluciones y los mensajes para continuar el proceso. Las fechas y horas del expediente se muestran en horario de Colombia (UTC−5).</p>
             </div>
             <a href="{{ route('dashboard') }}" class="sp-upload-link" wire:navigate>Volver a Inicio →</a>
         </header>
@@ -250,7 +250,7 @@
                                         <span class="sp-upload-thumb" aria-hidden="true">
                                             @if($isImage)<img src="{{ $fileUrl }}" alt="" loading="lazy">@else<x-document-type-icon :extension="$extension" class="sp-upload-file-icon" />@endif
                                         </span>
-                                        <span class="sp-upload-file-info"><span class="sp-upload-file-name">{{ $document->original_name }}</span><span class="sp-upload-file-meta">{{ $badge }} · {{ $formatFileSize((int) $document->file_size) }}@if($document->uploaded_at) · {{ $document->uploaded_at->format('d/m/Y') }}@endif</span></span>
+                                        <span class="sp-upload-file-info"><span class="sp-upload-file-name">{{ $document->original_name }}</span><span class="sp-upload-file-meta">{{ $badge }} · {{ $formatFileSize((int) $document->file_size) }}@if($document->uploaded_at) · {{ $document->uploaded_at->copy()->setTimezone(config('app.display_timezone'))->format('d/m/Y') }}@endif</span></span>
                                         <span class="sp-upload-open" aria-hidden="true">Abrir ↗</span>
                                     </a></li>
                                 @endforeach
@@ -288,7 +288,7 @@
                     @else
                         <ul class="sp-upload-history">
                             @foreach($adminMessages as $adminMessage)
-                                <li><div class="sp-upload-history-meta"><span>{{ optional($adminMessage->sent_at)->format('d/m/Y') }}</span><span>{{ optional($adminMessage->sent_at)->format('H:i') }}</span><span>{{ $adminMessage->sender?->fullName() ?: 'Equipo propaps.com' }}</span></div><p>{{ $adminMessage->message }}</p></li>
+                                <li><div class="sp-upload-history-meta"><span>{{ $adminMessage->sent_at?->copy()->setTimezone(config('app.display_timezone'))->format('d/m/Y') ?? 'Sin fecha' }}</span><span>{{ $adminMessage->sent_at?->copy()->setTimezone(config('app.display_timezone'))->format('H:i') }}</span><span>{{ $adminMessage->sender?->fullName() ?: 'Equipo propaps.com' }}</span></div><p>{{ $adminMessage->message }}</p></li>
                             @endforeach
                         </ul>
                     @endif

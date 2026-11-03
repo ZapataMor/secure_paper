@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // Zona para mostrar fechas del expediente; el almacenamiento sigue en UTC.
+    'display_timezone' => 'America/Bogota',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

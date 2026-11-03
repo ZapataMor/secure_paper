@@ -138,7 +138,7 @@ class PrivateDocumentUploadController extends Controller
         return $entries
             ->sortByDesc(fn (array $entry): int => ($entry['created_at'] ?? null)?->getTimestamp() ?? -1)
             ->map(function (array $entry): array {
-                $createdAt = $entry['created_at'] ?? null;
+                $createdAt = ($entry['created_at'] ?? null)?->copy()->setTimezone(config('app.display_timezone'));
 
                 return [
                     'content' => $entry['content'],

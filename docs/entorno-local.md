@@ -305,3 +305,19 @@ Se revisó el expediente del cliente en Brave con tamaños solicitados de 390 x 
 Cambios limitados a estilos en `resources/views/layouts/app/navbar.blade.php` y `resources/views/private/upload-document.blade.php`. Verificación visual, geometría del DOM, comprobación sintáctica PHP y `git diff --check` satisfactorias. No se repitieron pruebas de negocio porque este bloque solo modifica CSS. El control del entorno local confirmó SQLite en D, correo en archivos y pagos externos desactivados. Sin despliegue en Hostinger ni publicación en GitHub.
 
 Evidencia: `.local/logs/expediente-movil.jpg`. Siguiente bloque propuesto: mostrar las fechas y horas del expediente con la zona horaria acordada para el cliente; actualmente se presentan en UTC.
+## Bloque 10: horario de Colombia en el expediente (3 de noviembre de 2026)
+
+Las fechas de documentos y las fechas y horas de indicaciones y mensajes del expediente se presentan en `America/Bogota`. Cliente, asesor y administración comparten el mismo criterio. Las dos vistas explican que el horario mostrado es Colombia (UTC−5).
+
+Se agregó `app.display_timezone` para la presentación. `app.timezone` permanece en UTC; no se cambian escritura, almacenamiento, orden cronológico, vencimiento del servicio ni tareas programadas. La conversión trabaja sobre copias de las fechas. Las indicaciones sin fecha conservan el texto Sin fecha; los mensajes sin fecha también muestran ese texto sin inventar una hora.
+
+### Validación y conservación
+
+- Tres casos nuevos, uno por rol, prueban el cruce de medianoche: 04/11/2026 02:15 UTC se muestra como 03/11/2026 21:15.
+- Se verifican notas que ya incluyen un desfase horario explícito, orden cronológico, fechas ausentes y conservación exacta de los valores originales en la base de pruebas.
+- Las pruebas de documentos y aislamiento, junto con estos casos, aprobaron: **22 pruebas, 300 comprobaciones**. SQLite en memoria; correo, notificaciones y cola simulados, sin llamadas HTTP externas permitidas.
+- En Brave, el expediente existente del cliente muestra 17:45 y 17:20 para las indicaciones, y 17:36 para el mensaje del asesor. Antes se veían 22:45, 22:20 y 22:36. Se mantienen dos documentos, dos indicaciones y un mensaje; no se enviaron formularios durante esta revisión.
+- Evidencias: `.local/logs/pruebas-horario-colombia.xml` y `.local/logs/horario-colombia-expediente.jpg`.
+- Entorno local verificado: SQLite en D, correo en archivos, pagos externos desactivados. Cambio guardado únicamente en Git local, sin publicación ni despliegue. Si se despliega más adelante, deberá regenerarse la caché de configuración para incluir la nueva opción.
+
+Este bloque cubre el expediente. No modifica otras pantallas, correos ni reglas de vencimiento; la suite completa mantiene pendientes los fallos anteriores documentados. Siguiente revisión propuesta: comprobar con datos ficticios qué puede consultar y hacer un cliente cuando vence su servicio, conservando su expediente.

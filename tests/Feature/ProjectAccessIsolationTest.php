@@ -226,3 +226,47 @@ test('guests must sign in before reading files or changing a case', function () 
     $this->assertDatabaseCount('user_messages', 2);
     expect($this->assignmentA->fresh()->progress_status)->toBe('received');
 });
+
+test('case dates use Colombia time without changing stored timestamps', function (string $role) {
+    expect(config('app.timezone'))->toBe('UTC');
+    $this->clientA->document_additional_information = json_encode([
+        ['content' => 'NOTA-SIN-FECHA', 'created_at' => null],
+        ['content' => 'NOTA-OFFSET', 'created_at' => '2026-11-03T20:10:00-05:00'],
+        ['content' => 'NOTA-UTC', 'created_at' => '2026-11-04T02:15:00+00:00'],
+    ]);
+    $this->clientA->save();
+    $message = UserMessage::where('receiver_id', $this->clientA->id)->firstOrFail();
+    $message->update(['sent_at' => '2026-11-04 02:36:00']);
+    $document = $this->documentsA[0];
+    $document->update(['uploaded_at' => '2026-11-04 02:20:00']);
+    $originalNotes = $this->clientA->getRawOriginal('document_additional_information');
+    $originalMessage = $message->getRawOriginal('sent_at');
+    $originalDocument = $document->getRawOriginal('uploaded_at');
+
+    $actor = match ($role) {
+        'client' => $this->clientA,
+        'advisor' => $this->advisorA,
+        'admin' => $this->admin,
+    };
+    $url = $role === 'client' ? route('private.upload-document') : route('admin.works.show', $this->clientA);
+    $response = $this->actingAs($actor)->get($url)->assertOk()
+        ->assertSee('horario de Colombia (UTC−5)')->assertSee('21:36')->assertDontSee('02:36');
+    $entries = $response->viewData('additionalInformationEntries');
+    expect($entries->pluck('content')->all())->toBe(['NOTA-UTC', 'NOTA-OFFSET', 'NOTA-SIN-FECHA'])
+        ->and($entries[0]['date_key'])->toBe('2026-11-03')
+        ->and($entries[0]['date_label'])->toBe('03/11/2026')
+        ->and($entries[0]['time_label'])->toBe('21:15')
+        ->and($entries[1]['time_label'])->toBe('20:10')
+        ->and($entries[2]['date_label'])->toBe('Sin fecha')
+        ->and($entries[2]['time_label'])->toBeNull();
+    if ($role === 'client') {
+        $response->assertSee('PDF · 64 B · 03/11/2026');
+    }
+    expect($this->clientA->fresh()->getRawOriginal('document_additional_information'))->toBe($originalNotes)
+        ->and($message->fresh()->getRawOriginal('sent_at'))->toBe($originalMessage)
+        ->and($document->fresh()->getRawOriginal('uploaded_at'))->toBe($originalDocument)
+        ->and($response->viewData('adminMessages')->first()->sent_at->timezoneName)->toBe('UTC');
+
+    $message->update(['sent_at' => null]);
+    $this->get($url)->assertOk()->assertSee('Sin fecha');
+})->with(['client', 'advisor', 'admin']);
