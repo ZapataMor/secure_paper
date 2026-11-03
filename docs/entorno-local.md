@@ -214,3 +214,25 @@ La cuenta del cliente permaneció abierta en Brave. Se comprobaron visualmente t
 - Capturas: `.local/logs/estado-en-revision-cliente.jpg`, `.local/logs/estado-en-ajustes-cliente.jpg`, `.local/logs/estado-entregado-cliente.jpg` y `.local/logs/estado-entregado-inicio-cliente.jpg`.
 
 Este bloque verifica la presentación de los tres estados con insumos y una devolución existentes. Quedan para otro bloque las respuestas posteriores del cliente y los permisos entre expedientes de distintos clientes/asesores.
+## Bloque 6: respuesta del cliente visible para el asesor (3 de noviembre de 2026)
+
+Se probó una respuesta de texto sin adjuntos desde la sesión del cliente en Brave, manteniendo el expediente ficticio en **Entregado** y el servicio vigente.
+
+1. En **Cargar documentos**, escribir en **Indicaciones para la revisión** una nota de prueba que confirma la lectura de la devolución v1 y solicita una aclaración ficticia sobre la conexión entre objetivo y resultados.
+2. Pulsar **Enviar al equipo** sin seleccionar archivos.
+3. Comprobar **Informacion adicional guardada correctamente** y la presencia de dos indicaciones: la original y la nueva respuesta, cada una con su fecha y hora.
+4. Cerrar sesión, ingresar como `asesor@propaps.test`, abrir **Proyectos** y el expediente asignado.
+5. Comprobar que **Indicaciones del cliente** muestra el texto completo de ambas notas, con la nueva primero.
+
+La respuesta del cliente se guarda como una nueva entrada de información adicional; no se crea un mensaje del equipo. Se verificó que la nota original se conserva exactamente, que solo se añadió una entrada y que los dos documentos mantienen sus huellas SHA-256. El mensaje previo del asesor sigue disponible. Responder no reabre automáticamente el proyecto: permanece **Entregado**.
+
+Los recuentos de trabajos en cola, pagos y órdenes Wompi siguen en cero. El correo permanece en `log` y los avisos automáticos están desactivados; no se enviaron correos reales. No se modificaron código de aplicación ni Hostinger.
+
+### Conservación
+
+- Respaldo previo verificado: `.local/backups/antes-respuesta-cliente-20261103-174519.sqlite`.
+- Respaldo posterior verificado: `.local/backups/despues-respuesta-cliente-20261103-174644.sqlite`.
+- Resultado: `.local/logs/comprobacion-respuesta-cliente.json`.
+- Evidencias: `.local/logs/respuesta-guardada-cliente.jpg` y `.local/logs/respuesta-visible-asesor.jpg`.
+
+Se dejó abierta la sesión del asesor en el expediente. Mejora propuesta, todavía sin implementar: hacer visible una acción **Responder al asesor**, ya que actualmente la respuesta se envía mediante el campo **Indicaciones para la revisión**. El siguiente bloque recomendado es comprobar el aislamiento de expedientes entre clientes y asesores distintos mediante cuentas exclusivamente ficticias.
