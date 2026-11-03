@@ -59,7 +59,7 @@ class UserSubscription extends Model
         return $query
             ->whereIn('status', self::ACTIVE_STATUSES)
             ->whereIn('payment_status', self::PAID_STATUSES)
-            ->whereDate('start_date', '<=', now()->toDateString())
-            ->whereDate('end_date', '>=', now()->toDateString());
+            ->whereDate('start_date', '<=', now('America/Bogota')->toDateString())
+            ->whereDate('end_date', '>=', now('America/Bogota')->toDateString());
     }
 }

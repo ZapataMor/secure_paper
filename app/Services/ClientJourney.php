@@ -42,7 +42,7 @@ class ClientJourney
             }
             $scheduled=UserSubscription::where('user_id',$user->id)
                 ->whereIn('payment_status',['paid','pagado','approved','aprobado','completed','completado'])
-                ->whereIn('status',['active','vigente'])->whereDate('start_date','>',now()->toDateString())
+                ->whereIn('status',['active','vigente'])->whereDate('start_date','>',now('America/Bogota')->toDateString())
                 ->whereColumn('end_date','>=','start_date')->orderBy('start_date')->first();
             if ($scheduled) {
                 return array_replace($step,[
@@ -56,7 +56,7 @@ class ClientJourney
             }
             $expired=UserSubscription::where('user_id',$user->id)
                 ->whereIn('payment_status',['paid','pagado','approved','aprobado','completed','completado'])
-                ->whereIn('status',['active','vigente'])->whereDate('end_date','<',now()->toDateString())
+                ->whereIn('status',['active','vigente'])->whereDate('end_date','<',now('America/Bogota')->toDateString())
                 ->latest('end_date')->first();
             if ($expired) {
                 return array_replace($step,[

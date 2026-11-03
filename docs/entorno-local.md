@@ -346,3 +346,23 @@ Este bloque agrega pruebas y documentación; no cambia las reglas actuales de la
 ### Mejora propuesta para el siguiente bloque
 
 Corregir primero el cálculo de vigencia para respetar el día completo de Colombia, manteniendo UTC para los registros de eventos. Revisar juntos los criterios de servicio activo, programado y vencido para que el acceso y la orientación coincidan. Después conviene definir si el cliente conservará consulta de solo lectura tras el vencimiento: el aviso actual menciona únicamente la carga, aunque también se bloquea la consulta de lo ya entregado. Esta política de lectura no se ha cambiado.
+
+## Bloque 12: vigencia hasta el fin del día de Colombia (3 de noviembre de 2026)
+
+Se corrigió el cierre anticipado de las 19:00. Las fechas de inicio y final del servicio se comparan con el día calendario de `America/Bogota`. La fecha final es inclusiva: permite el acceso hasta las 23:59:59 de Colombia y lo bloquea desde las 00:00 del día siguiente. El inicio también espera la medianoche de Colombia; ya no se anticipa a la tarde anterior.
+
+Se mantuvo el mismo calendario en los avisos de servicio programado/vencido, la disponibilidad de acuerdos pendientes y la validación administrativa de su fecha final. Las nuevas suscripciones generadas por una aprobación de pago toman la fecha colombiana. Los registros de aprobación y otros eventos siguen en UTC. El cálculo de duración conserva las reglas existentes; no se cambian importes, estados de pago ni requisitos de autorización. El aviso de carga ahora aclara que la fecha inclusive corresponde a Colombia.
+
+### Validación
+
+Primero se reprodujeron cinco fallos con las expectativas corregidas. Después del cambio aprobaron **47 pruebas y 556 comprobaciones**: vencimiento, acceso a documentos, aislamiento, presentación de fechas y pagos simulados.
+
+- Acceso permitido a las 18:59:59, 19:00:00 y 23:59:59 del último día colombiano; bloqueado a las 00:00 del siguiente. PDF y orientación al cliente coinciden con el acceso.
+- Una respuesta enviada en el último segundo se conserva; la enviada después de medianoche se bloquea sin modificar el expediente.
+- Servicios futuros permanecen programados hasta su fecha local de inicio.
+- Acuerdos que vencen hoy siguen disponibles y admiten validación administrativa durante la noche colombiana; al día siguiente vencen. Permanecen pendientes de pago y no dan acceso por sí mismos.
+- Aprobaciones simuladas de Corrección Completa y Modo Indexación durante la noche generan el inicio en la fecha colombiana, conservando el registro de aprobación en UTC. No se contactó Wompi ni se hicieron cobros reales.
+
+Evidencias: `.local/logs/pruebas-vigencia-colombia.xml`, `.local/logs/comprobacion-vigencia-colombia.json` y `.local/logs/vigencia-horario-colombia.jpg`. Se verificaron los mismos recuentos del expediente persistente, servicio activo, estado Entregado y coincidencia SHA-256 de ambos PDF originales. Correo local y pagos externos desactivados.
+
+La corrección está guardada en Git local. No se publicó en GitHub ni se desplegó en Hostinger. No se cambiaron las fechas existentes ni se ejecutaron migraciones. El bloqueo de lectura una vez vencido el servicio sigue siendo la política anterior; queda pendiente definir si se ofrecerá consulta de solo lectura. Los fallos antiguos de la suite completa siguen fuera de este bloque.

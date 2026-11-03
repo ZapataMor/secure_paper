@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserMessage;
 use App\Models\UserSubscription;
 use App\Services\ClientJourney;
+use App\Services\ServiceAccessPolicy;
 use App\Services\TrmService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -90,16 +91,24 @@ afterEach(function () {
     Http::assertNothingSent();
 });
 
-// Caracteriza la regla UTC actual; no aprueba que el cierre deba ocurrir a las 19:00 de Colombia.
-test('current expiry uses the UTC date including the last UTC second', function (string $instant, bool $active, string $colombiaTime) {
+// La fecha final incluye todo el día de Colombia; el reloj de almacenamiento sigue en UTC.
+test('service access and guidance include the entire final Colombia day', function (string $instant, bool $active, string $colombiaTime) {
     Carbon::setTestNow(Carbon::parse($instant, 'UTC'));
     expect(now('America/Bogota')->format('Y-m-d H:i:s'))->toBe($colombiaTime)
         ->and($this->client->fresh()->hasActiveMembership())->toBe($active);
     $response = $this->actingAs($this->client->fresh())->get(route('private.upload-document'));
     $active ? $response->assertOk() : $response->assertRedirect(route('private.planes'));
+    $journey = app(ClientJourney::class)->forUser($this->client->fresh());
+    expect($journey['active'])->toBe($active)
+        ->and($journey['kind'])->toBe($active ? 'delivered' : 'expired');
+    foreach ($this->caseDocuments as $document) {
+        $fileResponse = $this->get(route('documents.file.show', $document));
+        $active ? $fileResponse->assertOk() : $fileResponse->assertForbidden();
+    }
 })->with([
     ['2030-11-03 23:59:59', true, '2030-11-03 18:59:59'],
-    ['2030-11-04 00:00:00', false, '2030-11-03 19:00:00'],
+    ['2030-11-04 00:00:00', true, '2030-11-03 19:00:00'],
+    ['2030-11-04 04:59:59', true, '2030-11-03 23:59:59'],
     ['2030-11-04 05:00:00', false, '2030-11-04 00:00:00'],
 ]);
 
@@ -167,3 +176,45 @@ test('an assigned advisor can still return work after expiry although the client
     $this->actingAs($this->client->fresh())->get(route('documents.file.show', $returned))->assertForbidden();
     $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
 });
+
+test('scheduled services start at Colombia midnight and not the preceding evening', function (string $utc, bool $active) {
+    $this->subscription->update(['start_date' => '2030-11-04', 'end_date' => '2030-12-03']);
+    Carbon::setTestNow(Carbon::parse($utc, 'UTC'));
+    expect($this->client->fresh()->hasActiveMembership())->toBe($active);
+    $journey = app(ClientJourney::class)->forUser($this->client->fresh());
+    expect($journey['kind'])->toBe($active ? 'delivered' : 'scheduled');
+})->with([['2030-11-04 04:59:59', false], ['2030-11-04 05:00:00', true]]);
+
+test('a response is accepted in the last Colombia second and blocked at the next midnight', function () {
+    Carbon::setTestNow(Carbon::parse('2030-11-04 04:59:59', 'UTC'));
+    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), [
+        'additional_information' => 'RESPUESTA DENTRO DEL ULTIMO DIA',
+    ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
+    expect($this->client->fresh()->additionalInformationEntries())->toHaveCount(2);
+    $before = ($this->caseSnapshot)();
+    Carbon::setTestNow(Carbon::parse('2030-11-04 05:00:00', 'UTC'));
+    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), [
+        'additional_information' => 'RESPUESTA FUERA DE PLAZO',
+    ])->assertRedirect(route('private.planes'))->assertSessionHas('membership_error');
+    expect(($this->caseSnapshot)())->toBe($before);
+});
+
+test('agreement availability and admin end date validation use the Colombia day', function (string $utc, bool $valid) {
+    Carbon::setTestNow(Carbon::parse($utc, 'UTC'));
+    $policy = app(ServiceAccessPolicy::class);
+    $this->subscription->paymentPlan->update(['name' => $policy->planName('correccion-completa')]);
+    $this->subscription->update(['status' => 'pending', 'payment_status' => 'pending']);
+    expect($policy->agreement($this->client->id, 'correccion-completa') !== null)->toBe($valid);
+    $response = $this->actingAs($this->admin)->post(route('admin.service-access.store'), [
+        'user_id' => $this->client->id, 'package' => 'correccion-completa',
+        'subscription_id' => $this->subscription->id,
+        'start_date' => '2030-10-05', 'end_date' => '2030-11-03',
+    ]);
+    if ($valid) {
+        $response->assertRedirect(route('admin.payment-quotes'))->assertSessionHasNoErrors();
+    } else {
+        $response->assertSessionHasErrors('end_date');
+    }
+    expect($this->subscription->fresh()->payment_status)->toBe('pending')
+        ->and($this->client->fresh()->hasActiveMembership())->toBeFalse();
+})->with([['2030-11-04 04:59:59', true], ['2030-11-04 05:00:00', false]]);

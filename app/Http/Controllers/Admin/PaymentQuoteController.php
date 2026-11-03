@@ -37,7 +37,7 @@ class PaymentQuoteController extends Controller
             'package' => ['required', Rule::in(['correccion-completa', 'grandes-volumenes'])],
             'subscription_id' => ['nullable', 'integer'],
             'start_date' => ['required', 'date_format:Y-m-d'],
-            'end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:start_date', 'after_or_equal:today'],
+            'end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:start_date', 'after_or_equal:'.now('America/Bogota')->toDateString()],
         ]);
         DB::transaction(function () use ($data, $policy) {
             User::whereKey($data['user_id'])->lockForUpdate()->firstOrFail();

@@ -1,14 +1,18 @@
 <?php
 
 use App\Models\User;
+use App\Models\UserSubscription;
 use App\Models\WompiOrder;
 use App\Services\AdditionalQuotePricing;
 use App\Services\TrmService;
 use App\Services\WompiGateway;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 // Llaves falsas con el prefijo que exige WompiGateway::ready(); nunca llegan a Wompi (Http::fake).
 beforeEach(function () {
@@ -172,3 +176,26 @@ function wompiEvent(WompiOrder $order, string $status): array
         ],
     ];
 }
+
+test('a simulated evening approval starts the service on the Colombia date', function (string $package, string $endDate) {
+    expect(config('database.connections.sqlite.database'))->toBe(':memory:');
+    Http::preventStrayRequests();
+    Mail::fake();
+    Notification::fake();
+    Carbon::withTestNow(Carbon::parse('2030-11-04 02:30:00', 'UTC'), function () use ($package, $endDate) {
+        $client = wompiClient();
+        $order = wompiOrder($client);
+        $order->update(['package' => $package]);
+        fakeWompiTransaction($order, 'APPROVED');
+        $this->actingAs($client)->get(route('private.payments.show', [
+            'order' => $order, 'id' => '556466-1791571531-22691',
+        ]))->assertOk();
+        $subscription = UserSubscription::findOrFail($order->fresh()->user_subscription_id);
+        expect($subscription->start_date->toDateString())->toBe('2030-11-03')
+            ->and($subscription->end_date->toDateString())->toBe($endDate)
+            ->and($client->fresh()->hasActiveMembership())->toBeTrue()
+            ->and($order->fresh()->approved_at->format('Y-m-d H:i:s'))->toBe('2030-11-04 02:30:00');
+    });
+    Mail::assertNothingSent();
+    Notification::assertNothingSent();
+})->with([['correccion-completa', '2030-12-03'], ['modo-indexacion', '2031-11-03']]);

@@ -23,7 +23,7 @@
     <h2>{{ $clientJourney['title'] }}</h2>
     <p class="sp-journey-description">{{ $clientJourney['description'] }}</p>
     @if($clientJourney['active'])
-        <p class="sp-journey-context">{{ $clientJourney['plan'] }}<br>Carga habilitada hasta el {{ $clientJourney['until'] }}, inclusive.</p>
+        <p class="sp-journey-context">{{ $clientJourney['plan'] }}<br>Carga habilitada hasta el {{ $clientJourney['until'] }}, inclusive, en horario de Colombia.</p>
     @endif
     <div class="sp-journey-tasks">
         <div><strong>Tu parte</strong><p>{{ $clientJourney['client'] }}</p></div>

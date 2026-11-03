@@ -259,7 +259,7 @@ class WompiGateway
                         $subscription->update(['status' => 'active', 'payment_status' => 'approved', 'amount_paid' => $order->amount_in_cents / 100]);
                     }
                 } elseif ($canGrant && ! $order->is_additional && ! $order->user_subscription_id) {
-                    $start = now()->startOfDay();
+                    $start = now('America/Bogota')->startOfDay();
                     $end = $order->package === 'modo-indexacion' ? $start->copy()->addYearNoOverflow() : $start->copy()->addDays($order->access_days);
                     $plan = PaymentPlan::firstOrCreate(['name' => 'Portafolio 7.1 · '.config("wompi.catalog.$order->package.name")], [
                         'description' => 'Servicio del portafolio vigente. Importes registrados por pedido en COP.',

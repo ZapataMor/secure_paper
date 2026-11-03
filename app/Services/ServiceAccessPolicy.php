@@ -19,7 +19,7 @@ class ServiceAccessPolicy
 
         return UserSubscription::where('user_id', $userId)
             ->where('status', 'pending')->where('payment_status', 'pending')
-            ->whereDate('end_date', '>=', now()->toDateString())
+            ->whereDate('end_date', '>=', now('America/Bogota')->toDateString())
             ->whereColumn('end_date', '>=', 'start_date')
             ->whereHas('paymentPlan', fn ($query) => $query->where('name', $this->planName($package)))
             ->latest('id')->first();
@@ -28,7 +28,7 @@ class ServiceAccessPolicy
     public function days(int $userId, string $package): ?int
     {
         if ($package === 'modo-indexacion') {
-            return (int) now()->startOfDay()->diffInDays(now()->startOfDay()->addYearNoOverflow());
+            return (int) now('America/Bogota')->startOfDay()->diffInDays(now('America/Bogota')->startOfDay()->addYearNoOverflow());
         }
         $agreement = $this->agreement($userId, $package);
 
