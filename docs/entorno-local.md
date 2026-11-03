@@ -157,3 +157,28 @@ Se conservaron un archivo y una indicación, y la huella SHA-256 del PDF no camb
 - Evidencias: `.local/logs/asignacion-admin-local.jpg`, `.local/logs/expediente-asesor-local.jpg` y `.local/logs/pdf-abierto-asesor-local.jpg`.
 
 Se dejó abierta la sesión del asesor en el expediente local. Siguiente bloque: preparar una devolución ficticia y comprobar que el cliente puede consultar el documento y el mensaje del asesor.
+## Bloque 4: devolución del asesor recibida por el cliente (3 de noviembre de 2026)
+
+Se preparó el PDF ficticio `.local/fixtures/PRUEBA-LOCAL-devolucion-asesor-v1.pdf` y un mensaje de seguimiento para el cliente de prueba. El usuario completó la selección y el envío desde la sesión local del asesor; la interfaz confirmó **Archivo enviado al usuario correctamente**. No se modificó el código de la aplicación.
+
+### Recorrido verificado
+
+1. Desde el asesor, comprobar un documento compartido y un mensaje en el historial, identificado con el remitente **Asesor de Prueba**.
+2. Cerrar sesión e ingresar como `cliente@propaps.test`.
+3. Abrir **Cargar documentos**: en **Devoluciones del equipo** aparece el PDF y en **Mensajes del equipo** aparece el texto completo de la devolución.
+4. Abrir el PDF desde el enlace del cliente: el visor muestra la devolución ficticia v1 correctamente.
+
+El expediente conserva el manuscrito original, la indicación del cliente, el PDF devuelto y un mensaje del asesor. Se comprobó en SQLite que el asesor figura como autor del documento y remitente del mensaje, que el cliente tiene permiso para abrirlo y que la huella SHA-256 del PDF almacenado coincide con el original generado.
+
+El estado del proyecto permanece **Recibido**: compartir documentos no cambia automáticamente el seguimiento. No se ejecutó un cambio a **Entregado**. El correo permanece en `log`, los avisos automáticos están desactivados y los recuentos de trabajos en cola, pagos y órdenes Wompi permanecieron sin cambios. No se enviaron correos reales ni se modificó Hostinger.
+
+### Evidencias y respaldo
+
+- Antes: `.local/backups/antes-devolucion-20261103-173119.sqlite`.
+- Después: `.local/backups/despues-devolucion-20261103-173841.sqlite`.
+- Comprobaciones: `.local/logs/comprobacion-devolucion-cliente.json`.
+- Capturas: `.local/logs/devolucion-recibida-cliente.jpg` y `.local/logs/devolucion-pdf-cliente.jpg`.
+
+Los respaldos SQLite fueron verificados con `PRAGMA integrity_check`; los adjuntos permanecen en el almacenamiento privado local. La sesión del cliente queda abierta en su expediente.
+
+Observación de interfaz: el cliente ve **Equipo propaps.com** como remitente, aunque administración y la base de datos identifican a **Asesor de Prueba**. Propuesta para un bloque posterior: mostrar el nombre del remitente para aclarar quién responde. Queda también por probar el cambio de estado y su reflejo en el panel del cliente, además de la respuesta posterior del cliente.
