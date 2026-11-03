@@ -54,18 +54,15 @@ class ClientJourney
                     'action'=>'Consultar mi servicio',
                 ]);
             }
-            $expired=UserSubscription::where('user_id',$user->id)
-                ->whereIn('payment_status',['paid','pagado','approved','aprobado','completed','completado'])
-                ->whereIn('status',['active','vigente'])->whereDate('end_date','<',now('America/Bogota')->toDateString())
-                ->latest('end_date')->first();
+            $expired=$user->userSubscriptions()->expiredPaid()->latest('end_date')->first();
             if ($expired) {
                 return array_replace($step,[
                     'kind'=>'expired','status'=>'Período de carga finalizado',
-                    'title'=>'Consulta las condiciones de tu servicio',
-                    'description'=>'La carga de documentos está vinculada al período de acompañamiento o trabajo y ajustes acordado. Revisa tu servicio antes de enviar nuevos archivos.',
-                    'client'=>'Consulta tu servicio para revisar la continuidad del trabajo.',
+                    'title'=>'Consulta tu expediente',
+                    'description'=>'Tu servicio ha vencido. Puedes seguir consultando tus documentos, indicaciones y mensajes. Las nuevas cargas y respuestas requieren un servicio activo.',
+                    'client'=>'Revisa el historial conservado. Para continuar enviando archivos o respuestas, consulta las condiciones de tu servicio.',
                     'team'=>'El equipo mantiene el seguimiento según las condiciones y el período acordados.',
-                    'action'=>'Consultar mi servicio',
+                    'action'=>'Consultar expediente', 'url'=>route('private.upload-document'),
                 ]);
             }
             if ($order && $order->status==='APPROVED' && $order->environment==='production') {

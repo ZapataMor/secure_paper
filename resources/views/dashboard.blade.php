@@ -38,6 +38,7 @@
         @elseif($isClient)
             @php
                 $hasActiveMembership = $currentUser?->hasActiveMembership() ?? false;
+                $canViewDocumentHistory = $currentUser?->canViewDocumentHistory() ?? false;
                 $activePlanName = $currentUser?->activeMembershipPlanName();
             @endphp
 
@@ -171,6 +172,9 @@
                                 <p>Elige el paquete en Planes, acepta sus condiciones y realiza el pago total. Con el servicio activo, carga tu manuscrito y las indicaciones. Por mensajería acordamos la sesión inicial y su preparación.</p>
                                 @if($hasActiveMembership)
                                     <a href="{{ route('private.upload-document') }}" class="sp-start-upload" wire:navigate>Cargar documentos →</a>
+                                @elseif($canViewDocumentHistory)
+                                    <a href="{{ route('private.upload-document') }}" class="sp-start-upload" wire:navigate>Consultar expediente →</a>
+                                    <p class="sp-start-access">Solo consulta. Para enviar archivos o respuestas necesitas un servicio activo.</p>
                                 @else
                                     <button type="button" class="sp-start-upload" disabled aria-describedby="sp-start-access-note">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>

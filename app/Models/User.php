@@ -98,6 +98,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->activePaidSubscription()->exists();
     }
 
+    public function canViewDocumentHistory(): bool
+    {
+        return $this->isClient() && ($this->hasActiveMembership()
+            || $this->userSubscriptions()->expiredPaid()->exists());
+    }
+
     public function activeMembershipPlanName(): ?string
     {
         $subscription = $this->relationLoaded('activePaidSubscription')

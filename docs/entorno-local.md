@@ -366,3 +366,27 @@ Primero se reprodujeron cinco fallos con las expectativas corregidas. Después d
 Evidencias: `.local/logs/pruebas-vigencia-colombia.xml`, `.local/logs/comprobacion-vigencia-colombia.json` y `.local/logs/vigencia-horario-colombia.jpg`. Se verificaron los mismos recuentos del expediente persistente, servicio activo, estado Entregado y coincidencia SHA-256 de ambos PDF originales. Correo local y pagos externos desactivados.
 
 La corrección está guardada en Git local. No se publicó en GitHub ni se desplegó en Hostinger. No se cambiaron las fechas existentes ni se ejecutaron migraciones. El bloqueo de lectura una vez vencido el servicio sigue siendo la política anterior; queda pendiente definir si se ofrecerá consulta de solo lectura. Los fallos antiguos de la suite completa siguen fuera de este bloque.
+
+## Bloque 13: consulta del expediente después del vencimiento (3 de noviembre de 2026)
+
+El cliente con un servicio pagado vencido conserva acceso de lectura a su expediente, PDF, indicaciones y mensajes. Las nuevas cargas y respuestas requieren un servicio activo. El final de vigencia sigue calculándose con el día completo de Colombia.
+
+### Comportamiento implementado
+
+- La ruta GET del expediente admite un servicio pagado vigente o vencido; el POST conserva el middleware de membresía activa. Intentar enviar texto, archivos o JSON directamente sin vigencia sigue bloqueado.
+- La política de archivos admite lectura histórica del propietario y exige que el documento pertenezca al cliente autenticado. Ser el cargador de un archivo atribuido a otro cliente no concede lectura.
+- Se comparte la condición de servicio pagado vencido entre orientación y autorización. Se mantienen las restricciones para servicios cancelados, no pagados, fechas incoherentes y servicios únicamente futuros. Una renovación futura no oculta el historial de un servicio anterior pagado vencido.
+- Inicio y el menú ofrecen acceso al expediente. Sin vigencia, el menú se llama Mi expediente, la pantalla muestra Solo consulta y explica cómo continuar; no se renderizan el formulario, los campos de archivos/respuesta ni Responder al asesor.
+- El asesor puede compartir una devolución posterior al vencimiento y el cliente puede leerla. Una renovación vigente devuelve los controles de envío al mismo expediente.
+
+### Pruebas y demostración local
+
+**54 pruebas aprobadas, 660 comprobaciones** en los bloques de vencimiento, aislamiento, documentos y pagos simulados. Se verificaron los límites de medianoche, la ausencia de controles de envío, el bloqueo de POST/JSON, la conservación de datos ante envíos rechazados, la renovación y el rechazo de documentos ajenos incluso con un cargador manipulado. Evidencia: `.local/logs/pruebas-solo-consulta.xml`.
+
+Para revisar Brave se creó una cuenta adicional exclusivamente local: **consulta-vencida@propaps.test**, Cliente Consulta Vencida, con la misma clave local de pruebas registrada en `.local/accesos-pruebas.txt`. Tiene un servicio ficticio pagado de valor cero finalizado el día anterior, un expediente Entregado, dos copias de los PDF ficticios, una indicación y un mensaje. La preparación está en `.local/preparar-cliente-consulta.php`; no repetirla si la cuenta ya existe.
+
+Respaldo previo: `.local/backups/antes-solo-consulta-20261103-235613.sqlite`. Se compararon exactamente usuario, suscripciones, documentos, mensajes y asignación del cliente original antes y después de crear la demostración: sin cambios. El cliente original conserva su servicio activo y sus documentos originales; las copias de prueba tienen rutas propias. Cero pagos, órdenes Wompi y trabajos de correo. Informe: `.local/logs/comprobacion-solo-consulta.json`.
+
+En Brave se comprobó Inicio, entrada por Mi expediente, lectura del historial y apertura visual de la devolución PDF con el servicio vencido. El DOM del expediente contiene cero campos de archivos, cero áreas de respuesta y cero formularios de envío. Evidencia: `.local/logs/expediente-solo-consulta.jpg`. Se dejó abierta la cuenta ficticia vencida para revisión del usuario.
+
+La versión se conserva en Git local. Sin publicación en GitHub, cambios en Hostinger, correos ni cobros reales. Las fechas de los servicios existentes no se modifican. La cuenta demostrativa y sus datos pertenecen solo al entorno local y no forman parte del commit. Los fallos antiguos de la suite completa siguen pendientes; no se ejecutó toda la suite en este bloque.

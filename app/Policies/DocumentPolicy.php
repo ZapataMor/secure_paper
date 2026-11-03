@@ -4,20 +4,20 @@ namespace App\Policies;
 
 use App\Models\Document;
 use App\Models\User;
+use App\Services\ProjectAccess;
 
 class DocumentPolicy
 {
     public function view(User $user, Document $document): bool
     {
         if ($user->isAdmin() || $user->isAdvisor()) {
-            return app(\App\Services\ProjectAccess::class)->allows($user, $document->user_id);
+            return app(ProjectAccess::class)->allows($user, $document->user_id);
         }
 
-        if (! $user->hasActiveMembership()) {
+        if (! $user->canViewDocumentHistory()) {
             return false;
         }
 
-        return $document->user_id === $user->id
-            || $document->uploaded_by === $user->id;
+        return $document->user_id === $user->id;
     }
 }

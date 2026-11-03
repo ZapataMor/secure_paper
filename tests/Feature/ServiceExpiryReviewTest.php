@@ -97,13 +97,13 @@ test('service access and guidance include the entire final Colombia day', functi
     expect(now('America/Bogota')->format('Y-m-d H:i:s'))->toBe($colombiaTime)
         ->and($this->client->fresh()->hasActiveMembership())->toBe($active);
     $response = $this->actingAs($this->client->fresh())->get(route('private.upload-document'));
-    $active ? $response->assertOk() : $response->assertRedirect(route('private.planes'));
+    $response->assertOk()->assertViewHas('canUpload', $active);
     $journey = app(ClientJourney::class)->forUser($this->client->fresh());
     expect($journey['active'])->toBe($active)
         ->and($journey['kind'])->toBe($active ? 'delivered' : 'expired');
     foreach ($this->caseDocuments as $document) {
         $fileResponse = $this->get(route('documents.file.show', $document));
-        $active ? $fileResponse->assertOk() : $fileResponse->assertForbidden();
+        $fileResponse->assertOk();
     }
 })->with([
     ['2030-11-03 23:59:59', true, '2030-11-03 18:59:59'],
@@ -112,16 +112,19 @@ test('service access and guidance include the entire final Colombia day', functi
     ['2030-11-04 05:00:00', false, '2030-11-04 00:00:00'],
 ]);
 
-test('expired clients can view guidance and plans but cannot read the case or send files and notes', function () {
+test('expired clients can read their case but cannot send files and notes', function () {
     $before = ($this->caseSnapshot)();
     $this->actingAs($this->client->fresh())->get(route('dashboard'))->assertOk()
-        ->assertSee('Período de carga finalizado')->assertSee('Consulta las condiciones de tu servicio');
-    expect(app(ClientJourney::class)->forUser($this->client->fresh())['url'])->toBe(route('private.planes'));
-    $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'))->assertSessionHas('membership_error');
+        ->assertSee('Período de carga finalizado')->assertSee('Consulta tu expediente');
+    expect(app(ClientJourney::class)->forUser($this->client->fresh())['url'])->toBe(route('private.upload-document'));
+    $this->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', false)
+        ->assertSee('Solo consulta')->assertSee('INDICACIONES CONSERVADAS')->assertSee('MENSAJE CONSERVADO')
+        ->assertDontSee('id="document_files"', false)->assertDontSee('id="additional_information"', false)
+        ->assertDontSee('Enviar al equipo')->assertDontSee('Responder al asesor');
     $this->get(route('private.planes'))->assertOk()->assertSee('Contrata tu servicio')
-        ->assertSee('Necesitas una membresia activa y pagada');
+        ->assertSee('Estamos preparando los pagos en línea.');
     foreach ($this->caseDocuments as $document) {
-        $this->get(route('documents.file.show', $document))->assertForbidden();
+        $this->get(route('documents.file.show', $document))->assertOk();
     }
     $this->post(route('private.upload-document.store'), ['additional_information' => 'NOTA BLOQUEADA'])
         ->assertRedirect(route('private.planes'));
@@ -142,12 +145,13 @@ test('the assigned team can still read an expired client case without changing i
     expect(($this->caseSnapshot)())->toBe($before);
 })->with(['advisor', 'admin']);
 
-test('a synthetic renewed service restores access to the same case without payment or duplicate documents', function () {
+test('a synthetic renewal restores writing to the same readable case without payment or duplicate documents', function () {
     $before = ($this->caseSnapshot)();
-    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', false);
     $renewal = $this->subscription->replicate();
     $renewal->fill(['start_date' => '2030-11-04', 'end_date' => '2030-12-03', 'amount_paid' => 0])->save();
-    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', true)
+        ->assertSee('id="document_files"', false)->assertSee('Enviar al equipo')
         ->assertSee('INDICACIONES CONSERVADAS')->assertSee('MENSAJE CONSERVADO')->assertSee('EXPEDIENTE CONSERVADO');
     foreach ($this->caseDocuments as $document) {
         $this->get(route('documents.file.show', $document))->assertOk();
@@ -158,7 +162,7 @@ test('a synthetic renewed service restores access to the same case without payme
     $this->assertDatabaseCount('user_subscriptions', 2);
 });
 
-test('an assigned advisor can still return work after expiry although the client cannot read it yet', function () {
+test('an assigned advisor can return work after expiry and the client can read it', function () {
     $oldNotes = $this->client->getRawOriginal('document_additional_information');
     $this->actingAs($this->advisor)->post(route('admin.works.store', $this->client), [
         'admin_message' => 'DEVOLUCION POSTERIOR AL VENCIMIENTO',
@@ -173,8 +177,9 @@ test('an assigned advisor can still return work after expiry although the client
     foreach ($this->caseDocuments as $document) {
         Storage::disk('local')->assertExists($document->file_path);
     }
-    $this->actingAs($this->client->fresh())->get(route('documents.file.show', $returned))->assertForbidden();
-    $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
+    $this->actingAs($this->client->fresh())->get(route('documents.file.show', $returned))->assertOk();
+    $this->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', false)
+        ->assertSee('DEVOLUCION POSTERIOR AL VENCIMIENTO');
 });
 
 test('scheduled services start at Colombia midnight and not the preceding evening', function (string $utc, bool $active) {
@@ -218,3 +223,42 @@ test('agreement availability and admin end date validation use the Colombia day'
     expect($this->subscription->fresh()->payment_status)->toBe('pending')
         ->and($this->client->fresh()->hasActiveMembership())->toBeFalse();
 })->with([['2030-11-04 04:59:59', true], ['2030-11-04 05:00:00', false]]);
+
+test('expired read access never exposes another client case even with a forged uploader', function () {
+    $other = User::factory()->create(['role' => 'client']);
+    $other->appendAdditionalInformation('NOTA AJENA');
+    $other->save();
+    UserMessage::create(['sender_id' => $this->advisor->id, 'receiver_id' => $other->id,
+        'subject' => 'Privado', 'message' => 'MENSAJE AJENO', 'status' => 'sent', 'sent_at' => now()]);
+    $foreign = $this->caseDocuments->first()->replicate();
+    $foreign->fill(['user_id' => $other->id, 'uploaded_by' => $this->client->id,
+        'original_name' => 'documento-ajeno.pdf'])->save();
+    $this->actingAs($this->client)->get(route('private.upload-document', ['user_id' => $other->id]))
+        ->assertOk()->assertDontSee('NOTA AJENA')->assertDontSee('MENSAJE AJENO')->assertDontSee('documento-ajeno.pdf');
+    $this->get(route('documents.file.show', $foreign))->assertForbidden();
+    $this->get(route('admin.works.show', $other))->assertForbidden();
+});
+
+test('cancelled unpaid or future only services do not grant historical read access', function (array $attributes) {
+    $this->subscription->update($attributes);
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))
+        ->assertRedirect(route('private.planes'));
+    foreach ($this->caseDocuments as $document) {
+        $this->get(route('documents.file.show', $document))->assertForbidden();
+    }
+    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'NO AUTORIZADO'])->assertForbidden();
+})->with([
+    [['status' => 'cancelled']],
+    [['payment_status' => 'pending']],
+    [['payment_status' => 'voided']],
+    [['start_date' => '2030-11-05', 'end_date' => '2030-12-05']],
+    [['start_date' => '2030-11-05', 'end_date' => '2030-11-03']],
+]);
+
+test('a future renewal does not hide previously paid expired history or permit writing', function () {
+    $future = $this->subscription->replicate();
+    $future->fill(['start_date' => '2030-11-05', 'end_date' => '2030-12-05'])->save();
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))
+        ->assertOk()->assertViewHas('canUpload', false)->assertSee('MENSAJE CONSERVADO');
+    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'DEMASIADO PRONTO'])->assertForbidden();
+});

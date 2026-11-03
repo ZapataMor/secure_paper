@@ -31,8 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('dashboard/pagos', [WompiPaymentController::class, 'store'])->middleware('throttle:10,1')->name('private.payments.store');
         Route::get('dashboard/pagos/{order}', [WompiPaymentController::class, 'show'])->middleware('throttle:30,1')->name('private.payments.show');
 
+        Route::get('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'index'])->name('private.upload-document');
+
         Route::middleware('membership')->group(function () {
-            Route::get('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'index'])->name('private.upload-document');
             Route::post('dashboard/cargar-documento', [PrivateDocumentUploadController::class, 'store'])->name('private.upload-document.store');
         });
     });

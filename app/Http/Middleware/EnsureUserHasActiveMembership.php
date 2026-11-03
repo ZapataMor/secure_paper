@@ -17,11 +17,11 @@ class EnsureUserHasActiveMembership
         }
 
         if ($request->expectsJson()) {
-            abort(403, 'Necesitas una membresia activa y pagada para acceder al modulo Cargar documento.');
+            abort(403, 'Necesitas una membresia activa y pagada para enviar archivos o respuestas.');
         }
 
         return redirect()
             ->route('private.planes')
-            ->with('membership_error', 'Necesitas una membresia activa y pagada para acceder al modulo "Cargar documento".');
+            ->with('membership_error', 'Necesitas una membresia activa y pagada para enviar archivos o respuestas.');
     }
 }

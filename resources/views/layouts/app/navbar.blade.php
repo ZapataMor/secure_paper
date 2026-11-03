@@ -69,6 +69,7 @@
             $isAdvisor = $currentUser?->isAdvisor();
             $isClient = $currentUser?->isClient();
             $hasActiveMembership = $isClient && ($currentUser?->hasActiveMembership() ?? false);
+            $canViewDocumentHistory = $isClient && ($currentUser?->canViewDocumentHistory() ?? false);
         @endphp
 
         @persist('admin-navbar')
@@ -107,11 +108,11 @@
                         <a
                             href="{{ route('private.upload-document') }}"
                             wire:navigate
-                            class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }} {{ $hasActiveMembership ? '' : 'pointer-events-none opacity-55' }}"
-                            aria-disabled="{{ $hasActiveMembership ? 'false' : 'true' }}"
-                            title="{{ $hasActiveMembership ? 'Cargar documento' : 'Disponible al activar una membresia pagada' }}"
+                            class="sp-admin-module-link {{ request()->routeIs('private.upload-document') ? 'is-active' : '' }} {{ $canViewDocumentHistory ? '' : 'pointer-events-none opacity-55' }}"
+                            aria-disabled="{{ $canViewDocumentHistory ? 'false' : 'true' }}"
+                            title="{{ $canViewDocumentHistory ? 'Consultar mi expediente' : 'Disponible al activar una membresia pagada' }}"
                         >
-                            Cargar documentos
+                            {{ $hasActiveMembership ? 'Cargar documentos' : 'Mi expediente' }}
                         </a>
                     @endif
 

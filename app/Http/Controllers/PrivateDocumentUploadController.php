@@ -18,10 +18,14 @@ class PrivateDocumentUploadController extends Controller
         //
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
-        abort_if($user?->isAdmin(), 403);
+        abort_unless($user?->isClient(), 403);
+        if (! $user->canViewDocumentHistory()) {
+            return redirect()->route('private.planes')->with('membership_error',
+                'Necesitas un servicio pagado vigente o finalizado para consultar el expediente.');
+        }
 
         $documents = Document::query()
             ->with('documentType:id,name')
@@ -53,6 +57,7 @@ class PrivateDocumentUploadController extends Controller
         );
 
         return view('private.upload-document', [
+            'canUpload' => $user->hasActiveMembership(),
             'documents' => $documents,
             'adminDocuments' => $adminDocuments,
             'adminMessages' => $adminMessages,

@@ -1,4 +1,4 @@
-<x-layouts::app :title="__('Cargar documentos')">
+<x-layouts::app :title="__('Mi expediente')">
     @php
         $documents = $documents ?? collect();
         $adminDocuments = $adminDocuments ?? collect();
@@ -117,9 +117,9 @@
     <section class="sp-upload" aria-labelledby="sp-upload-title">
         <header class="sp-upload-hero">
             <div>
-                <p class="sp-upload-kicker">Tu espacio de trabajo · Cargar documentos</p>
+                <p class="sp-upload-kicker">Tu espacio de trabajo · {{ $canUpload ? 'Cargar documentos' : 'Solo consulta' }}</p>
                 <h1 id="sp-upload-title">Tu expediente de trabajo</h1>
-                <p class="sp-upload-intro">Reúne los archivos de tu proyecto y cuéntanos qué necesitas trabajar. Aquí también encontrarás las devoluciones y los mensajes para continuar el proceso. Las fechas y horas del expediente se muestran en horario de Colombia (UTC−5).</p>
+                <p class="sp-upload-intro">{{ $canUpload ? 'Reúne los archivos de tu proyecto y cuéntanos qué necesitas trabajar. Aquí también encontrarás las devoluciones y los mensajes para continuar el proceso.' : 'Consulta los documentos, indicaciones y mensajes conservados de tu proyecto. El envío de archivos y respuestas está deshabilitado mientras no tengas un servicio activo.' }} Las fechas y horas del expediente se muestran en horario de Colombia (UTC−5).</p>
             </div>
             <a href="{{ route('dashboard') }}" class="sp-upload-link" wire:navigate>Volver a Inicio →</a>
         </header>
@@ -128,11 +128,13 @@
             @include('partials.project-card',['projectEditable'=>false])
         @endif
         <div class="sp-upload-service">
-            <strong>Servicio activo</strong>
+            <strong>{{ $canUpload ? 'Servicio activo' : 'Solo consulta' }}</strong>
+            @unless($canUpload)<span>Puedes abrir tus documentos y leer el historial. Para enviar archivos o respuestas necesitas un servicio activo.</span>@endunless
             @if($activePlanName)<span>{{ $activePlanName }}</span>@endif
             <a href="{{ route('private.planes') }}" class="sp-upload-link" wire:navigate>Consultar mi servicio →</a>
         </div>
 
+        @if($canUpload)
         @if(session('status'))
             <div class="sp-upload-alert" role="status">{{ session('status') }}</div>
         @endif
@@ -224,6 +226,7 @@
                 </button>
             </div>
         </form>
+        @endif
 
         <section class="sp-upload-section" aria-labelledby="sp-upload-library-title">
             <header class="sp-upload-section-head"><h2 id="sp-upload-library-title">Documentos del proyecto</h2><p>Consulta los archivos que has compartido y las versiones que recibes durante el proceso.</p></header>
@@ -278,7 +281,7 @@
                 </article>
                 <article class="sp-upload-card">
                     <div class="sp-upload-card-head"><h3>Mensajes del equipo</h3><span class="sp-upload-count" aria-label="{{ $adminMessages->count() }} mensajes">{{ $adminMessages->count() }}</span></div>
-                    @if($adminMessages->isNotEmpty())
+                    @if($canUpload && $adminMessages->isNotEmpty())
                         <a href="#additional_information" class="sp-upload-link sp-upload-reply" x-data x-on:click="$dispatch('sp-upload-reply')">
                             {{ ($projectAssignment ?? null)?->advisor ? 'Responder al asesor' : 'Responder al equipo' }}
                         </a>

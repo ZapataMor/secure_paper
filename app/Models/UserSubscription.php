@@ -54,6 +54,15 @@ class UserSubscription extends Model
         return $this->belongsTo(PaymentPlan::class);
     }
 
+    public function scopeExpiredPaid(Builder $query): Builder
+    {
+        return $query
+            ->whereIn('status', self::ACTIVE_STATUSES)
+            ->whereIn('payment_status', self::PAID_STATUSES)
+            ->whereColumn('end_date', '>=', 'start_date')
+            ->whereDate('end_date', '<', now('America/Bogota')->toDateString());
+    }
+
     public function scopeActivePaid(Builder $query): Builder
     {
         return $query
