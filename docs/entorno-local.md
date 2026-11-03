@@ -130,3 +130,30 @@ Las bases, adjuntos y credenciales locales están excluidos de Git. El código d
 Pendiente: asignación al asesor ficticio, revisión y devolución de una versión al cliente. En esta revisión se probó un PDF con indicaciones, el envío vacío y el rechazo de `.txt` en el navegador; no se certificaron todavía todos los formatos, tamaños límite ni envíos múltiples.
 
 Observaciones para una mejora posterior: Configuración conserva textos en inglés; las horas del expediente se muestran en UTC (22:20 en la prueba, equivalente a 17:20 de Bogotá); los contadores usan «1 archivos» y «1 indicaciones». No se cambiaron estos textos en este bloque.
+## Bloque 3: asignación y acceso del asesor (3 de noviembre de 2026)
+
+Se asignó el expediente del cliente ficticio desde la interfaz local de administración, sin cambiar código ni reglas de permisos.
+
+### Recorrido comprobado
+
+1. Ingresar como `administracion@propaps.test`, abrir **Proyectos** y el expediente de **Cliente de Prueba**.
+2. Establecer el título **PRUEBA LOCAL - Manuscrito de Cliente de Prueba**, seleccionar **Asesor de Prueba**, conservar **Recibido** y pulsar **Guardar asignación y estado**.
+3. Comprobar el aviso **Asignación y seguimiento del proyecto guardados**.
+4. Cerrar la sesión administrativa e ingresar como `asesor@propaps.test`.
+5. Abrir **Proyectos**: aparece el expediente asignado. Dentro se ven el PDF y las indicaciones del cliente.
+6. Abrir el PDF desde la sesión del asesor: se muestra correctamente en el visor del navegador.
+
+La interfaz del asesor permite actualizar seguimiento y compartir documentos o mensajes; no presenta los controles administrativos para cambiar el responsable o el nombre del proyecto. En este bloque no se envió ninguna devolución ni mensaje y el estado sigue en **Recibido**.
+
+### Verificación y conservación
+
+Antes de asignar, la cuenta del asesor no tenía acceso según `ProjectAccess`; después, tanto ese servicio como `DocumentPolicy` permiten consultar el expediente y el documento. El acceso posterior también se verificó con la sesión real del asesor en Brave. No se realizó todavía una prueba HTTP de rechazo con un segundo asesor no asignado.
+
+Se conservaron un archivo y una indicación, y la huella SHA-256 del PDF no cambió. La asignación quedó registrada a nombre del administrador ficticio y se creó su entrada de auditoría. Los recuentos de pagos, órdenes Wompi, trabajos en cola y mensajes permanecieron sin cambios. Hostinger no fue modificado.
+
+- Respaldo previo verificado: `.local/backups/antes-asignacion-20261103-172422.sqlite`.
+- Respaldo posterior verificado: `.local/backups/despues-asignacion-20261103-172809.sqlite`.
+- Resultado: `.local/logs/comprobacion-asignacion-asesor.json`.
+- Evidencias: `.local/logs/asignacion-admin-local.jpg`, `.local/logs/expediente-asesor-local.jpg` y `.local/logs/pdf-abierto-asesor-local.jpg`.
+
+Se dejó abierta la sesión del asesor en el expediente local. Siguiente bloque: preparar una devolución ficticia y comprobar que el cliente puede consultar el documento y el mensaje del asesor.
