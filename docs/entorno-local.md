@@ -90,3 +90,43 @@ No ejecutar `composer setup` ni migraciones en Hostinger para preparar esta copi
 El traslado y este registro no certifican la operacion de pagos, correos ni recorridos privados en produccion.
 Actualizacion confirmada por el usuario el 3 de noviembre de 2026: el ultimo gran avance fue una prueba de pago real realizada satisfactoriamente. Esta confirmacion sustituye el pendiente historico de Wompi descrito en los registros de octubre. En esta sesion no se repitio el cobro ni se consulto el detalle de la transaccion; los recorridos restantes se revisaran por bloques.
 No ejecutar una actualizacion completa en Hostinger solamente para copiar este documento sin revisar primero el estado y los cambios pendientes del servidor.
+
+## Bloque 2: servicio ficticio y primera carga (3 de noviembre de 2026)
+
+Se preparó exclusivamente en SQLite local la cuenta `cliente@propaps.test` con el servicio **PRUEBA LOCAL - Revision de manuscrito - Sin cobro**, del 03/11/2026 al 02/12/2026 inclusive. El importe es cero. `payment_status=paid` simula el requisito de acceso; no representa un pago real y no crea registros en `payments` ni en `wompi_orders`.
+
+### Preparación reproducible
+
+```powershell
+& .\.local\php\php.exe tools/local/activate-test-service.php
+```
+
+La herramienta usa las protecciones de `tools/local/bootstrap.php`, solo admite la cuenta ficticia activa de cliente y conserva cualquier servicio previo. Antes de crear el servicio, genera una copia SQLite consistente mediante `VACUUM INTO` y comprueba su integridad. Si el servicio ficticio ya está vigente, no lo duplica ni cambia su fecha de finalización. Si existe otro servicio, se detiene para revisarlo. No usarla como herramienta de administración en producción.
+
+### Recorrido comprobado en Brave
+
+1. Actualizar Inicio: aparece **Servicio activo**, el nombre de prueba y su fecha de vencimiento; se habilita **Cargar documentos**.
+2. Abrir **Cargar documentos**: aparecen selección de archivos, indicaciones, documentos y seguimiento.
+3. Pulsar **Enviar al equipo** sin contenido: aparece «Adjunta al menos un archivo o escribe tus indicaciones»; no se guarda nada.
+4. Seleccionar un `.txt` ficticio: el navegador lo rechaza y muestra los formatos permitidos.
+5. Seleccionar `.local/fixtures/PRUEBA-LOCAL-manuscrito.pdf`, escribir indicaciones ficticias y enviar: aparece **Archivo cargado correctamente**.
+6. El expediente conserva un archivo y una indicación. La orientación cambia a **Insumos recibidos**.
+7. Abrir el enlace del documento: el PDF se muestra correctamente en una pestaña nueva.
+
+Se verificó que la huella SHA-256 del archivo almacenado coincide con la del PDF original. Los recuentos de pagos, órdenes Wompi y trabajos de cola permanecieron en cero. Se comprobó también que repetir la activación no crea otra suscripción y que `APP_ENV=production` bloquea la herramienta antes de hacer cambios.
+
+### Evidencias y conservación
+
+- Respaldo anterior: `.local/backups/antes-servicio-ficticio-20261103-221832-9219af.sqlite`.
+- Respaldo posterior: `.local/backups/despues-primera-carga-*.sqlite` (conserva el expediente; el archivo adjunto permanece en `storage/app/private/documents/`).
+- Resultado de comprobaciones: `.local/logs/comprobacion-carga-documentos.json`.
+- PDF original de una página: `.local/fixtures/PRUEBA-LOCAL-manuscrito.pdf`.
+- Captura del expediente: `.local/logs/primera-carga-cliente.jpg`.
+
+Las bases, adjuntos y credenciales locales están excluidos de Git. El código de la herramienta y este registro permiten conservar el procedimiento por separado de los datos. No se modificaron Hostinger, Wompi ni las reglas de acceso de la aplicación.
+
+### Siguiente bloque y límites
+
+Pendiente: asignación al asesor ficticio, revisión y devolución de una versión al cliente. En esta revisión se probó un PDF con indicaciones, el envío vacío y el rechazo de `.txt` en el navegador; no se certificaron todavía todos los formatos, tamaños límite ni envíos múltiples.
+
+Observaciones para una mejora posterior: Configuración conserva textos en inglés; las horas del expediente se muestran en UTC (22:20 en la prueba, equivalente a 17:20 de Bogotá); los contadores usan «1 archivos» y «1 indicaciones». No se cambiaron estos textos en este bloque.
