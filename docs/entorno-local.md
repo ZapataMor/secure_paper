@@ -236,3 +236,42 @@ Los recuentos de trabajos en cola, pagos y órdenes Wompi siguen en cero. El cor
 - Evidencias: `.local/logs/respuesta-guardada-cliente.jpg` y `.local/logs/respuesta-visible-asesor.jpg`.
 
 Se dejó abierta la sesión del asesor en el expediente. Mejora propuesta, todavía sin implementar: hacer visible una acción **Responder al asesor**, ya que actualmente la respuesta se envía mediante el campo **Indicaciones para la revisión**. El siguiente bloque recomendado es comprobar el aislamiento de expedientes entre clientes y asesores distintos mediante cuentas exclusivamente ficticias.
+## Bloque 7: aislamiento entre clientes y asesores (3 de noviembre de 2026)
+
+Se añadieron 13 casos automatizados en `tests/Feature/ProjectAccessIsolationTest.php`, usando dos clientes con servicio activo, dos asesores y un administrador ficticios. Las pruebas ejecutan las rutas y controladores de Laravel con autenticación simulada por el framework; no sustituyen una prueba de inicio de sesión ni comprueban CSRF en el navegador.
+
+La ejecución usa SQLite `:memory:` y `Storage::fake('local')`. Correo, notificaciones y cola se simulan, los avisos del proyecto se desactivan y se prohíben solicitudes HTTP externas inesperadas. El expediente local persistente permanece separado.
+
+### Resultados
+
+- Ambos clientes consultan su manuscrito y devolución, pero reciben **403** al intentar abrir los archivos del otro, aun teniendo un servicio vigente.
+- Cada asesor solo ve su expediente en la lista y puede abrir sus documentos e indicaciones. El expediente y los archivos del otro cliente devuelven **403**.
+- Un asesor no asignado o un cliente no pueden cambiar el estado, reasignar el expediente ni enviarle archivos o mensajes: **403**, sin cambios en documentos, mensajes, auditoría ni almacenamiento.
+- Manipular los campos `user_id` o `uploaded_by` en una carga de cliente no permite atribuir el archivo a otro usuario: el servidor mantiene al cliente autenticado como propietario y autor.
+- La reasignación administrativa retira el acceso al asesor anterior, incluidos los documentos que él mismo había subido; el nuevo asesor sí puede acceder.
+- Un asesor inactivo o eliminado pierde el acceso al expediente, archivos y acciones de escritura.
+- Se verifica también el acceso permitido: el asesor asignado puede actualizar y devolver trabajo en su expediente, y administración puede consultar ambos expedientes.
+- Sin sesión, las rutas protegidas redirigen al inicio de sesión.
+
+Resultado del bloque: **19 pruebas aprobadas, 227 comprobaciones** (13 casos nuevos y 6 pruebas existentes de `DocumentAccessTest.php`). Formato PHP aprobado. No fue necesario modificar las reglas de acceso de la aplicación.
+
+### Conservación y reproducción
+
+- Respaldo previo verificado: `.local/backups/antes-aislamiento-20261103-175035.sqlite`.
+- Resultado automatizado: `.local/logs/pruebas-aislamiento.xml`.
+- Verificación del entorno persistente: `.local/logs/comprobacion-aislamiento.json`.
+- Se compararon exactamente 11 tablas de negocio con el respaldo y las huellas SHA-256 de los dos PDF: sin cambios. El expediente local conserva **Entregado**, dos documentos, dos indicaciones del cliente y un mensaje del asesor.
+
+Para repetir este bloque desde la raíz del proyecto, sin configuración cacheada:
+
+```powershell
+$env:APP_ENV = 'testing'
+$env:DB_CONNECTION = 'sqlite'
+$env:DB_DATABASE = ':memory:'
+$env:DB_URL = ''
+$env:MAIL_MAILER = 'array'
+$env:PROPAPS_PROJECT_EMAIL_ENABLED = 'false'
+& .\.local\php\php.exe vendor/bin/pest tests/Feature/ProjectAccessIsolationTest.php tests/Feature/DocumentAccessTest.php --compact
+```
+
+Estas variables corresponden a la sesión de terminal de pruebas; abrir otra terminal para el servidor local. No se ejecutó nuevamente toda la suite: los siete fallos antiguos documentados en el primer bloque siguen pendientes. Esta comprobación de permisos no equivale a una auditoría integral de seguridad o de producción. Hostinger permanece sin cambios.
