@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Herramientas, caches y datos de pruebas de este equipo
+/.local/
