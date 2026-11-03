@@ -321,3 +321,28 @@ Se agregó `app.display_timezone` para la presentación. `app.timezone` permanec
 - Entorno local verificado: SQLite en D, correo en archivos, pagos externos desactivados. Cambio guardado únicamente en Git local, sin publicación ni despliegue. Si se despliega más adelante, deberá regenerarse la caché de configuración para incluir la nueva opción.
 
 Este bloque cubre el expediente. No modifica otras pantallas, correos ni reglas de vencimiento; la suite completa mantiene pendientes los fallos anteriores documentados. Siguiente revisión propuesta: comprobar con datos ficticios qué puede consultar y hacer un cliente cuando vence su servicio, conservando su expediente.
+
+## Bloque 11: revisión del vencimiento sin perder el expediente (3 de noviembre de 2026)
+
+Se añadieron ocho casos en `tests/Feature/ServiceExpiryReviewTest.php`. Los clientes, asesores, documentos y servicios de este bloque existen únicamente en SQLite `:memory:` y almacenamiento simulado. Se fijó el reloj de las pruebas en noviembre de 2030; no se cambió el reloj del PC, del servidor local ni la suscripción del cliente que se usa en Brave. La TRM se simuló, se bloquearon solicitudes HTTP externas y se simularon correo, cola y notificaciones.
+
+### Comportamiento actual comprobado
+
+- El último segundo del día UTC de vencimiento aún permite acceder. Al comenzar el día siguiente UTC, se pierde el acceso: un servicio con fecha final 03/11/2030 deja de funcionar a las **19:00 del 03/11/2030 en Colombia**, cinco horas antes del fin del día colombiano. La mejora de presentación del bloque 10 no cambió esta regla.
+- Inicio sigue disponible y muestra Período de carga finalizado / Consulta las condiciones de tu servicio. La acción dirige a Planes, que sigue accesible y ofrece contratación; no muestra un resumen específico del servicio vencido en esta prueba.
+- El expediente completo redirige a Planes con un aviso de membresía activa requerida. El cliente no puede consultar allí indicaciones, mensajes ni devoluciones. Los enlaces directos a ambos PDF devuelven 403.
+- Los envíos de texto y archivos también se bloquean; las solicitudes JSON reciben 403. Se compararon exactamente ocho tablas de negocio y las huellas de los archivos antes y después de los intentos: no se modificó el expediente, ni se generaron pagos u órdenes.
+- Asesor asignado y administración conservan acceso de lectura. El asesor puede incluso enviar una nueva devolución al expediente vencido; el cliente no puede abrirla mientras no recupere un servicio activo. Esta prueba también se ejecutó exclusivamente con datos efímeros y comunicaciones simuladas.
+- Registrar una nueva suscripción ficticia vigente, por valor cero y sin pasar por la pasarela, devuelve el acceso al mismo expediente y a los mismos documentos, notas y mensajes. No duplica ni sustituye el expediente. Esto verifica la condición de acceso, no un proceso real de renovación o cobro.
+
+### Resultado y conservación
+
+**30 pruebas aprobadas, 430 comprobaciones**: ocho de vencimiento y 22 anteriores de documentos, aislamiento y horario. Formato del nuevo archivo aprobado. Evidencia automatizada: `.local/logs/pruebas-vencimiento.xml`.
+
+Comprobación independiente de la base local persistente: integridad SQLite correcta; cliente de prueba con servicio activo; proyecto Entregado; dos documentos, dos indicaciones, un mensaje; cero trabajos en cola, pagos y órdenes Wompi. Los dos PDF coinciden por SHA-256 con los archivos ficticios originales. Informe: `.local/logs/comprobacion-vencimiento.json`.
+
+Este bloque agrega pruebas y documentación; no cambia las reglas actuales de la app. Las pruebas de límite horario describen expresamente el comportamiento encontrado, no lo validan como política deseada. No hubo cambios en Hostinger, publicación en GitHub, cobros ni correos reales. No se repitió toda la suite; siguen pendientes los fallos anteriores documentados.
+
+### Mejora propuesta para el siguiente bloque
+
+Corregir primero el cálculo de vigencia para respetar el día completo de Colombia, manteniendo UTC para los registros de eventos. Revisar juntos los criterios de servicio activo, programado y vencido para que el acceso y la orientación coincidan. Después conviene definir si el cliente conservará consulta de solo lectura tras el vencimiento: el aviso actual menciona únicamente la carga, aunque también se bloquea la consulta de lo ya entregado. Esta política de lectura no se ha cambiado.
