@@ -784,3 +784,8 @@ La comprobación autenticada del sitio real usó tres cuentas ficticias temporal
 Se retiró la vinculación antigua a aplicativo-aburra del panel de Hostinger; secure_paper conserva su origen correcto en GitHub. El flujo de publicación es Git más actualización controlada por SSH, con compilación y migraciones. No se configuró autoimplementación directa sobre public_html.
 
 GitHub Actions detectó que su matriz incluía PHP 8.3, incompatible con Symfony 8 fijado en composer.lock. Se ajustó a PHP 8.4/8.5, sin cambiar paquetes, y se añadieron las doce pruebas JavaScript. Versión v29, etiqueta local/v29-integracion-hostinger-20261104.
+## Bloque 30: verificación visual y permisos de assets (4 de noviembre de 2026)
+
+La aceptación visual del sitio detectó que el build copiado desde Windows tenía permisos privados y sus CSS/JS no se servían. Se corrigieron únicamente public/build y public_html/build a directorios 755 y archivos 644. Se verificaron respuestas 200 de CSS/JS y la página completa con estilos en Brave. La configuración, los documentos y los respaldos conservaron sus permisos privados. El procedimiento de publicación ya incluye esta comprobación.
+
+GitHub Actions v29 aprobó formato, pruebas PHP 8.4 y 8.5 y borradores JavaScript. Se descargó además una copia privada de los respaldos a D:\PROYECTOS\secure_paper\.local\backups\hostinger-20261104, excluida de Git y restringida al usuario de Windows. Versión v30, etiqueta local/v30-verificacion-publicacion-20261104; solo documentación, sin cambios funcionales adicionales.
