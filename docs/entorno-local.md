@@ -768,3 +768,10 @@ Resultado: **225 pruebas PHP, 3.213 comprobaciones, y 12 pruebas JavaScript apro
 Se inició la comprobación de Hostinger con hPanel en Brave. PHP web 8.4; cron project-mail cada minuto. La conexión GIT del panel apunta a otro repositorio, por lo que no debe usarse Redistribuir. SSH está activo, pero aún requiere autenticación de este equipo. No se ha desplegado código ni modificado datos del servidor en este bloque. Los requisitos, hallazgos y pasos para respaldo, actualización y restauración están en docs/preparacion-publicacion.md.
 
 Versión local v27, etiqueta local/v27-preparacion-publicacion-20261104. El siguiente bloque es integrar el código revisado en GitHub y en la instalación real, previa verificación técnica y respaldo. La aprobación general del propietario permite continuar hasta completar esa integración; cualquier acceso nuevo se confirma con el alcance concreto.
+## Bloque 28: pruebas reproducibles antes de integrar Hostinger (4 de noviembre de 2026)
+
+Se publicó v27 y sus etiquetas en GitHub conservando todo el historial. Se obtuvo autorización específica para una clave SSH temporal, que se retirará al finalizar la integración. La revisión real confirmó PHP CLI 8.4.27, configuración production sin debug, MySQL, Wompi production listo, Google con retorno correcto y trabajador de avisos ejecutándose cada minuto sin trabajos pendientes ni fallidos.
+
+Se prepararon respaldos privados del servidor y una copia de ensayo fuera de public_html. La primera ejecución en esa copia mostró una dependencia del entorno: una prueba de recuperación esperaba 127.0.0.1:8000. Se fijó APP_URL en phpunit.xml para que las pruebas sean reproducibles en cualquier equipo y en GitHub. La copia aislada necesita también un .env de ejemplo para evitar avisos por ausencia del archivo; nunca utiliza el .env de producción. Las nueve pruebas de recuperación volvieron a pasar en local (143 comprobaciones). No cambia el comportamiento de la aplicación.
+
+Versión v28, etiqueta local/v28-configuracion-pruebas-20261104. La actualización pública sigue pendiente hasta completar el ensayo en el servidor y verificar su resultado.
