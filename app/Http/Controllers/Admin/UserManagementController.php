@@ -78,7 +78,10 @@ class UserManagementController extends Controller
             // Orden fijo para impedir que dos administradores se desactiven mutuamente a la vez.
             $admins = User::where('role', 'admin')->orderBy('id')->lockForUpdate()->get();
             $actor = $admins->firstWhere('id', $request->user()->id);
-            abort_unless($actor && $actor->status === 'active', 403);
+            // Una reactivación durante esta petición no devuelve validez a su sesión anterior.
+            abort_unless($actor && $actor->status === 'active'
+                && $actor->session_epoch === $request->user()->session_epoch, 403,
+                'Tu acceso cambió. Vuelve a ingresar antes de realizar cambios.');
             $target = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
             if ($input['status'] === 'inactive') {
                 if ($target->isAdmin() && $target->status === 'active' && $admins->where('status', 'active')->count() <= 1) {

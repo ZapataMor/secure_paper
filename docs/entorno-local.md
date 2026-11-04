@@ -728,3 +728,32 @@ El ayudante `verify` confirmó la conservación exacta del expediente, suscripci
 Cero trabajos de correo, pagos y órdenes Wompi. No se usaron cuentas ni servicios de producción. Las sesiones antiguas del cliente se cerraron; no se restauraron al reactivarlo. No se envió el borrador anterior de la pestaña del cliente.
 
 Versión local v25, etiqueta `local/v25-controles-cuentas-auditados-20261103`, sin publicación en GitHub ni despliegue en Hostinger. Este bloque usa la migración de v24 y requiere compilar sus estilos en un despliegue futuro. El historial muestra los últimos veinte cambios sin filtros; puede ampliarse con búsqueda por cuenta cuando se necesite. Siguiente revisión sugerida: probar dos administradores trabajando con confirmaciones antiguas para comprobar que uno no pueda ejecutar cambios después de perder su propio acceso.
+## Bloque 26: dos administradores con confirmaciones abiertas (3 de noviembre de 2026)
+
+Se revisó el caso en que un administrador abre una confirmación y otro lo desactiva antes de enviarla. El cierre de sesiones de v24 y la comprobación del administrador dentro de la transacción de v25 ya bloqueaban la cuenta inactiva. La nueva prueba detectó una ventana adicional: si el administrador era desactivado y reactivado después de la autorización inicial, pero antes de la escritura, el control final solo comprobaba rol y estado y permitía continuar.
+
+Se corrigió `UserManagementController::updateStatus` para comparar también, bajo el bloqueo de administradores, la marca de revocación vigente con la del usuario que inició la petición. Si cambió, rechaza con 403 y el mensaje «Tu acceso cambió. Vuelve a ingresar antes de realizar cambios». La reactivación no legitima una petición iniciada con la sesión anterior. El rechazo ocurre antes de modificar el destino o escribir auditoría.
+
+### Pruebas
+
+`TwoAdminOpenFormsTest.php` añade seis casos: dos confirmaciones antiguas del administrador retirado, dirigidas al administrador que permanece activo o a un cliente; tres cambios después de la autorización de ruta, antes del controlador (desactivación, pérdida del rol administrativo y desactivación/reactivación); y reactivación seguida de rechazo de sesión antigua y acceso con nuevo login. La pérdida de acceso durante la petición se intercala mediante middleware exclusivo de prueba; no se cambian rutas de producción para simularla.
+
+La prueba del ciclo durante una petición reprodujo el fallo antes de la corrección y pasó después. Se verifican la conservación del expediente y del destino, la permanencia del administrador autorizado y la ausencia de registros adicionales por intentos rechazados. CSRF está activo. Se utilizan SQLite en memoria, almacenamiento y comunicaciones simulados y HTTP externo bloqueado.
+
+Batería completa: **213 pruebas PHP aprobadas, 3.102 comprobaciones**. Evidencias: `.local/logs/pruebas-completas-v26.xml` y `.local/logs/pruebas-completas-v26.txt`. El registro inicial `.local/logs/dos-administradores-v26.txt` conserva la reproducción del fallo previo; la evidencia final válida es la batería completa. Formato y diferencias de Git comprobados. No se modificaron vistas, estilos ni JavaScript.
+
+### Demostración con sesiones HTTP separadas
+
+Se creó `.local/backups/antes-dos-administradores-v26-20261104-031638.sqlite` antes de preparar los datos (nombre UTC; en Bogotá seguía siendo 3 de noviembre). Se añadió exclusivamente la cuenta ficticia `administracion-relevo@propaps.test`, ID 6, Administracion Relevo de Prueba, con la clave de las otras cuentas locales. No se ejecutó registro público ni se enviaron correos.
+
+El ayudante privado `.local/verificar-dos-administradores-v26.php` abrió sesiones independientes para el administrador original ID 3, el segundo administrador ID 6 y el cliente ID 4. El segundo administrador abrió confirmaciones para desactivar al administrador original y al cliente. El administrador original abrió y confirmó la desactivación del segundo, con un motivo identificado como PRUEBA LOCAL V26.
+
+Los dos formularios antiguos del administrador desactivado fueron rechazados con 419 porque sus sesiones y tokens CSRF ya habían sido eliminados. El acceso al listado pidió login. No cambiaron las cuentas objetivo ni el expediente y no se añadió auditoría por esos intentos. En las pruebas automatizadas se comprobó también el rechazo con CSRF válido y una sesión todavía presente, mediante el control de acceso.
+
+El administrador original reactivó al segundo por la ruta administrativa, en un bloque `finally`. Su sesión antigua siguió sin poder entrar ni enviar. Tras un nuevo login pudo consultar el listado y abrir una confirmación nueva, que no se envió. Los dos administradores quedaron activos y el cliente permaneció activo durante toda la prueba.
+
+El cliente pudo consultar las indicaciones y mensajes y abrir los cinco PDF; se compararon sus huellas. Se conservaron los registros anteriores, asignaciones, suscripciones y auditoría previa. Solo permanecen la nueva cuenta ficticia y dos cambios de acceso autorizados sobre ella: desactivación y reactivación, ambos realizados por el administrador ID 3. Del perfil nuevo se exceptúan las modificaciones esperadas de marca de revocación, recordatorio y fecha de actualización. Informe: `.local/logs/dos-administradores-http-v26.json`.
+
+El expediente conserva **cinco documentos, tres indicaciones/respuestas y dos mensajes del asesor**. Cero trabajos de correo, pagos y órdenes Wompi. No se manipularon las pestañas abiertas del usuario; la comprobación usó HTTP local. La intercalación se probó de forma determinista y las sesiones HTTP se utilizaron en secuencia; no se simuló concurrencia real de procesos contra MySQL de Hostinger.
+
+Versión local v26, etiqueta `local/v26-dos-administradores-formularios-20261103`, sin publicación en GitHub ni despliegue en Hostinger. El administrador original y el cliente quedaron con sus permisos y expedientes conservados.
