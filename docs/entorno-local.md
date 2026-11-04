@@ -472,3 +472,28 @@ La batería completa de pruebas ahora aprueba: **120 pruebas, 1.357 comprobacion
 Se compararon las huellas SHA-256 de la base SQLite persistente y de todos los documentos privados antes y después: sin cambios. Informe: `.local/logs/comprobacion-v16.json`. El comprobador local confirmó correo en archivos, SQLite en D y pagos externos desactivados antes de la ejecución.
 
 Versión v16 conservada únicamente en Git local, etiqueta `local/v16-panel-servicios-20261103`. Sin publicación en GitHub ni despliegue en Hostinger. Siguiente bloque sugerido: revisar una renovación ficticia de un servicio vencido, conservando el expediente y recuperando los permisos de carga y respuesta.
+
+## Bloque 17: renovación ficticia y continuidad del expediente (3 de noviembre de 2026)
+
+Se amplió la prueba de renovación de ServiceExpiryReviewTest para comprobar envíos reales al controlador, además de la presencia de controles. Una nueva suscripción ficticia vigente de valor cero permite subir un PDF y, en otro envío, responder al asesor. Cliente y asesor pueden consultar el nuevo archivo y el mensaje. Se conservan exactamente la suscripción vencida, la asignación y el estado del proyecto, las indicaciones y mensajes anteriores, los registros de documentos originales y sus huellas SHA-256.
+
+La prueba también avanza el reloj hasta el vencimiento de la renovación: vuelve el modo de consulta, se conserva el documento y la respuesta nuevos, y se rechaza otra respuesta sin alterar el expediente. Todo se ejecuta en SQLite en memoria, con almacenamiento simulado, HTTP externo bloqueado y correo, notificaciones y colas simulados.
+
+Resultado conjunto con membresías, aislamiento y documentos: **52 pruebas aprobadas, 896 comprobaciones**. Evidencia final: `.local/logs/pruebas-renovacion-v17.xml`. No se repitió la batería completa en este bloque; la ejecución completa de v16 aprobó 120 pruebas. No hubo cambios en el código de la aplicación.
+
+### Demostración persistente local
+
+Se renovó exclusivamente `consulta-vencida@propaps.test`, conservando el servicio anterior. Antes se creó el respaldo `.local/backups/antes-renovacion-v17-20261103-202213.sqlite`.
+
+- Nueva suscripción ficticia ID 3, del **03/11/2026 al 02/12/2026 inclusive**, valor cero. El estado paid es un dato sintético para probar permisos; no representa un pago ni una aprobación de Wompi.
+- Se mantiene el mismo plan claramente identificado como PRUEBA LOCAL y Sin cobro.
+- El proyecto conserva su título histórico PRUEBA LOCAL - Expediente vencido en solo consulta, su estado Entregado y el Asesor de Prueba. El estado de acceso actual aparece por separado como Servicio activo; renovar no modifica automáticamente el avance del proyecto.
+- Desde el navegador integrado se inició sesión con la cuenta ficticia, se comprobó el bloqueo previo y luego los controles habilitados tras renovar. Brave no estaba conectado en esta sesión.
+- Se cargó `PRUEBA-LOCAL-renovacion-v17.pdf`, copia del manuscrito ficticio existente, y se guardó por separado la respuesta identificada como Renovación ficticia v17. Ambos envíos mostraron confirmación y quedaron visibles en el historial. No se renombró ni sobrescribió ningún PDF anterior.
+- El expediente ahora tiene **tres documentos, dos indicaciones/respuestas y un mensaje del asesor**. La comprobación automática del asesor se hizo en la base en memoria; la demostración del navegador se realizó como cliente.
+
+Preparación y verificación local: `.local/renovacion-v17.php` (uso único para preparar; `verify` permite comprobar el resultado). La preparación rechaza repeticiones y usa el validador de entorno local. Informes privados: `.local/logs/renovacion-v17-preparacion.json` y `.local/logs/comprobacion-renovacion-v17.json`. Se conservaron las huellas de todos los registros previos y PDF; solo se excluyeron los campos de indicaciones y fecha de actualización del cliente renovado para admitir su respuesta, verificando por separado la conservación de las indicaciones anteriores. Las demás cuentas y expedientes permanecen intactos.
+
+Cero trabajos de correo, pagos y órdenes Wompi. La configuración sigue con correo en archivos, avisos automáticos desactivados y pasarela sin credenciales. No se ejecutaron trabajadores de correo.
+
+Captura: `.local/logs/renovacion-local-v17.jpg`. La pestaña local quedó abierta en los documentos y la comunicación del cliente renovado. Los datos ficticios, respaldo y evidencias permanecen fuera de Git; las pruebas y esta documentación se conservan en la versión local v17, etiqueta `local/v17-renovacion-ficticia-20261103`. Sin publicación en GitHub ni cambios en Hostinger.

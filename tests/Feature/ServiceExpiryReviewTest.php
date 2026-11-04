@@ -160,6 +160,57 @@ test('a synthetic renewal restores writing to the same readable case without pay
     unset($before['user_subscriptions'], $after['user_subscriptions']);
     expect($after)->toBe($before);
     $this->assertDatabaseCount('user_subscriptions', 2);
+    $oldSubscription = $this->subscription->fresh()->getRawOriginal();
+    $oldNotes = json_decode($this->client->fresh()->additionalInformationEntries()->toJson(), true);
+    $oldAssignment = $this->assignment->fresh()->getRawOriginal();
+    $oldMessages = UserMessage::orderBy('id')->get()->toJson();
+    $oldDocuments = Document::orderBy('id')->get()->toJson();
+    $oldHashes = $after['files'];
+
+    $this->post(route('private.upload-document.store'), [
+        'document_files' => [UploadedFile::fake()->create('renovacion-ficticia.pdf', 2, 'application/pdf')],
+    ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
+    $uploaded = Document::where('original_name', 'renovacion-ficticia.pdf')->sole();
+    expect($uploaded->user_id)->toBe($this->client->id)
+        ->and($uploaded->uploaded_by)->toBe($this->client->id);
+    Storage::disk('local')->assertExists($uploaded->file_path);
+    $this->post(route('private.upload-document.store'), [
+        'additional_information' => 'RESPUESTA TRAS RENOVACION FICTICIA',
+    ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', true)
+        ->assertSee('renovacion-ficticia.pdf')->assertSee('RESPUESTA TRAS RENOVACION FICTICIA')
+        ->assertSee('MENSAJE CONSERVADO')->assertSee('INDICACIONES CONSERVADAS');
+    $this->get(route('documents.file.show', $uploaded))->assertOk();
+    $this->actingAs($this->advisor)->get(route('admin.works.show', $this->client))->assertOk()
+        ->assertSee('renovacion-ficticia.pdf')->assertSee('RESPUESTA TRAS RENOVACION FICTICIA');
+    $this->get(route('documents.file.show', $uploaded))->assertOk();
+
+    expect($this->subscription->fresh()->getRawOriginal())->toBe($oldSubscription)
+        ->and($this->assignment->fresh()->getRawOriginal())->toBe($oldAssignment)
+        ->and(UserMessage::orderBy('id')->get()->toJson())->toBe($oldMessages)
+        ->and(Document::whereKey($this->caseDocuments->pluck('id')->all())->orderBy('id')->get()->toJson())->toBe($oldDocuments)
+        ->and($this->client->fresh()->additionalInformationEntries())->toHaveCount(count($oldNotes) + 1);
+    foreach ($oldNotes as $note) {
+        expect(json_decode($this->client->fresh()->additionalInformationEntries()->toJson(), true))->toContain($note);
+    }
+    foreach ($oldHashes as $path => $hash) {
+        expect(hash('sha256', Storage::disk('local')->get($path)))->toBe($hash);
+    }
+    $this->assertDatabaseCount('documents', 3);
+    $this->assertDatabaseCount('payments', 0);
+    $this->assertDatabaseCount('wompi_orders', 0);
+
+    // Al terminar también la renovación, se conserva todo en modo de consulta.
+    Carbon::setTestNow(Carbon::parse('2030-12-04 05:00:00', 'UTC'));
+    $renewedSnapshot = ($this->caseSnapshot)();
+    $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()
+        ->assertViewHas('canUpload', false)->assertSee('Solo consulta')
+        ->assertSee('renovacion-ficticia.pdf')->assertSee('RESPUESTA TRAS RENOVACION FICTICIA');
+    $this->get(route('documents.file.show', $uploaded))->assertOk();
+    $this->postJson(route('private.upload-document.store'), [
+        'additional_information' => 'FUERA DE LA RENOVACION',
+    ])->assertForbidden();
+    expect(($this->caseSnapshot)())->toBe($renewedSnapshot);
 });
 
 test('an assigned advisor can return work after expiry and the client can read it', function () {
