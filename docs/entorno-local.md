@@ -390,3 +390,29 @@ Respaldo previo: `.local/backups/antes-solo-consulta-20261103-235613.sqlite`. Se
 En Brave se comprobó Inicio, entrada por Mi expediente, lectura del historial y apertura visual de la devolución PDF con el servicio vencido. El DOM del expediente contiene cero campos de archivos, cero áreas de respuesta y cero formularios de envío. Evidencia: `.local/logs/expediente-solo-consulta.jpg`. Se dejó abierta la cuenta ficticia vencida para revisión del usuario.
 
 La versión se conserva en Git local. Sin publicación en GitHub, cambios en Hostinger, correos ni cobros reales. Las fechas de los servicios existentes no se modifican. La cuenta demostrativa y sus datos pertenecen solo al entorno local y no forman parte del commit. Los fallos antiguos de la suite completa siguen pendientes; no se ejecutó toda la suite en este bloque.
+
+## Bloque 14: recuperación de contraseña y conservación del expediente (3 de noviembre de 2026)
+
+Se revisó la recuperación con cuentas ficticias creadas únicamente en SQLite `:memory:`, almacenamiento simulado y reloj de pruebas. No se cambiaron contraseñas de las cuentas persistentes del navegador ni de producción.
+
+Los tres fallos antiguos de `PasswordResetTest.php` se reprodujeron: las pruebas esperaban la notificación estándar `ResetPassword`, pero el modelo envía `AccountPasswordReset`, la notificación personalizada de Propaps. Se corrigió la expectativa y se utilizó el nombre de ruta POST `password.email`. No fue necesario modificar el código de recuperación de la aplicación.
+
+Se añadió `tests/Feature/Auth/PasswordRecoveryLifecycleTest.php` con nueve casos:
+
+- Solicitud y renderizado real del correo personalizado mediante transporte `log`, en un archivo de almacenamiento de pruebas. Se verifica su texto, duración de 60 minutos y enlace local; se abre la vista y se completa el restablecimiento mediante peticiones del entorno de pruebas.
+- Rechazo de enlaces vencidos, inválidos, ya utilizados y asociados a otra cuenta, conservando la contraseña ante cada rechazo.
+- Una solicitud inmediata se limita sin reemplazar el enlace vigente; pasada la espera configurada, un nuevo enlace invalida el anterior.
+- Una confirmación de contraseña distinta se rechaza sin consumir el enlace válido.
+- Recuperación e inicio de sesión de clientes con servicio activo y vencido: la contraseña anterior falla, la nueva funciona y se renueva el token de Recordarme. Se conserva exactamente el resto de los atributos de la cuenta y las tablas del expediente, junto con las huellas de los PDF. El servicio vencido continúa en solo consulta y no permite responder; no se adquieren permisos administrativos.
+
+### Resultados y conservación
+
+Las cuatro pruebas existentes corregidas más los nueve casos nuevos aprobaron: **13 pruebas, 151 comprobaciones**. La ejecución conjunta con inicio de sesión, vencimiento, documentos y aislamiento aprobó: **61 pruebas, 787 comprobaciones**. Evidencias: `.local/logs/pruebas-recuperacion.xml` y `.local/logs/pruebas-recuperacion-y-acceso.xml`.
+
+La mayoría de casos simula notificaciones. El caso de integración renderiza el correo completo con el transporte local de archivos; su registro vive en `storage/framework/testing/disks/recovery-mail` y se limpia al preparar el siguiente caso. No se usan SMTP ni proveedores externos. Las solicitudes HTTP externas están bloqueadas. No se conservan enlaces de recuperación reutilizables en la documentación ni se muestran claves o tokens en el informe.
+
+Comprobación independiente de la base persistente: cliente original activo con dos PDF, dos indicaciones y un mensaje; cliente Consulta Vencida con dos PDF, una indicación y un mensaje, manteniendo lectura habilitada y escritura deshabilitada. Los cuatro PDF coinciden con sus originales ficticios. Cero tokens de recuperación, trabajos de correo, pagos y órdenes en esa base. Informe: `.local/logs/comprobacion-recuperacion.json`.
+
+Este bloque usa peticiones automatizadas al framework; no realiza un cambio de contraseña mediante la interfaz de Brave ni una entrega real de correo. Las peticiones de prueba no sustituyen la comprobación de CSRF o la entrega SMTP de producción. Se conserva la configuración de contraseñas existente. La suite completa no se repitió; quedan fuera del bloque los otros fallos previamente documentados.
+
+Cambio guardado únicamente en Git local: pruebas y documentación. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. Siguiente bloque sugerido: revisar el registro de una cuenta nueva y la aceptación de condiciones, donde aún hay pruebas antiguas pendientes.
