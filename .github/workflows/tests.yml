@@ -20,7 +20,8 @@ jobs:
     environment: Testing
     strategy:
       matrix:
-        php-version: ['8.3', '8.4', '8.5']
+        # Symfony 8 fijado en composer.lock requiere PHP 8.4 o posterior.
+        php-version: ['8.4', '8.5']
 
     steps:
       - name: Checkout code
@@ -39,7 +40,7 @@ jobs:
           node-version: '22'
 
       - name: Install Node Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Add Flux Credentials Loaded From ENV
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
@@ -58,3 +59,6 @@ jobs:
 
       - name: Run Tests
         run: ./vendor/bin/pest
+
+      - name: Run Draft Tests
+        run: node --test tests/Browser/upload-draft.test.mjs

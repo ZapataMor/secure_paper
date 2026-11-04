@@ -775,3 +775,12 @@ Se publicó v27 y sus etiquetas en GitHub conservando todo el historial. Se obtu
 Se prepararon respaldos privados del servidor y una copia de ensayo fuera de public_html. La primera ejecución en esa copia mostró una dependencia del entorno: una prueba de recuperación esperaba 127.0.0.1:8000. Se fijó APP_URL en phpunit.xml para que las pruebas sean reproducibles en cualquier equipo y en GitHub. La copia aislada necesita también un .env de ejemplo para evitar avisos por ausencia del archivo; nunca utiliza el .env de producción. Las nueve pruebas de recuperación volvieron a pasar en local (143 comprobaciones). No cambia el comportamiento de la aplicación.
 
 Versión v28, etiqueta local/v28-configuracion-pruebas-20261104. La actualización pública sigue pendiente hasta completar el ensayo en el servidor y verificar su resultado.
+## Bloque 29: integración de local, GitHub y Hostinger (4 de noviembre de 2026)
+
+Se integró main por avance directo y se aplicó la misma versión en Hostinger. El ensayo privado de v28, con PHP 8.4 y SQLite en memoria, aprobó 225 pruebas y 3.213 comprobaciones. Se preservaron archivos, base de datos y documentos mediante respaldos privados verificados antes de la ventana y otro dump durante mantenimiento. Se aplicaron las tres migraciones, se publicaron los assets, se regeneraron cachés y se limitó la cookie de sesión a HTTPS. APP_KEY, credenciales y entrada pública se conservaron.
+
+La comprobación autenticada del sitio real usó tres cuentas ficticias temporales y un expediente ficticio. Pasaron paneles de los tres roles, lectura del mensaje y PDF y rechazo del cliente en administración. Se retiraron todos los datos temporales; los registros y archivos originales conservaron sus huellas. No se realizaron cargas por formulario, correos reales ni cobros. El trabajador siguió completando su ciclo sin trabajos fallidos. Detalles, respaldos y limitaciones en docs/preparacion-publicacion.md.
+
+Se retiró la vinculación antigua a aplicativo-aburra del panel de Hostinger; secure_paper conserva su origen correcto en GitHub. El flujo de publicación es Git más actualización controlada por SSH, con compilación y migraciones. No se configuró autoimplementación directa sobre public_html.
+
+GitHub Actions detectó que su matriz incluía PHP 8.3, incompatible con Symfony 8 fijado en composer.lock. Se ajustó a PHP 8.4/8.5, sin cambiar paquetes, y se añadieron las doce pruebas JavaScript. Versión v29, etiqueta local/v29-integracion-hostinger-20261104.
