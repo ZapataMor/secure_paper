@@ -668,3 +668,34 @@ Ambas cuentas quedaron activas, con las asignaciones originales intactas. Se con
 Cero trabajos de correo, pagos y órdenes Wompi. No se modificaron pestañas ni borradores del usuario; las comprobaciones usaron sesiones HTTP independientes. El control se aplica cuando llega la siguiente petición autenticada mientras la cuenta está inactiva: no borra páginas o archivos ya descargados y no cancela una petición que ya hubiera pasado el control. Si una cuenta se desactiva y reactiva antes de que otra sesión haga una petición, este control no revoca por sí solo esa sesión no observada; las sesiones efectivamente cerradas sí requieren nuevo login.
 
 Versión local v23, etiqueta `local/v23-cuentas-inactivas-20261103`, sin publicación en GitHub ni cambios en Hostinger. Siguiente revisión sugerida: cerrar todas las sesiones de una cuenta al desactivarla, incluso las que no hicieron ninguna petición durante ese intervalo.
+## Bloque 24: revocación de sesiones sin actividad y recordatorios (3 de noviembre de 2026)
+
+Se cerró la limitación de v23 para desactivaciones realizadas mediante el modelo de usuario de la aplicación. `UserSessionObserver` genera una marca UUID `session_epoch` y rota el token de recordatorio en la misma escritura que cambia la cuenta a un estado no activo. Después elimina las sesiones de esa cuenta cuando el controlador de sesiones es database, respetando la conexión y tabla configuradas. Reactivar o editar el perfil no restaura la marca anterior; cada nueva desactivación genera otra.
+
+Al iniciar sesión, el evento Login guarda en la sesión el usuario y la marca con la que se autenticó. El control web compara esa marca con la vigente en cada petición. Una sesión antigua queda rechazada aunque la cuenta ya haya sido reactivada, incluso si sus datos reaparecieran en el almacenamiento. El rechazo de una sesión antigua de una cuenta ya activa cierra solo ese dispositivo, sin rotar el recordatorio de un login nuevo legítimo. Las sesiones anteriores a esta mejora siguen funcionando si la cuenta nunca ha sido revocada; después de la primera revocación también se rechazan si no llevan marca.
+
+Se añadió una página de sesión revocada y un mensaje JSON equivalente, ambos 403 y sin caché ni reflejo del borrador. No se repiten envíos automáticamente. La eliminación de la sesión de base de datos puede hacer que la siguiente navegación pida login directamente; un POST con CSRF de la sesión eliminada puede recibir 419. Ambos caminos impiden guardar el envío antiguo.
+
+### Pruebas
+
+`DormantSessionRevocationTest.php` añade nueve casos: seis combinaciones de cliente/asesor/administrador con sesión marcada o anterior a la mejora; eliminación de sesiones de una sola cuenta y rotación del recordatorio; cambios ordinarios de perfil y desactivaciones sucesivas; y rechazo de sesión antigua sin invalidar el recordatorio nuevo. En los seis ciclos se desactiva y reactiva antes de volver a usar la sesión, se rechaza el formulario anterior y se verifica el acceso con un nuevo login. CSRF está activo; datos y comunicaciones son ficticios.
+
+Batería completa: **192 pruebas PHP aprobadas, 2.782 comprobaciones**. Evidencias: `.local/logs/pruebas-completas-v24.xml` y `.local/logs/pruebas-completas-v24.txt`. SQLite en memoria, almacenamiento y comunicaciones simulados, HTTP externo bloqueado. Formato PHP y diferencias de Git comprobados. Sin cambios JavaScript.
+
+### Demostración local y conservación
+
+Se respaldó en `.local/backups/antes-revocacion-v24-20261104-023657.sqlite` antes de aplicar exclusivamente en SQLite local la migración `2026_11_03_230000_add_session_epoch_to_users.php`. Inicialmente todas las marcas eran nulas, por lo que esa migración no cerró sesiones existentes. Antes de la demostración se creó `.local/backups/antes-sesiones-dormidas-v24-20261104-023951.sqlite`. Los nombres usan UTC; en Bogotá aún era 3 de noviembre.
+
+El ayudante privado `.local/verificar-sesiones-dormidas-v24.php` abrió sesiones HTTP separadas como cliente ID 4 y asesor ID 2. Conservó además una copia aislada de la cookie ficticia de recordatorio, sin cookie de sesión. Para cada cuenta, ejecutó la desactivación mediante el modelo User y la reactivó en `finally`, sin realizar ninguna petición de esas sesiones mientras estaba inactiva.
+
+La desactivación eliminó **10 sesiones guardadas del cliente y 5 del asesor**, incluidas sesiones de revisiones anteriores. Tras reactivar, las sesiones antiguas y la cookie antigua de recordatorio pidieron login. El formulario con token antiguo fue rechazado con 419. Después de un login nuevo se comprobaron las indicaciones, mensajes y los cinco PDF mediante sus huellas. La sesión de control del Asesor Relevo, ID 5, siguió funcionando.
+
+Ambas cuentas quedaron activas y sus asignaciones originales se conservaron. Se compararon todos los registros del expediente y archivos, así como los perfiles exceptuando únicamente marca de revocación, token de recordatorio y fecha de actualización de las dos cuentas. El expediente mantiene **cinco documentos, tres indicaciones/respuestas y dos mensajes del asesor**. No se añadió contenido ni se enviaron correos. Cero trabajos, pagos y órdenes Wompi. Informe: `.local/logs/sesiones-dormidas-http-v24.json`.
+
+Las pestañas del usuario no se manipularon, pero sus sesiones de esas cuentas ficticias también fueron revocadas: al volver a usarlas pedirán ingreso. Los borradores temporales del navegador no se borraron. Esta mejora no elimina documentos ya descargados ni cancela una petición que ya había superado el control.
+
+### Alcance de integración
+
+La revocación se ejecuta con cambios individuales mediante el modelo User y sus eventos normales. SQL directo, actualizaciones masivas del constructor de consultas, `saveQuietly` o eventos desactivados evitan el observador: **no deben usarse para desactivar cuentas**. Los antiguos ayudantes de v23 que cambiaban el estado directamente en SQL solo demuestran el comportamiento histórico de esa versión. Aún no existe una pantalla administrativa de desactivación; deberá utilizar este flujo normal del modelo, con autorización y registro del cambio. La marca protege otros controladores de sesión al siguiente acceso, aunque la purga física implementada corresponde al controlador database.
+
+Versión local v24, etiqueta `local/v24-revocacion-sesiones-dormidas-20261103`, sin publicación en GitHub ni despliegue en Hostinger. Un despliegue futuro requiere aplicar la migración antes de activar el código que consulta la nueva columna. Siguiente bloque sugerido: incorporar a administración la desactivación y reactivación controladas, con confirmación y auditoría, conservando el expediente.
