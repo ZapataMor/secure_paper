@@ -120,7 +120,7 @@ test('unauthorized actors cannot alter another case or send it documents and mes
     $this->post(route('admin.works.progress', $this->clientB), [
         'progress_status' => 'delivered',
     ])->assertForbidden();
-    $this->post(route('admin.works.store', $this->clientB), [
+    $this->post(route('admin.works.store', $this->clientB), ['submission_id' => (string) Str::uuid(),
         'admin_message' => 'INTENTO-NO-AUTORIZADO',
         'admin_files' => [UploadedFile::fake()->create('intrusion.pdf', 1, 'application/pdf')],
     ])->assertForbidden();
@@ -163,7 +163,7 @@ test('reassignment revokes the former advisor including files they uploaded', fu
         $this->get(route('documents.file.show', $document))->assertForbidden();
     }
     $this->post(route('admin.works.progress', $this->clientA), ['progress_status' => 'delivered'])->assertForbidden();
-    $this->post(route('admin.works.store', $this->clientA), ['admin_message' => 'YA-NO-ASIGNADO'])->assertForbidden();
+    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(), 'admin_message' => 'YA-NO-ASIGNADO'])->assertForbidden();
     $this->actingAs($this->advisorB);
     $this->get(route('admin.works.show', $this->clientA))->assertOk()->assertSee('INDICACION-PRIVADA-A');
     foreach ($this->documentsA as $document) {
@@ -185,7 +185,7 @@ test('inactive or deleted advisors lose access even with an assignment', functio
         $this->get(route('documents.file.show', $document))->assertForbidden();
     }
     $this->post(route('admin.works.progress', $this->clientA), ['progress_status' => 'delivered'])->assertForbidden();
-    $this->post(route('admin.works.store', $this->clientA), ['admin_message' => 'CUENTA-INACTIVA'])->assertForbidden();
+    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(), 'admin_message' => 'CUENTA-INACTIVA'])->assertForbidden();
     $this->assertDatabaseCount('user_messages', 2);
     expect($this->assignmentA->fresh()->progress_status)->toBe('received');
 })->with(['inactive', 'deleted']);
@@ -194,7 +194,7 @@ test('assigned advisors can update and return work without modifying another cas
     $this->actingAs($this->advisorA)->post(route('admin.works.progress', $this->clientA), [
         'progress_status' => 'in_review',
     ])->assertRedirect(route('admin.works.show', $this->clientA));
-    $this->post(route('admin.works.store', $this->clientA), [
+    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(),
         'admin_message' => 'DEVOLUCION-AUTORIZADA',
         'admin_files' => [UploadedFile::fake()->create('permitido.pdf', 1, 'application/pdf')],
     ])->assertRedirect(route('admin.works.show', $this->clientA))->assertSessionHasNoErrors();
@@ -223,7 +223,7 @@ test('guests must sign in before reading files or changing a case', function () 
     $this->get(route('admin.works.show', $this->clientA))->assertRedirect(route('login'));
     $this->get(route('documents.file.show', $this->documentsA[0]))->assertRedirect(route('login'));
     $this->post(route('admin.works.progress', $this->clientA), ['progress_status' => 'delivered'])->assertRedirect(route('login'));
-    $this->post(route('admin.works.store', $this->clientA), ['admin_message' => 'SIN-SESION'])->assertRedirect(route('login'));
+    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(), 'admin_message' => 'SIN-SESION'])->assertRedirect(route('login'));
     $this->assertDatabaseCount('user_messages', 2);
     expect($this->assignmentA->fresh()->progress_status)->toBe('received');
 });

@@ -60,8 +60,15 @@
             action="{{ route('admin.works.store', $targetUser) }}"
             enctype="multipart/form-data"
             class="space-y-6"
+            x-data="{ ...window.propapsUploadDraft({ userId: {{ auth()->id() }}, scope: 'return:{{ $targetUser->id }}', saved: @js((bool) session('work_saved')) }), files: [], notes: '', error: '', submitting: false }"
+            x-init="initDraft()"
+            x-on:submit="if (submitting) { $event.preventDefault(); } else { saveDraft(); submitting = true; }"
+            x-on:pageshow.window="submitting = false"
+            x-bind:aria-busy="submitting"
         >
             @csrf
+            <input type="hidden" name="submission_id" value="{{ $submissionId }}" x-ref="submission">
+            <input type="hidden" name="draft_owner" value="{{ auth()->id() }}">
 
             <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
                 <article class="xl:col-span-7 overflow-hidden rounded-2xl border border-[#006A4C]/45 bg-[#032221]/78 shadow-[10px_10px_24px_rgba(0,15,31,0.24)]">
@@ -99,6 +106,7 @@
                                 id="admin_files"
                                 type="file"
                                 name="admin_files[]"
+                                x-on:change="files = Array.from($event.target.files); saveDraft()"
                                 multiple
                                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.bmp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/*"
                                 class="mt-4 block w-full cursor-pointer rounded-lg border border-[#AAC8C4]/45 bg-[#032221] px-3 py-2 text-sm text-[#F1F7F6] file:mr-3 file:rounded-md file:border-0 file:bg-[#006A4C] file:px-3 file:py-2 file:font-semibold file:text-[#F1F7F6] hover:file:bg-[#2CC295]/40"
@@ -120,10 +128,16 @@
                             Escribe observaciones o próximos pasos para orientar al cliente.
                         </p>
 
+                        <div x-show="hasPendingDraft" x-cloak role="status" class="mt-3 rounded-lg border border-[#2CC295]/50 p-3 text-sm text-[#D7FFF2]">
+                            <p>Hay una devolución sin confirmar para este cliente. Recupera el mensaje y selecciona los mismos archivos para reintentarlo.</p>
+                            <button type="button" x-on:click="recoverDraft()" class="mt-2 underline">Recuperar mensaje</button>
+                            <button type="button" x-on:click="discardDraft()" class="mt-2 ml-3 underline">Descartar borrador</button>
+                        </div>
                         <label for="admin_message" class="sr-only">Mensaje para el cliente</label>
                         <textarea
                             id="admin_message"
                             name="admin_message"
+                            x-ref="notes" x-on:input="notes = $event.target.value; saveDraft()"
                             maxlength="8000"
                             aria-describedby="message-help"
                             rows="6"
@@ -132,14 +146,17 @@
                         >{{ old('admin_message') }}</textarea>
                         <p id="message-help" class="mt-2 text-xs text-[#AAC8C4]">Hasta 8.000 caracteres, incluidos espacios. Puedes compartir archivos, un mensaje o ambos.</p>
 
+                        <p class="mt-2 text-xs text-[#AAC8C4]">El borrador se conserva hasta 24 horas en esta pestaña, separado por cuenta y cliente. Para reintentar, selecciona de nuevo los archivos.</p>
+                        <p x-show="draftSaved" x-cloak class="mt-2 text-xs text-[#2CC295]" role="status">Borrador guardado en esta pestaña.</p>
+                        <p x-show="draftWarning" x-text="draftWarning" x-cloak class="mt-2 text-xs text-amber-200" role="status"></p>
                         <button
-                            type="submit"
+                            type="submit" x-bind:disabled="submitting"
                             class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#2CC295]/60 bg-[#2CC295]/95 px-4 py-3 text-sm font-bold text-[#000F1F] transition hover:bg-[#00BF81]"
                         >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
                                 <path d="M20 6 9 17l-5-5"/>
                             </svg>
-                            Compartir con el cliente
+                            <span x-text="submitting ? 'Compartiendo…' : 'Compartir con el cliente'">Compartir con el cliente</span>
                         </button>
                     </div>
                 </article>

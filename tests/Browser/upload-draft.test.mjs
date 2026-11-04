@@ -12,7 +12,7 @@ beforeEach(() => {
     }});
 });
 function form(userId, options = {}) {
-    const state = { ...uploadDraft({ userId, saved: options.saved }), notes: '', error: '',
+    const state = { ...uploadDraft({ userId, saved: options.saved, scope: options.scope }), notes: '', error: '',
         files: [], $refs: { notes: { value: options.oldInput ?? '' }, submission: { value: options.submissionId ?? crypto.randomUUID() } } };
     state.initDraft();
     return state;
@@ -106,4 +106,24 @@ test('a server error with returned input preserves its supplied retry identifier
     const retry = form(4, { oldInput: 'Texto', submissionId: original.$refs.submission.value });
     const reloaded = form(4); reloaded.recoverDraft();
     assert.equal(reloaded.$refs.submission.value, original.$refs.submission.value);
+});
+
+test('advisor drafts are isolated by account and target client', () => {
+    const original = form(2, { scope: 'return:4' });
+    original.notes = 'Devolución para cliente 4'; original.saveDraft();
+    assert.equal(form(2, { scope: 'return:1' }).hasPendingDraft, false);
+    assert.equal(form(3, { scope: 'return:4' }).hasPendingDraft, false);
+    assert.equal(form(2).hasPendingDraft, false);
+    const recovered = form(2, { scope: 'return:4' }); recovered.recoverDraft();
+    assert.equal(recovered.notes, original.notes);
+    assert.equal(recovered.$refs.submission.value, original.$refs.submission.value);
+});
+
+test('confirming a return clears only that client draft for that advisor', () => {
+    for (const scope of ['return:4', 'return:1']) {
+        const f = form(2, { scope }); f.notes = scope; f.saveDraft();
+    }
+    form(2, { scope: 'return:4', saved: true });
+    assert.equal(form(2, { scope: 'return:4' }).hasPendingDraft, false);
+    assert.equal(form(2, { scope: 'return:1' }).hasPendingDraft, true);
 });

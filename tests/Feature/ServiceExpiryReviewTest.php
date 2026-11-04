@@ -216,7 +216,7 @@ test('a synthetic renewal restores writing to the same readable case without pay
 
 test('an assigned advisor can return work after expiry and the client can read it', function () {
     $oldNotes = $this->client->getRawOriginal('document_additional_information');
-    $this->actingAs($this->advisor)->post(route('admin.works.store', $this->client), [
+    $this->actingAs($this->advisor)->post(route('admin.works.store', $this->client), ['submission_id' => (string) Str::uuid(),
         'admin_message' => 'DEVOLUCION POSTERIOR AL VENCIMIENTO',
         'admin_files' => [UploadedFile::fake()->create('devolucion-posterior.pdf', 1, 'application/pdf')],
     ])->assertRedirect(route('admin.works.show', $this->client))->assertSessionHasNoErrors();

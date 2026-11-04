@@ -2,9 +2,9 @@ export const DRAFT_TTL = 24 * 60 * 60 * 1000;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // sessionStorage pertenece a esta pestaña; cada cuenta utiliza una clave distinta.
-export function uploadDraft({ userId, saved = false }) {
+export function uploadDraft({ userId, saved = false, scope = 'upload' }) {
     return {
-        draftKey: `propaps:upload-draft:v1:${userId}`,
+        draftKey: `propaps:${scope}-draft:v1:${userId}`,
         pendingDraft: '',
         pendingSubmission: '',
         hasPendingDraft: false,

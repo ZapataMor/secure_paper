@@ -87,7 +87,7 @@ test('an admin can upload a document for a client', function () {
 
     $this
         ->actingAs($admin)
-        ->post(route('admin.works.store', $client), [
+        ->post(route('admin.works.store', $client), ['submission_id' => (string) Str::uuid(),
             'admin_files' => [$file],
         ])
         ->assertRedirect(route('admin.works.show', $client))

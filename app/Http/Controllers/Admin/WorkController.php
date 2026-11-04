@@ -7,13 +7,18 @@ use App\Http\Requests\StoreAdminWorkRequest;
 use App\Models\Document;
 use App\Models\User;
 use App\Models\UserMessage;
+use App\Services\DocumentSubmissionFingerprint;
 use App\Services\DocumentTypeResolver;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Collection;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Services\ProjectAccess;
-use App\Models\ProjectAssignment;
+use App\Services\ProjectEmailNotices;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class WorkController extends Controller
 {
@@ -29,11 +34,15 @@ class WorkController extends Controller
                 'activePaidSubscription.paymentPlan:id,name',
             ])
             ->where('role', 'client')
-            ->when($request->user()->isAdvisor(), function($query)use($request,$access): void {
-                if(!$access->ready() || $request->user()->status!=='active') { $query->whereRaw('1 = 0'); return; }
-                $query->whereHas('projectAssignment',fn($project)=>$project->where('advisor_id',$request->user()->id));
+            ->when($request->user()->isAdvisor(), function ($query) use ($request, $access): void {
+                if (! $access->ready() || $request->user()->status !== 'active') {
+                    $query->whereRaw('1 = 0');
+
+                    return;
+                }
+                $query->whereHas('projectAssignment', fn ($project) => $project->where('advisor_id', $request->user()->id));
             })
-            ->when($access->ready(),fn($query)=>$query->with('projectAssignment.advisor:id,name,last_name'))
+            ->when($access->ready(), fn ($query) => $query->with('projectAssignment.advisor:id,name,last_name'))
             ->orderBy('name')
             ->orderBy('last_name')
             ->get([
@@ -62,7 +71,7 @@ class WorkController extends Controller
     public function show(User $user, Request $request, ProjectAccess $access): View
     {
         abort_unless($user->isClient(), 404);
-        abort_unless($access->allows($request->user(),$user->id),403);
+        abort_unless($access->allows($request->user(), $user->id), 403);
 
         $userDocuments = Document::query()
             ->with('documentType:id,name')
@@ -92,7 +101,11 @@ class WorkController extends Controller
             $user->additionalInformationEntries()
         );
 
+        $previousSubmissionId = $request->old('submission_id');
+
         return view('admin.works.show', [
+            'submissionId' => is_string($previousSubmissionId) && Str::isUuid($previousSubmissionId)
+                ? strtolower($previousSubmissionId) : (string) Str::uuid(),
             'targetUser' => $user,
             'userDocuments' => $userDocuments,
             'adminDocuments' => $adminDocuments,
@@ -100,86 +113,118 @@ class WorkController extends Controller
             'additionalInformationEntries' => $additionalInformationEntries,
             'assignmentReady' => $access->ready(),
             'projectAssignment' => $access->ready() ? $user->projectAssignment()->with('advisor:id,name,last_name')->first() : null,
-            'advisors' => $request->user()->isAdmin() ? User::where('role','advisor')->where('status','active')->orderBy('name')->get(['id','name','last_name']) : collect(),
+            'advisors' => $request->user()->isAdmin() ? User::where('role', 'advisor')->where('status', 'active')->orderBy('name')->get(['id', 'name', 'last_name']) : collect(),
         ]);
     }
 
     public function store(StoreAdminWorkRequest $request, User $user): RedirectResponse
     {
-        $storedPaths=[];
+        $storedPaths = [];
         try {
-            return \Illuminate\Support\Facades\DB::transaction(function() use ($request, $user, &$storedPaths) {
-        abort_unless($user->isClient(), 404);
+            return DB::transaction(function () use ($request, $user, &$storedPaths) {
+                abort_unless($user->isClient(), 404);
 
-        \App\Models\User::whereKey($user->id)->lockForUpdate()->firstOrFail();
-        abort_unless(app(\App\Services\ProjectAccess::class)->allows($request->user(),$user->id),403);
-        $admin = $request->user();
-        $adminMessage = trim((string) $request->input('admin_message'));
-        $adminMessage = $adminMessage !== '' ? $adminMessage : null;
-        $hasFiles = $request->hasFile('admin_files');
+                User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+                abort_unless(app(ProjectAccess::class)->allows($request->user(), $user->id), 403);
+                $admin = $request->user();
+                $adminMessage = trim((string) $request->input('admin_message'));
+                $adminMessage = $adminMessage !== '' ? $adminMessage : null;
+                $hasFiles = $request->hasFile('admin_files');
 
-        if (! $hasFiles && $adminMessage === null) {
-            return redirect()
-                ->route('admin.works.show', $user)
-                ->withErrors(['admin_files' => 'Debes escribir un mensaje o cargar al menos un archivo.'])
-                ->withInput();
-        }
+                if (! $hasFiles && $adminMessage === null) {
+                    return redirect()
+                        ->route('admin.works.show', $user)
+                        ->withErrors(['admin_files' => 'Debes escribir un mensaje o cargar al menos un archivo.'])
+                        ->withInput();
+                }
 
-        if ($adminMessage !== null) {
-            UserMessage::create([
-                'sender_id' => $admin->id,
-                'receiver_id' => $user->id,
-                'subject' => 'Actualizacion de trabajo',
-                'message' => $adminMessage,
-                'status' => 'sent',
-                'sent_at' => now(),
-            ]);
-        }
+                $submissionId = strtolower($request->validated('submission_id'));
+                $fingerprint = app(DocumentSubmissionFingerprint::class)->make($adminMessage, $request->file('admin_files', []));
+                $receipt = DB::table('work_submissions')->where('sender_id', $admin->id)
+                    ->where('client_id', $user->id)->where('submission_id', $submissionId)->first();
+                if ($receipt) {
+                    if (! hash_equals($receipt->payload_hash, $fingerprint)) {
+                        return redirect()->route('admin.works.show', $user)
+                            ->withErrors(['submission_id' => 'Esta devolución ya fue recibida con otro contenido. Revisa el mensaje y selecciona los archivos para realizar un envío nuevo.'])
+                            ->withInput($request->only('admin_message'));
+                    }
 
-        $uploadedCount = 0;
+                    return redirect()->route('admin.works.show', $user)
+                        ->with('status', 'Esta devolución ya se había compartido. No se duplicaron documentos ni mensajes.')
+                        ->with('work_saved', true);
+                }
+                // El recibo y el contenido se confirman juntos; un fallo revierte ambos.
+                DB::table('work_submissions')->insert([
+                    'sender_id' => $admin->id, 'client_id' => $user->id, 'submission_id' => $submissionId,
+                    'payload_hash' => $fingerprint, 'created_at' => now(), 'updated_at' => now(),
+                ]);
 
-        foreach ($request->file('admin_files', []) as $uploadedFile) {
-            $originalName = $uploadedFile->getClientOriginalName();
-            $title = pathinfo($originalName, PATHINFO_FILENAME);
-            $title = $title !== '' ? $title : $originalName;
+                if ($adminMessage !== null) {
+                    UserMessage::create([
+                        'sender_id' => $admin->id,
+                        'receiver_id' => $user->id,
+                        'subject' => 'Actualizacion de trabajo',
+                        'message' => $adminMessage,
+                        'status' => 'sent',
+                        'sent_at' => now(),
+                    ]);
+                }
 
-            $path = $uploadedFile->store(
-                'documents/user-'.$user->id.'/admin-'.$admin->id,
-                'local'
-            );
-            if (!$path) throw new \RuntimeException('No fue posible guardar el archivo.');
-            $storedPaths[]=$path;
+                $uploadedCount = 0;
 
-            Document::create([
-                'user_id' => $user->id,
-                'document_type_id' => $this->documentTypeResolver->resolveId($uploadedFile->getClientOriginalExtension()),
-                'uploaded_by' => $admin->id,
-                'title' => $title,
-                'description' => $adminMessage,
-                'file_path' => $path,
-                'original_name' => $originalName,
-                'mime_type' => (string) ($uploadedFile->getClientMimeType() ?? $uploadedFile->getMimeType() ?? 'application/octet-stream'),
-                'file_size' => (int) ($uploadedFile->getSize() ?? 0),
-                'status' => 'shared_by_admin',
-                'uploaded_at' => now(),
-            ]);
+                foreach ($request->file('admin_files', []) as $uploadedFile) {
+                    $originalName = $uploadedFile->getClientOriginalName();
+                    $title = pathinfo($originalName, PATHINFO_FILENAME);
+                    $title = $title !== '' ? $title : $originalName;
 
-            $uploadedCount++;
-        }
+                    $path = $uploadedFile->store(
+                        'documents/user-'.$user->id.'/admin-'.$admin->id,
+                        'local'
+                    );
+                    if (! $path) {
+                        throw new \RuntimeException('No fue posible guardar el archivo.');
+                    }
+                    $storedPaths[] = $path;
 
-        $status = $uploadedCount > 0
-            ? ($uploadedCount === 1 ? 'Archivo enviado al usuario correctamente.' : 'Archivos enviados al usuario correctamente.')
-            : 'Mensaje enviado al usuario correctamente.';
+                    Document::create([
+                        'user_id' => $user->id,
+                        'document_type_id' => $this->documentTypeResolver->resolveId($uploadedFile->getClientOriginalExtension()),
+                        'uploaded_by' => $admin->id,
+                        'title' => $title,
+                        'description' => $adminMessage,
+                        'file_path' => $path,
+                        'original_name' => $originalName,
+                        'mime_type' => (string) ($uploadedFile->getClientMimeType() ?? $uploadedFile->getMimeType() ?? 'application/octet-stream'),
+                        'file_size' => (int) ($uploadedFile->getSize() ?? 0),
+                        'status' => 'shared_by_admin',
+                        'uploaded_at' => now(),
+                    ]);
 
-        if (config('project_notifications.enabled')) app(\App\Services\ProjectEmailNotices::class)->schedule($user->id, 'return');
+                    $uploadedCount++;
+                }
 
-        return redirect()
-            ->route('admin.works.show', $user)
-            ->with('status', $status);
+                $status = $uploadedCount > 0
+                    ? ($uploadedCount === 1 ? 'Archivo enviado al usuario correctamente.' : 'Archivos enviados al usuario correctamente.')
+                    : 'Mensaje enviado al usuario correctamente.';
+
+                if (config('project_notifications.enabled')) {
+                    app(ProjectEmailNotices::class)->schedule($user->id, 'return');
+                }
+
+                return redirect()
+                    ->route('admin.works.show', $user)
+                    ->with('status', $status)->with('work_saved', true);
             });
         } catch (\Throwable $exception) {
-            \Illuminate\Support\Facades\Storage::disk('local')->delete($storedPaths);
-            throw $exception;
+            Storage::disk('local')->delete($storedPaths);
+            if ($exception instanceof HttpExceptionInterface) {
+                throw $exception;
+            }
+            report($exception);
+
+            return redirect()->route('admin.works.show', $user)
+                ->withErrors(['admin_files' => 'No pudimos guardar la devolución. El mensaje se conserva; vuelve a seleccionar los archivos e inténtalo de nuevo.'])
+                ->withInput($request->only('admin_message', 'submission_id'));
         }
     }
 

@@ -587,3 +587,30 @@ Se compararon todos los registros anteriores y las huellas de los archivos, perm
 Cero pagos, órdenes Wompi y trabajos de correo. El comprobador local confirmó SQLite en D, correo en archivos y pagos externos desactivados. Esta demostración usa peticiones HTTP repetidas en el servidor local; no constituye una prueba de concurrencia simultánea sobre MySQL de Hostinger. Si una petición concurrente encuentra contención, puede recibir el aviso de reintento; el recibo único evita guardar otra copia.
 
 Versión conservada en Git local con etiqueta `local/v20-envios-sin-duplicados-20261103`, sin publicación en GitHub ni despliegue en Hostinger. Un despliegue futuro requiere aplicar la migración y compilar los recursos. Este bloque protege los envíos del cliente; la devolución del asesor utiliza otro controlador y queda como siguiente revisión sugerida.
+## Bloque 21: devoluciones del asesor sin duplicados (3 de noviembre de 2026)
+
+Se extendió la protección de reintentos a `WorkController`, usado por asesores y administradores para compartir archivos y mensajes con un cliente. El formulario incluye un identificador UUID requerido y desactiva el botón mientras comparte. El servidor conserva un recibo en `work_submissions`, único por remitente, cliente e identificador, dentro de la misma transacción que guarda el contenido y con bloqueo del usuario cliente. Se reutiliza la huella de texto y archivos de v20.
+
+- Una petición repetida con el mismo contenido confirma: «Esta devolución ya se había compartido. No se duplicaron documentos ni mensajes». No crea otra copia ni vuelve a programar el aviso.
+- Reutilizar el identificador con otro mensaje o archivo se rechaza, conservando el texto y preparando un identificador nuevo para una decisión explícita. Un envío nuevo deliberado puede repetir contenido.
+- Un fallo parcial revierte recibo, documentos y mensaje, elimina los archivos del intento fallido y conserva el mensaje e identificador para reintentar. Los errores de autorización mantienen su rechazo habitual.
+- Se vuelven a comprobar los permisos antes de consultar el recibo: un asesor que perdió la asignación no recupera acceso por conocer un envío anterior.
+- El borrador temporal reutiliza el módulo de v19/v20, ahora con claves separadas por remitente y cliente. Recuperar mensaje conserva el identificador para reconocer reintentos. No se conservan bytes de archivos; deben seleccionarse nuevamente. La vigencia sigue siendo 24 horas en la misma pestaña. `draft_owner` rechaza formularios de otra cuenta después de cambiar de usuario. Las claves existentes de borradores del cliente siguen siendo compatibles.
+
+### Verificación
+
+`WorkIdempotencyTest.php` añade 18 casos: repetición de mensaje, archivos y ambos como asesor y administrador; cambios de contenido; fallo tras guardar parcialmente un lote y posterior reintento; identificadores inválidos; repetición intencional nueva; revocación del asesor; aislamiento por remitente y cliente; aviso simulado una sola vez; y formulario perteneciente a otra cuenta. Se comprueba que el cliente pueda consultar el mensaje y abrir el documento. Las pruebas usan SQLite en memoria, almacenamiento y comunicaciones simulados, con HTTP externo bloqueado.
+
+Batería completa: **166 pruebas PHP aprobadas, 2.035 comprobaciones**, más **12 pruebas JavaScript aprobadas**. Estas últimas incluyen aislamiento de borradores por cuenta/expediente y limpieza exclusiva del borrador confirmado. Evidencias: `.local/logs/pruebas-completas-v21.xml`, `.local/logs/pruebas-completas-v21.txt`, `.local/logs/borrador-v21.txt`. Compilación de Vite completada y formato PHP verificado. Las pruebas del módulo JavaScript no equivalen a una inspección visual en navegador; este bloque realizó la demostración mediante peticiones HTTP locales autenticadas.
+
+### Demostración persistente local y conservación
+
+Antes de aplicar exclusivamente en SQLite local la migración `2026_11_03_220000_create_work_submissions_table.php`, se creó `.local/backups/antes-devoluciones-v21-20261104-020739.sqlite`. Antes del envío se creó `.local/backups/antes-envio-asesor-v21-20261104-020816.sqlite`. Los nombres usan UTC; en Bogotá correspondían al 3 de noviembre.
+
+El ayudante privado `.local/verificar-devoluciones-v21.php` ingresó con `asesor@propaps.test` y repitió tres veces el mismo PDF y mensaje para `consulta-vencida@propaps.test`. La primera petición no siguió la confirmación y los dos reintentos mostraron el aviso de recepción previa. Se añadieron exclusivamente **un PDF, un mensaje y un recibo**. Después inició una sesión HTTP como cliente, verificó ambos en el panel y abrió el PDF, comparando su huella con el archivo ficticio original.
+
+Se conservaron exactamente todos los registros previos, incluidas las indicaciones del cliente, y todas las huellas de los archivos anteriores. El expediente ahora contiene **cinco documentos, tres indicaciones/respuestas del cliente y dos mensajes del asesor**. El PDF nuevo es `PRUEBA-LOCAL-devolucion-unica-v21.pdf`. Las suscripciones, asignación, estado del proyecto y otros expedientes permanecen intactos. Informe: `.local/logs/devoluciones-http-v21.json`. Los ayudantes rechazan repetir la demostración si ya existe el documento.
+
+Cero pagos, órdenes Wompi y trabajos de correo; avisos automáticos desactivados, correo en archivos y pasarela sin credenciales. No se alteró el borrador de v19 del navegador. Las peticiones se repitieron en el servidor local: no se probó concurrencia simultánea en MySQL de Hostinger. La transacción y el recibo único evitan persistir duplicados; una contención puede requerir otro reintento.
+
+Versión local v21, etiqueta `local/v21-devoluciones-sin-duplicados-20261103`. Sin publicación en GitHub ni despliegue en Hostinger. Un despliegue futuro necesita la migración y la compilación de recursos. Siguiente revisión sugerida: comprobar formularios abiertos cuando el proyecto cambia de asesor, asegurando que el anterior no pueda enviar y que el nuevo conserve el expediente completo.
