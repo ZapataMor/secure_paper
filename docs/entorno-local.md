@@ -614,3 +614,30 @@ Se conservaron exactamente todos los registros previos, incluidas las indicacion
 Cero pagos, órdenes Wompi y trabajos de correo; avisos automáticos desactivados, correo en archivos y pasarela sin credenciales. No se alteró el borrador de v19 del navegador. Las peticiones se repitieron en el servidor local: no se probó concurrencia simultánea en MySQL de Hostinger. La transacción y el recibo único evitan persistir duplicados; una contención puede requerir otro reintento.
 
 Versión local v21, etiqueta `local/v21-devoluciones-sin-duplicados-20261103`. Sin publicación en GitHub ni despliegue en Hostinger. Un despliegue futuro necesita la migración y la compilación de recursos. Siguiente revisión sugerida: comprobar formularios abiertos cuando el proyecto cambia de asesor, asegurando que el anterior no pueda enviar y que el nuevo conserve el expediente completo.
+## Bloque 22: reasignación con un formulario del asesor anterior abierto (3 de noviembre de 2026)
+
+Se comprobó que la autorización existente se consulta de nuevo al recibir la devolución y dentro de la transacción, después de bloquear el cliente. La asignación y el cambio de estado usan el mismo bloqueo. No fue necesario ampliar permisos ni cambiar la lógica de asignación.
+
+Se añadió una página de rechazo específica para peticiones HTML de devolución realizadas por un asesor que recibe 403. Explica que su cuenta ya no tiene permiso, que la asignación o el acceso pudo cambiar y que ese intento no añadió documentos ni mensajes. Ofrece Volver a mis proyectos. No refleja el borrador, el nombre del cliente ni información del expediente y responde con `Cache-Control: no-store, private`. Las peticiones JSON mantienen su error normal. No se reenvía el contenido automáticamente ni se transfiere el borrador al asesor nuevo.
+
+### Pruebas automatizadas
+
+`AdvisorReassignmentTest.php` añade seis casos con CSRF realmente activo: formulario abierto antes del cambio, con mensaje, archivos o ambos; cambio entre la autorización inicial y la segunda comprobación para devolución y para estado; y rechazo JSON sin reflejar el texto privado. La intercalación entre comprobaciones se simula de forma determinista; no es una prueba concurrente contra MySQL.
+
+Se verifican el rechazo de nuevos envíos y consultas del asesor anterior, el acceso completo del sucesor y del cliente, la conservación de los documentos, mensajes, indicaciones, servicios, recibos y archivos privados, y la conservación del otro expediente. Los datos y comunicaciones son ficticios: SQLite en memoria, almacenamiento/correo/notificaciones/colas simulados y HTTP externo bloqueado.
+
+Batería completa: **172 pruebas PHP aprobadas, 2.196 comprobaciones**. Evidencias: `.local/logs/pruebas-completas-v22.xml` y `.local/logs/pruebas-completas-v22.txt`. No se modificó JavaScript ni se necesitó recompilar recursos; las 12 pruebas del borrador aprobaron en v21. Formato PHP y diferencias de Git comprobados.
+
+### Demostración HTTP local y conservación
+
+El ayudante privado `.local/verificar-reasignacion-v22.php` creó primero el respaldo `.local/backups/antes-reasignacion-v22-20261104-021718.sqlite` (nombre en UTC, todavía 3 de noviembre en Bogotá). Se añadió la cuenta ficticia `asesor-relevo@propaps.test`, ID 5, Asesor Relevo de Prueba, con la misma clave local de las otras cuentas ficticias. No se ejecutó registro público ni notificación de bienvenida.
+
+Con cuatro sesiones HTTP independientes, el asesor original abrió el formulario del cliente ID 4. Después, la administración reasignó temporalmente ese expediente al asesor de relevo conservando título y estado. Al enviar el formulario antiguo con su token válido, PDF y mensaje ficticios, recibió 403 y el aviso claro; no se almacenó ninguna parte del envío. También se rechazaron la consulta del expediente, sus cinco PDF y el cambio de estado por parte del anterior asesor.
+
+El relevo consultó todas las indicaciones y mensajes anteriores y abrió los cinco archivos. El cliente pudo consultar el mismo historial y abrir los cinco archivos. Se compararon sus huellas con el almacenamiento local. Al terminar, se restauró por la ruta de administración la asignación original al Asesor de Prueba, ID 2: recuperó acceso y el relevo volvió a recibir 403. La restauración está en un bloque `finally` para ejecutarse también ante un fallo de la comprobación.
+
+Se conservaron exactamente usuarios existentes, documentos, mensajes, indicaciones, servicios, recibos y archivos privados. Los otros expedientes no cambiaron. El expediente probado mantiene **cinco documentos, tres indicaciones/respuestas del cliente y dos mensajes del asesor**. Permanecen la nueva cuenta ficticia y dos entradas legítimas de auditoría, una por reasignar y otra por restaurar; la fecha de actualización de la asignación refleja esas operaciones. Informe: `.local/logs/reasignacion-http-v22.json`.
+
+Cero trabajos de correo, pagos y órdenes Wompi. Se mantiene el entorno local protegido, sin correos reales ni cambios en Hostinger. No se tocaron las pestañas ni borradores abiertos del usuario: el recorrido se realizó mediante HTTP local. La revocación se aplica a las siguientes peticiones; no borra contenido ya descargado ni hace desaparecer de inmediato una página que el asesor ya tenía abierta.
+
+Versión local v22, etiqueta `local/v22-reasignacion-formulario-abierto-20261103`, sin publicación en GitHub ni despliegue. Siguiente revisión sugerida: comprobar la desactivación de una cuenta con sesión abierta y su posterior reactivación, conservando el expediente.

@@ -27,6 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function ($response, Throwable $exception, Request $request) {
+            if ($request->isMethod('POST') && $request->routeIs('admin.works.store')
+                && $response->getStatusCode() === 403 && ! $request->expectsJson()
+                && $request->user()?->isAdvisor()) {
+                return response()->view('errors.work-access-denied', [], 403)
+                    ->header('Cache-Control', 'no-store, private');
+            }
             if (! $request->isMethod('POST') || ! $request->is('dashboard/cargar-documento') || $request->expectsJson()) {
                 return $response;
             }
