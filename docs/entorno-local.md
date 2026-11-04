@@ -641,3 +641,30 @@ Se conservaron exactamente usuarios existentes, documentos, mensajes, indicacion
 Cero trabajos de correo, pagos y órdenes Wompi. Se mantiene el entorno local protegido, sin correos reales ni cambios en Hostinger. No se tocaron las pestañas ni borradores abiertos del usuario: el recorrido se realizó mediante HTTP local. La revocación se aplica a las siguientes peticiones; no borra contenido ya descargado ni hace desaparecer de inmediato una página que el asesor ya tenía abierta.
 
 Versión local v22, etiqueta `local/v22-reasignacion-formulario-abierto-20261103`, sin publicación en GitHub ni despliegue. Siguiente revisión sugerida: comprobar la desactivación de una cuenta con sesión abierta y su posterior reactivación, conservando el expediente.
+## Bloque 23: cuentas desactivadas con sesiones abiertas (3 de noviembre de 2026)
+
+La autenticación con contraseña y Google ya rechazaba cuentas inactivas, pero faltaba un control general para sesiones abiertas. Se añadió `EnsureAccountIsActive` al grupo web. Consulta el estado actual en la base de datos en cada petición autenticada, incluyendo la exclusión de usuarios eliminados; no confía en un objeto de usuario cargado antes del cambio ni confunde vencimiento del servicio con desactivación de la cuenta.
+
+Cuando detecta una cuenta inactiva, cierra su sesión web, invalida los datos de esa sesión, regenera CSRF y devuelve 403 sin ejecutar la acción solicitada. Laravel también rota el token de recordatorio si existía. La página informa que la solicitud no modificó el expediente y que, tras reactivar la cuenta, se necesita ingresar de nuevo. Las peticiones JSON reciben un mensaje equivalente. Ambas respuestas llevan `Cache-Control: no-store, private`; no reflejan textos ni archivos del formulario rechazado.
+
+El control cubre clientes, asesores y administradores, incluyendo configuración y la ruta de actualización de Livewire. Las cuentas activas y los expedientes con servicio vencido mantienen sus reglas anteriores. No se añadió todavía una pantalla para desactivar cuentas: los cambios temporales de estado de la demostración se hicieron mediante el ayudante local protegido.
+
+### Verificación
+
+`InactiveAccountSessionTest.php` añade once casos: nueve combinaciones de cliente/asesor/administrador con tablero, documento o envío; más configuración y petición JSON a la ruta real de Livewire. CSRF está activo. Los casos de ciclo completo abren la sesión antes de modificar el estado directamente en la base, comprueban el cierre, el rechazo de un nuevo login mientras la cuenta está inactiva, la reactivación sin restaurar automáticamente la sesión cerrada y el acceso tras un login nuevo. Se conservan perfil, documentos, indicaciones, mensajes y asignación; se permiten las actualizaciones legítimas de token de recordatorio y fecha de actualización del usuario.
+
+Se ajustó la prueba anterior de asesores inactivos/eliminados: después del primer bloqueo la sesión ya está cerrada, por lo que las peticiones posteriores piden iniciar sesión. Las pruebas usan SQLite en memoria, archivos y comunicaciones simulados, con HTTP externo bloqueado.
+
+Batería completa final: **183 pruebas PHP aprobadas, 2.582 comprobaciones**. Evidencias: `.local/logs/pruebas-completas-v23.xml` y `.local/logs/pruebas-completas-v23.txt`. Formato PHP y diferencias de Git comprobados. Sin cambios de JavaScript ni compilación nueva requerida.
+
+### Demostración HTTP local
+
+Se creó primero `.local/backups/antes-cuentas-inactivas-v23-20261104-022403.sqlite` (nombre UTC; en Bogotá seguía siendo 3 de noviembre). El ayudante privado `.local/verificar-cuentas-inactivas-v23.php` abrió dos sesiones HTTP separadas para cada una de las cuentas ficticias `consulta-vencida@propaps.test` y `asesor@propaps.test`.
+
+En cada cuenta se abrió un formulario antes de desactivarla. Al enviar el PDF y borrador ficticios, se rechazó la petición con 403 sin guardar nada y se cerró esa sesión. La segunda sesión también se cerró al solicitar el tablero mientras la cuenta estaba inactiva. Un nuevo intento de login fue rechazado. Se restauró el estado activo dentro de un bloque `finally`; ninguna de las dos sesiones cerradas recuperó acceso automáticamente. Tras ingresar otra vez, se comprobaron el historial completo y los cinco PDF comparando sus huellas.
+
+Ambas cuentas quedaron activas, con las asignaciones originales intactas. Se conservaron todos los registros y archivos anteriores; se exceptuaron únicamente los tokens de recordatorio al comparar perfiles, porque cerrar sesión puede rotarlos. El expediente conserva **cinco documentos, tres indicaciones/respuestas y dos mensajes del asesor**. No se añadieron documentos ni mensajes de prueba. Informe: `.local/logs/cuentas-inactivas-http-v23.json`.
+
+Cero trabajos de correo, pagos y órdenes Wompi. No se modificaron pestañas ni borradores del usuario; las comprobaciones usaron sesiones HTTP independientes. El control se aplica cuando llega la siguiente petición autenticada mientras la cuenta está inactiva: no borra páginas o archivos ya descargados y no cancela una petición que ya hubiera pasado el control. Si una cuenta se desactiva y reactiva antes de que otra sesión haga una petición, este control no revoca por sí solo esa sesión no observada; las sesiones efectivamente cerradas sí requieren nuevo login.
+
+Versión local v23, etiqueta `local/v23-cuentas-inactivas-20261103`, sin publicación en GitHub ni cambios en Hostinger. Siguiente revisión sugerida: cerrar todas las sesiones de una cuenta al desactivarla, incluso las que no hicieron ninguna petición durante ese intervalo.

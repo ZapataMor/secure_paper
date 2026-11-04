@@ -181,11 +181,12 @@ test('inactive or deleted advisors lose access even with an assignment', functio
     }
     $this->actingAs($this->advisorA);
     $this->get(route('admin.works.show', $this->clientA))->assertForbidden();
+    $this->assertGuest();
     foreach ($this->documentsA as $document) {
-        $this->get(route('documents.file.show', $document))->assertForbidden();
+        $this->get(route('documents.file.show', $document))->assertRedirect(route('login'));
     }
-    $this->post(route('admin.works.progress', $this->clientA), ['progress_status' => 'delivered'])->assertForbidden();
-    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(), 'admin_message' => 'CUENTA-INACTIVA'])->assertForbidden();
+    $this->post(route('admin.works.progress', $this->clientA), ['progress_status' => 'delivered'])->assertRedirect(route('login'));
+    $this->post(route('admin.works.store', $this->clientA), ['submission_id' => (string) Str::uuid(), 'admin_message' => 'CUENTA-INACTIVA'])->assertRedirect(route('login'));
     $this->assertDatabaseCount('user_messages', 2);
     expect($this->assignmentA->fresh()->progress_status)->toBe('received');
 })->with(['inactive', 'deleted']);

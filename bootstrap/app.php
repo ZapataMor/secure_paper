@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\EnsureConfiguredEmailVerification;
 use App\Http\Middleware\EnsureUserHasActiveMembership;
 use App\Http\Middleware\EnsureUserIsAdmin;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [EnsureAccountIsActive::class]);
         $middleware->preventRequestForgery(except: ['pagos/wompi/eventos/*']);
         $middleware->alias([
             'verified' => EnsureConfiguredEmailVerification::class,
