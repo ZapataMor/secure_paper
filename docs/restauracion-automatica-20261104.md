@@ -51,3 +51,7 @@ Evidencias privadas: `database-restore-result.json`, `app-preparation-result.jso
 3. Aislar configuración, base, correo, pagos, colas y conexiones externas antes de iniciar Laravel. Usar un usuario de solo lectura para las primeras comprobaciones.
 4. Importar el SQL, comprobar tablas, referencias y documentos; revisar páginas, mensajes y archivos con el código de ese respaldo.
 5. Comparar los datos antes y después, apagar los procesos de prueba y conservar evidencias. Una prueba posterior de actualización debe hacerse sobre otra copia, manteniendo esta restauración histórica.
+
+## Prueba posterior de actualización
+
+La restauración histórica descrita aquí se conservó intacta. Se creó otra copia con el código actual y se aplicaron sus tres migraciones pendientes: el cliente con servicio vencido ya puede consultar documentos, mensajes e indicaciones, mientras siguen bloqueados los envíos. Los datos originales y ambas copias quedaron verificados. Véase [Actualización de una restauración automática](actualizacion-restauracion-20261104.md) para resultados y límites.
