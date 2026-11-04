@@ -134,7 +134,12 @@ class PrivateDocumentUploadController extends Controller
             });
         } catch (\Throwable $exception) {
             \Illuminate\Support\Facades\Storage::disk('local')->delete($storedPaths);
-            throw $exception;
+            report($exception);
+
+            return redirect()
+                ->route('private.upload-document')
+                ->withErrors(['document_files' => 'No pudimos guardar el envío. Tus indicaciones se conservan; vuelve a seleccionar los archivos e inténtalo de nuevo.'])
+                ->withInput($request->only('additional_information'));
         }
     }
 

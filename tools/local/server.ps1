@@ -17,7 +17,10 @@ try {
             Write-Host 'El servidor local ya esta detenido.'
             exit 0
         }
-        $expectedTime = [DateTime]::Parse($state.startedAtUtc).ToUniversalTime().Ticks
+        $recordedStart = if ($state.startedAtUtc -is [DateTime]) { $state.startedAtUtc } else {
+            [DateTime]::Parse($state.startedAtUtc, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::RoundtripKind)
+        }
+        $expectedTime = $recordedStart.ToUniversalTime().Ticks
         if ($process.Path -ne $php -or $process.StartTime.ToUniversalTime().Ticks -ne $expectedTime) {
             throw 'El proceso registrado no coincide con este servidor. No se detuvo ningun proceso.'
         }
@@ -44,7 +47,8 @@ try {
     New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
     $env:TEMP = Join-Path $root '.local\tmp'
     $env:TMP = $env:TEMP
-    $server = Start-Process -FilePath $php -ArgumentList @('-S', '127.0.0.1:8000', '../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php') -WorkingDirectory (Join-Path $root 'public') -WindowStyle Hidden -RedirectStandardOutput (Join-Path $logRoot 'servidor-local.log') -RedirectStandardError (Join-Path $logRoot 'servidor-local-error.log') -PassThru
+    # PHP debe recibir mas de 10 archivos para que Laravel rechace el lote completo, sin truncarlo.
+    $server = Start-Process -FilePath $php -ArgumentList @('-d', 'max_file_uploads=20', '-S', '127.0.0.1:8000', '../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php') -WorkingDirectory (Join-Path $root 'public') -WindowStyle Hidden -RedirectStandardOutput (Join-Path $logRoot 'servidor-local.log') -RedirectStandardError (Join-Path $logRoot 'servidor-local-error.log') -PassThru
     $state = [pscustomobject]@{
         pid = $server.Id
         php = $php

@@ -497,3 +497,33 @@ Preparación y verificación local: `.local/renovacion-v17.php` (uso único para
 Cero trabajos de correo, pagos y órdenes Wompi. La configuración sigue con correo en archivos, avisos automáticos desactivados y pasarela sin credenciales. No se ejecutaron trabajadores de correo.
 
 Captura: `.local/logs/renovacion-local-v17.jpg`. La pestaña local quedó abierta en los documentos y la comunicación del cliente renovado. Los datos ficticios, respaldo y evidencias permanecen fuera de Git; las pruebas y esta documentación se conservan en la versión local v17, etiqueta `local/v17-renovacion-ficticia-20261103`. Sin publicación en GitHub ni cambios en Hostinger.
+
+## Bloque 18: cargas rechazadas, fallos de guardado y borradores (3 de noviembre de 2026)
+
+Se revisaron los límites de carga y la recuperación del envío fallido con datos ficticios. Se añadieron diez casos en `tests/Feature/UploadFailureTest.php`: archivo superior a 20 MB, formato no permitido, texto disfrazado de PDF, once archivos, lote mixto válido/inválido, indicaciones superiores a 8.000 caracteres, aceptación de los límites exactos, envío vacío y dos fallos parciales de guardado.
+
+En las pruebas, los archivos de tamaño límite usan metadatos simulados; no se escriben diez archivos de 20 MB. Todos los casos usan SQLite en memoria, almacenamiento de pruebas y correo/notificaciones/colas simulados, con HTTP externo bloqueado.
+
+### Correcciones
+
+- `StorePrivateDocumentRequest` ahora ofrece mensajes explícitos en español para exceso de archivos, indicaciones demasiado largas y tipos de entrada incorrectos. Los límites siguen siendo diez archivos, 20 MB por archivo y 8.000 caracteres.
+- `PrivateDocumentUploadController` conserva la reversión de la transacción y la eliminación de archivos del intento fallido. En lugar de mostrar un error general, registra la excepción para diagnóstico y vuelve al formulario con un mensaje claro y las indicaciones originales. Los archivos deben seleccionarse de nuevo, como explica la vista existente; no se exponen detalles internos del error.
+- Se comprobaron fallos al guardar el segundo archivo y al resolver su tipo tras almacenar archivos: se restauran los registros originales, se eliminan los nuevos archivos y se conserva el borrador. Al retirar el fallo simulado, el reintento guarda exactamente un documento y una indicación nuevos.
+- El arranque local pasa `-d max_file_uploads=20` a PHP. PHP debe permitir recibir más de diez archivos para que Laravel pueda rechazar el lote completo; con el límite previo de diez, PHP truncaba once a diez antes de la validación. El máximo permitido por la app sigue siendo diez.
+- Se corrigió además la interpretación de `startedAtUtc` en el script de servidor: PowerShell puede convertir el JSON directamente a DateTime. Reinterpretarlo con la cultura del equipo alteraba mes/día y precisión, impidiendo detener el proceso correcto. Se conserva la verificación exacta del ejecutable y de su hora de inicio.
+
+### Validación HTTP local y conservación
+
+Se iniciaron sesión y peticiones HTTP con CSRF mediante `.local/verificar-cargas-http-v18.php`, exclusivamente en `127.0.0.1:8000` y con la cuenta ficticia renovada. Se comprobaron cuatro rechazos reales: texto no permitido, texto renombrado como PDF, archivo físico de 21 MB rechazado por PHP y once archivos PDF pequeños. Todos devolvieron el mensaje esperado y restauraron el texto del textarea; el formulario pidió volver a seleccionar los archivos. Los hashes de los registros del expediente y PDF permanecieron iguales antes y después de cada rechazo final. Evidencia: `.local/logs/cargas-fallidas-http-v18.json`.
+
+La primera prueba de once archivos reveló el truncamiento de PHP y guardó diez archivos ficticios y su nota. Un segundo intento lo reprodujo porque el reinicio inicial no se había completado debido al problema de fecha del proceso. Ambos intentos se respaldaron y retiraron de forma dirigida: únicamente sus documentos, identificados por usuario, descripción, nombres y hashes, y la nota específica del intento. Respaldos completos y copias de esos PDF: `.local/backups/intento-cantidad-v18-20261103-203837` y `.local/backups/intento-cantidad-v18-20261103-203955`. No se restauró la base completa ni se tocaron archivos previos. Los identificadores de documentos consumidos por las pruebas no se reutilizaron.
+
+Tras reiniciar correctamente se verificó la nueva línea de arranque y el rechazo de los once archivos. El expediente renovado conserva tres documentos y dos indicaciones/respuestas; servicio vencido y renovación intactos, mismas asignaciones y mensajes, demás cuentas intactas, cero pagos, órdenes Wompi y trabajos de correo. La comprobación de conservación de v17 volvió a aprobar.
+
+### Resultado
+
+Pruebas relacionadas: **53 aprobadas, 814 comprobaciones**. Batería completa final: **130 aprobadas, 1.548 comprobaciones**, sin fallos. Evidencias: `.local/logs/pruebas-cargas-fallidas-v18.xml`, `.local/logs/pruebas-completas-v18.xml` y `.local/logs/conservacion-suite-v18.json`. La batería completa no cambió la base persistente ni los PDF privados, comprobado por SHA-256.
+
+No se automatizó el selector de archivos del navegador en este bloque; la comprobación real se hizo mediante HTTP con sesión y CSRF, incluyendo el HTML devuelto. No se simularon cortes de red, sesión caducada ni peticiones que excedan el tamaño total permitido por PHP. Los fallos internos se provocaron solo en las pruebas aisladas, no dañando el almacenamiento persistente.
+
+Versión local v18, etiqueta `local/v18-cargas-fallidas-20261103`. Sin publicación en GitHub ni despliegue en Hostinger; las correcciones de código y configuración del servidor son locales. Para un futuro despliegue se debe comprobar también el valor efectivo de `max_file_uploads` en Hostinger; este bloque no lo modificó. Siguiente revisión sugerida: sesión vencida mientras el cliente prepara un envío y recuperación de su borrador.
