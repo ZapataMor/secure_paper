@@ -446,3 +446,29 @@ El servidor local estaba detenido y se volvió a iniciar con el script habitual,
 La base persistente conserva cuatro cuentas de prueba, los mismos recuentos y permisos de ambos expedientes, y cero trabajos de correo, pagos y órdenes. Informe: `.local/logs/comprobacion-registro.json`. No se crearon cuentas persistentes nuevas ni se modificaron contraseñas existentes. No se aceptaron condiciones mediante una cuenta real.
 
 Versión guardada únicamente en Git local: pruebas y documentación. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. Siguiente bloque sugerido: revisar las pruebas antiguas restantes del panel y acceso a servicios para completar la validación local pendiente.
+
+## Bloque 16: panel y acceso tras el pago (3 de noviembre de 2026)
+
+Se reprodujeron los tres fallos antiguos pendientes en MembershipAccessTest: dos expectativas de textos anteriores y una ruta de selección de plan eliminada. Se actualizaron las pruebas al panel vigente y al flujo HTTP actual de creación y consulta de pedidos. No se modificó el código de la aplicación ni la configuración persistente.
+
+La revisión comprueba:
+
+- Sin servicio pagado, el panel muestra el botón de carga deshabilitado y la explicación; acceder por URL redirige a Planes y enviar una respuesta directamente devuelve 403 sin guardar indicaciones.
+- Un cliente con servicio activo puede consultar el módulo y ve el enlace de carga habilitado.
+- Visitar Planes no crea un pedido ni una suscripción. Iniciar el pago crea un pedido pendiente; repetir la selección reutiliza ese pedido.
+- Escribir APPROVED en la URL no acredita un pago ni habilita acceso.
+- Se simulan las respuestas PENDING, DECLINED, ERROR, VOIDED y APPROVED del proveedor. Solo la aprobación verificada de un pedido elegible habilita el servicio; el modo sandbox con acceso deshabilitado no lo habilita.
+- Consultar dos veces el retorno aprobado no duplica la suscripción.
+- El listado administrativo conserva los clientes con servicio vigente primero y los rótulos actuales.
+
+Se añadieron guardas de SQLite en memoria y bloqueo de HTTP no simulado a todas las pruebas de WompiPaymentTest, con correo y notificaciones simulados. Las claves usadas son cadenas ficticias; no se contacta a Wompi ni se realiza ningún cobro. Las pruebas de membresía también impiden envío o encolado de correos.
+
+### Resultados y conservación
+
+Panel y servicios: **11 pruebas aprobadas, 237 comprobaciones**. Evidencia: `.local/logs/pruebas-panel-servicios.xml`.
+
+La batería completa de pruebas ahora aprueba: **120 pruebas, 1.357 comprobaciones**, sin fallos. Evidencias: `.local/logs/pruebas-completas-v16.xml` y `.local/logs/pruebas-completas-v16.txt`. Se ejecutó con SQLite `:memory:` y transporte de correo de pruebas; no es una prueba de integración con proveedores reales.
+
+Se compararon las huellas SHA-256 de la base SQLite persistente y de todos los documentos privados antes y después: sin cambios. Informe: `.local/logs/comprobacion-v16.json`. El comprobador local confirmó correo en archivos, SQLite en D y pagos externos desactivados antes de la ejecución.
+
+Versión v16 conservada únicamente en Git local, etiqueta `local/v16-panel-servicios-20261103`. Sin publicación en GitHub ni despliegue en Hostinger. Siguiente bloque sugerido: revisar una renovación ficticia de un servicio vencido, conservando el expediente y recuperando los permisos de carga y respuesta.

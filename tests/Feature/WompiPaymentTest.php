@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Notification;
 
 // Llaves falsas con el prefijo que exige WompiGateway::ready(); nunca llegan a Wompi (Http::fake).
 beforeEach(function () {
+    expect(config('database.connections.sqlite.database'))->toBe(':memory:');
+    Http::preventStrayRequests();
+    Mail::fake();
+    Notification::fake();
     config([
         'wompi.environment' => 'production',
         'wompi.public_key' => 'pub_prod_fake',
