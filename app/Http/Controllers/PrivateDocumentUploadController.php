@@ -130,7 +130,8 @@ class PrivateDocumentUploadController extends Controller
 
         return redirect()
             ->route('private.upload-document')
-            ->with('status', $status);
+            ->with('status', $status)
+            ->with('upload_saved', true);
             });
         } catch (\Throwable $exception) {
             \Illuminate\Support\Facades\Storage::disk('local')->delete($storedPaths);

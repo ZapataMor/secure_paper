@@ -8,7 +8,8 @@ class StorePrivateDocumentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isClient() === true;
+        return $this->user()?->isClient() === true
+            && (! $this->has('draft_owner') || in_array($this->input('draft_owner'), [$this->user()->id, (string) $this->user()->id], true));
     }
 
     /**

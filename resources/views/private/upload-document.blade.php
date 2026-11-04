@@ -148,6 +148,7 @@
 
         <form method="POST" action="{{ route('private.upload-document.store') }}" enctype="multipart/form-data" class="sp-upload-form"
             x-data="{
+                ...window.propapsUploadDraft({ userId: {{ auth()->id() }}, saved: @js((bool) session('upload_saved')) }),
                 files: [], notes: '', error: '', dragging: false, submitting: false,
                 size(bytes) { return bytes < 1048576 ? (bytes / 1024).toFixed(1) + ' KB' : (bytes / 1048576).toFixed(2) + ' MB'; },
                 sync() { const transfer = new DataTransfer(); this.files.forEach(file => transfer.items.add(file)); this.$refs.files.files = transfer.files; },
@@ -170,16 +171,18 @@
                         event.preventDefault(); this.error = 'Adjunta al menos un archivo o escribe tus indicaciones.'; this.$refs.notes.focus(); return;
                     }
                     if (this.error) { event.preventDefault(); return; }
+                    this.saveDraft();
                     this.submitting = true;
                 }
             }"
-            x-init="notes = $refs.notes.value"
+            x-init="initDraft()"
             x-on:submit="send($event)"
             x-on:pageshow.window="submitting = false"
             x-on:sp-upload-reply.window="$refs.notes.focus()"
             x-bind:aria-busy="submitting"
         >
             @csrf
+            <input type="hidden" name="draft_owner" value="{{ auth()->id() }}">
             <div class="sp-upload-columns">
                 <section class="sp-upload-field" aria-labelledby="sp-upload-files-title">
                     <div class="sp-upload-heading"><span class="sp-upload-number" aria-hidden="true">01</span><h2 id="sp-upload-files-title">Archivos de tu proyecto</h2></div>
@@ -209,11 +212,19 @@
                 <section class="sp-upload-field" aria-labelledby="sp-upload-notes-title">
                     <div class="sp-upload-heading"><span class="sp-upload-number" aria-hidden="true">02</span><h2 id="sp-upload-notes-title"><label for="additional_information">Indicaciones y respuestas</label></h2></div>
                     <p class="sp-upload-description">Comparte las indicaciones de tu proyecto o responde a las observaciones del equipo. Puedes enviar solo texto.</p>
+                    <div class="sp-upload-alert" x-show="pendingDraft" x-cloak role="status">
+                        <p>Hay indicaciones sin enviar de esta cuenta en esta pestaña. Puedes recuperarlas y revisarlas antes de enviar.</p>
+                        <button type="button" class="sp-upload-remove" x-on:click="recoverDraft()">Recuperar indicaciones</button>
+                        <button type="button" class="sp-upload-remove" x-on:click="discardDraft()">Descartar borrador</button>
+                    </div>
                     <textarea id="additional_information" name="additional_information" rows="7" maxlength="8000" class="sp-upload-textarea"
-                        x-ref="notes" x-on:input="notes = $event.target.value; error = ''"
+                        x-ref="notes" x-on:input="notes = $event.target.value; error = ''; saveDraft()"
                         placeholder="Por ejemplo: revisar la coherencia de los objetivos, ajustar las citas a APA 7 y priorizar el capítulo de metodología. Puedes incluir enlaces de referencia."
                         aria-describedby="sp-upload-notes-help">{{ old('additional_information') }}</textarea>
                     <div id="sp-upload-notes-help" class="sp-upload-help"><span>Hasta 8.000 caracteres</span><span x-cloak x-text="notes.length.toLocaleString('es-CO') + ' / 8.000'"></span></div>
+                    <p class="sp-upload-hint">Tus indicaciones se guardan temporalmente en esta pestaña durante 24 horas desde la última edición. Si debes volver a ingresar, usa la misma cuenta. Los archivos deben seleccionarse de nuevo.</p>
+                    <p class="sp-upload-hint" x-show="draftSaved" x-cloak role="status">Borrador temporal guardado. Se borra al confirmar el envío.</p>
+                    <p class="sp-upload-alert is-error" x-show="draftWarning" x-text="draftWarning" x-cloak role="alert"></p>
                     <p class="sp-upload-hint">Puedes enviar archivos, indicaciones o ambos. Cada respuesta se añade al historial del expediente y conserva tus indicaciones anteriores.</p>
                 </section>
             </div>

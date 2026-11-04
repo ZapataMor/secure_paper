@@ -527,3 +527,35 @@ Pruebas relacionadas: **53 aprobadas, 814 comprobaciones**. Batería completa fi
 No se automatizó el selector de archivos del navegador en este bloque; la comprobación real se hizo mediante HTTP con sesión y CSRF, incluyendo el HTML devuelto. No se simularon cortes de red, sesión caducada ni peticiones que excedan el tamaño total permitido por PHP. Los fallos internos se provocaron solo en las pruebas aisladas, no dañando el almacenamiento persistente.
 
 Versión local v18, etiqueta `local/v18-cargas-fallidas-20261103`. Sin publicación en GitHub ni despliegue en Hostinger; las correcciones de código y configuración del servidor son locales. Para un futuro despliegue se debe comprobar también el valor efectivo de `max_file_uploads` en Hostinger; este bloque no lo modificó. Siguiente revisión sugerida: sesión vencida mientras el cliente prepara un envío y recuperación de su borrador.
+
+## Bloque 19: sesión vencida y recuperación de indicaciones (3 de noviembre de 2026)
+
+Se añadió recuperación de borradores porque el `old input` de la validación dependía de una sesión disponible. El formulario guarda únicamente las indicaciones en `sessionStorage`, con una clave por cuenta y una vigencia de 24 horas desde el guardado. No se guardan archivos ni se envía el borrador al servidor automáticamente. La recuperación requiere continuar en la misma pestaña y volver a ingresar con la misma cuenta.
+
+### Comportamiento
+
+- Al escribir se informa si el borrador temporal quedó guardado. Si el navegador impide almacenarlo, aparece una advertencia para copiar el texto; no se borra el campo ni se afirma que está guardado.
+- Tras volver a ingresar, el formulario ofrece Recuperar indicaciones y Descartar borrador. Recuperar restaura el texto sin enviar nada; el cliente debe revisarlo y confirmar su envío. Los archivos deben seleccionarse de nuevo.
+- Si el servidor devuelve indicaciones tras una validación, ese texto tiene prioridad sobre un borrador antiguo. Los borradores inválidos o vencidos no se restauran. La vigencia se comprueba al cargar el formulario; no hay un proceso externo que borre almacenamiento de pestañas cerradas.
+- Un envío exitoso incluye la confirmación `upload_saved` y elimina el borrador de esa cuenta al volver al formulario. Un rechazo no lo elimina.
+- El formulario incluye el identificador `draft_owner`; si una pestaña antigua intenta enviar después de cambiar de cuenta, se rechaza sin copiar ese texto a la sesión de la nueva cuenta. También se rechazan identificadores malformados. El aislamiento de borradores en la interfaz se basa en claves por usuario; no es un almacén cifrado independiente del navegador.
+- Si no hay autenticación al enviar, se pide ingresar y se fija como destino posterior el GET del expediente. No se repite el POST ni se confía en un destino recibido del navegador.
+- Si el servidor devuelve 419 por un token vencido, aparece una página de recuperación con enlace al expediente, sin mostrar las indicaciones rechazadas. La respuesta no se almacena en caché. Las peticiones JSON conservan sus errores normales. No se desactivó CSRF ni se ampliaron los permisos de carga.
+
+### Pruebas
+
+`tests/Feature/UploadSessionExpiryTest.php` contiene seis casos que activan realmente el middleware CSRF en el entorno de pruebas: token inválido, regreso tras autenticación sin repetir el envío, formulario perteneciente a otra cuenta, identificador malformado, respuesta JSON y envío explícito con token válido. Comprueban la conservación de registros y PDF, y la confirmación de limpieza del borrador tras un envío válido.
+
+`tests/Browser/upload-draft.test.mjs` ejecuta siete pruebas del módulo de borradores con Node y almacenamiento simulado: recuperación explícita, separación por cuenta, limpieza solo del borrador enviado, prioridad del texto devuelto por el servidor, vencimiento/datos inválidos, descarte/vaciado y almacenamiento bloqueado. Estas pruebas del módulo no sustituyen el recorrido visual descrito a continuación.
+
+Batería completa final: **136 pruebas PHP aprobadas, 1.619 comprobaciones**, más **7 pruebas JavaScript aprobadas**. Evidencias finales: `.local/logs/pruebas-completas-v19.xml`, `.local/logs/pruebas-completas-v19.txt` y `.local/logs/pruebas-borrador-js-v19.txt`. Compilación de Vite completada. Los recursos compilados permanecen locales; un despliegue futuro requiere compilar los cambios de JavaScript.
+
+### Comprobación en el navegador y conservación
+
+En el navegador integrado se abrió la cuenta `consulta-vencida@propaps.test` y se escribió un texto ficticio identificado como PRUEBA LOCAL V19. Se comprobó el aviso de borrador guardado. El ayudante `.local/comprobar-sesion-v19.php expire` modificó únicamente la última actividad de la sesión más reciente de esa cuenta para vencerla, sin cambiar las fechas del servicio ni el expediente.
+
+Al intentar enviar desde la pestaña abierta, el servidor pidió ingresar nuevamente. Tras usar la misma cuenta, regresó al expediente y mostró Recuperar indicaciones. El botón restauró el texto completo. **No se confirmó un nuevo envío después de recuperarlo**; queda como borrador en el formulario para revisión. En este navegador se comprobó la ruta de autenticación vencida; la página 419 se verificó con el middleware real en pruebas automatizadas.
+
+Se compararon hashes de usuarios, documentos, mensajes, asignaciones, suscripciones, pagos, órdenes, trabajos y todos los PDF privados antes y después: sin cambios. Solo cambió el estado de las sesiones de prueba. El expediente renovado mantiene tres documentos, dos indicaciones/respuestas y el mensaje del asesor. Cero pagos, órdenes Wompi y trabajos de correo. Informe: `.local/logs/conservacion-sesion-v19.json`. Captura: `.local/logs/indicaciones-recuperadas-v19.jpg`.
+
+Versión local v19, etiqueta `local/v19-recuperacion-sesion-20261103`. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. La recuperación temporal requiere JavaScript y almacenamiento de sesión disponibles; no permite recuperar adjuntos, trasladar el borrador a otro dispositivo ni garantiza su conservación al cerrar la pestaña. Siguiente revisión sugerida: doble clic o reintento de envío para evitar duplicados en el expediente.

@@ -1,3 +1,6 @@
+import { uploadDraft } from './upload-draft';
+window.propapsUploadDraft = uploadDraft;
+
 import 'animate.css';
 
 document.addEventListener('DOMContentLoaded', () => {
