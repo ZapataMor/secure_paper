@@ -757,3 +757,14 @@ El cliente pudo consultar las indicaciones y mensajes y abrir los cinco PDF; se 
 El expediente conserva **cinco documentos, tres indicaciones/respuestas y dos mensajes del asesor**. Cero trabajos de correo, pagos y órdenes Wompi. No se manipularon las pestañas abiertas del usuario; la comprobación usó HTTP local. La intercalación se probó de forma determinista y las sesiones HTTP se utilizaron en secuencia; no se simuló concurrencia real de procesos contra MySQL de Hostinger.
 
 Versión local v26, etiqueta `local/v26-dos-administradores-formularios-20261103`, sin publicación en GitHub ni despliegue en Hostinger. El administrador original y el cliente quedaron con sus permisos y expedientes conservados.
+## Bloque 27: preparación de publicación y avisos en cola (4 de noviembre de 2026)
+
+Se revisaron requisitos de PHP, migraciones, almacenamiento privado, compilación y configuración de ejemplo. Composer valida el proyecto y sus requisitos locales. Todas las 27 migraciones locales están aplicadas. Las plantillas dejan desactivados el acceso por pagos sandbox y los avisos automáticos; Git ignora variantes privadas de .env, manteniendo las plantillas. El .env efectivo no se modificó.
+
+Se añadieron doce pruebas de avisos en cola: destinatario actual de cliente/asesor/administrador, reasignación, desactivación, eliminación lógica, correo no verificado, cliente inactivo, administrador retirado de la lista, avisos deshabilitados, transporte local y rechazo de otro cliente. Los mensajes autorizados se renderizan sin adjuntos ni título del expediente. Mail::fake y transporte en memoria impiden cualquier envío real. No hizo falta modificar la lógica del trabajo.
+
+Resultado: **225 pruebas PHP, 3.213 comprobaciones, y 12 pruebas JavaScript aprobadas**. Compilación Vite correcta. Evidencias en .local/logs con sufijo v27. Se respaldó SQLite antes de revisar y se compararon las huellas de todos los registros y archivos al terminar: seis usuarios ficticios, siete documentos totales, expedientes intactos y cero trabajos de correo, pagos y órdenes Wompi.
+
+Se inició la comprobación de Hostinger con hPanel en Brave. PHP web 8.4; cron project-mail cada minuto. La conexión GIT del panel apunta a otro repositorio, por lo que no debe usarse Redistribuir. SSH está activo, pero aún requiere autenticación de este equipo. No se ha desplegado código ni modificado datos del servidor en este bloque. Los requisitos, hallazgos y pasos para respaldo, actualización y restauración están en docs/preparacion-publicacion.md.
+
+Versión local v27, etiqueta local/v27-preparacion-publicacion-20261104. El siguiente bloque es integrar el código revisado en GitHub y en la instalación real, previa verificación técnica y respaldo. La aprobación general del propietario permite continuar hasta completar esa integración; cualquier acceso nuevo se confirma con el alcance concreto.
