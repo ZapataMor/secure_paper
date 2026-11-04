@@ -8,6 +8,9 @@
             </p>
         </header>
 
+        @if(session('status'))
+            <p role="status" class="rounded-xl border border-[#2CC295]/50 bg-[#006A4C]/20 p-4 text-[#D7FFF2]">{{ session('status') }}</p>
+        @endif
         <div class="sp-users-card">
             <div class="sp-users-card-header">
                 <h2>Listado general</h2>
@@ -24,7 +27,7 @@
                             <th>Plan</th>
                             <th>Documento</th>
                             <th>Estado</th>
-                            <th>Registro</th>
+                            <th>Registro</th><th>Acceso</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,7 +48,7 @@
                                     <p class="sp-users-secondary">{{ $user->email }}</p>
                                 </td>
                                 <td data-label="Rol">
-                                    <span class="sp-role-pill">{{ ucfirst($user->role ?? 'sin rol') }}</span>
+                                    <span class="sp-role-pill">{{ ['client' => 'Cliente', 'advisor' => 'Asesor', 'admin' => 'Administrador'][$user->role] ?? 'Sin rol' }}</span>
                                 </td>
                                 <td data-label="Plan">
                                     @if(! $isClient)
@@ -71,15 +74,38 @@
                                 <td data-label="Registro">
                                     <p class="sp-users-secondary">{{ $user->created_at->format('d/m/Y') }}</p>
                                 </td>
+                                <td data-label="Acceso">
+                                    @if($user->id === auth()->id())
+                                        <span class="sp-users-secondary">Tu cuenta: no puedes desactivarla</span>
+                                    @else
+                                        <a class="inline-block rounded-lg border border-[#2CC295]/60 px-3 py-2 text-[#D7FFF2] focus-visible:outline focus-visible:outline-2" href="{{ route('admin.users.status.edit', ['user' => $user, 'status' => $user->status === 'active' ? 'inactive' : 'active']) }}">
+                                            {{ $user->status === 'active' ? 'Desactivar' : 'Reactivar' }}
+                                        </a>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="sp-users-empty">No hay usuarios registrados.</td>
+                                <td colspan="8" class="sp-users-empty">No hay usuarios registrados.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
+        <section class="sp-users-card mt-6" aria-labelledby="status-history-title">
+            <div class="sp-users-card-header"><h2 id="status-history-title">Últimos cambios de acceso</h2><span class="sp-users-count">Hasta 20 registros · hora de Colombia</span></div>
+            <div class="p-4 space-y-4">
+                @forelse($statusChanges as $change)
+                    <article class="rounded-lg border border-[#006A4C]/50 p-4 text-[#D7FFF2]">
+                        <p><strong>{{ $change->target }}</strong> ({{ $change->targetEmail }}): {{ $change->before === 'active' ? 'Activo' : 'Inactivo' }} → {{ $change->after === 'active' ? 'Activo' : 'Inactivo' }}</p>
+                        <p>{{ $change->actor }} · {{ $change->date }}</p>
+                        <p class="whitespace-pre-wrap break-words">Motivo: {{ $change->reason }}</p>
+                    </article>
+                @empty
+                    <p class="sp-users-secondary">Todavía no hay cambios de acceso registrados.</p>
+                @endforelse
+            </div>
+        </section>
     </section>
 </x-layouts::app>

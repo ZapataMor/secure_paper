@@ -47,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('correo/prueba-avisos', [\App\Http\Controllers\Admin\ProjectMailTestController::class, 'store'])->middleware('throttle:3,1')->name('mail-test.store');
             Route::get('correo/diagnostico', \App\Http\Controllers\Admin\MailDiagnosticController::class)->middleware('throttle:10,1')->name('mail.diagnostic');
             Route::get('users', [UserManagementController::class, 'index'])->name('users.index');
+            Route::get('users/{user}/estado', [UserManagementController::class, 'confirmStatus'])->name('users.status.edit');
+            Route::post('users/{user}/estado', [UserManagementController::class, 'updateStatus'])->middleware('throttle:20,1')->name('users.status.update');
             Route::post('trabajos/{user}/asignacion', [\App\Http\Controllers\Admin\ProjectAssignmentController::class, 'store'])->middleware('throttle:20,1')->name('works.assignment');
             Route::post('pagos/datos-fiscales', [PaymentBillingController::class, 'store'])->middleware('throttle:20,1')->name('payment-billing.store');
             Route::get('cotizaciones', [PaymentQuoteController::class, 'index'])->name('payment-quotes');

@@ -1680,3 +1680,14 @@ select:focus[data-flux-control] {
         }
     }
 }
+
+/* En móvil, cada cuenta conserva sus etiquetas y el control de acceso a la vista. */
+@media (max-width: 800px) {
+    .sp-users-table, .sp-users-table tbody { display: block; width: 100%; min-width: 0; }
+    .sp-users-table thead { display: none; }
+    .sp-users-table tbody tr { display: block; padding: 0.65rem 0; border-bottom: 1px solid #27614f; }
+    .sp-users-table td { display: block; position: relative; min-height: 2.5rem; padding: 0.5rem 1rem 0.5rem 7rem; border: 0; overflow-wrap: anywhere; }
+    .sp-users-table td::before { content: attr(data-label); position: absolute; left: 1rem; top: 0.5rem; max-width: 5.5rem; color: #aac8c4; font-size: 0.8rem; font-weight: 700; }
+    .sp-users-table td.sp-users-empty { padding-left: 1rem; }
+    .sp-users-table .sp-role-pill { max-width: 100%; white-space: normal; }
+}
