@@ -13,7 +13,7 @@ beforeEach(() => {
 });
 function form(userId, options = {}) {
     const state = { ...uploadDraft({ userId, saved: options.saved }), notes: '', error: '',
-        $refs: { notes: { value: options.oldInput ?? '' } } };
+        files: [], $refs: { notes: { value: options.oldInput ?? '' }, submission: { value: options.submissionId ?? crypto.randomUUID() } } };
     state.initDraft();
     return state;
 }
@@ -75,4 +75,35 @@ test('blocked storage warns without erasing text or pretending it was saved', ()
     assert.equal(f.notes, 'Texto que se puede copiar');
     assert.equal(f.draftSaved, false);
     assert.match(f.draftWarning, /Copia tus indicaciones/);
+});
+
+test('a lost confirmation keeps the same submission identifier when recovering', () => {
+    const original = form(4);
+    const identifier = original.$refs.submission.value;
+    original.notes = 'Texto enviado sin confirmación'; original.saveDraft();
+    const retry = form(4);
+    assert.notEqual(retry.$refs.submission.value, identifier);
+    retry.recoverDraft();
+    assert.equal(retry.$refs.submission.value, identifier);
+    retry.saveDraft();
+    const later = form(4); later.recoverDraft();
+    assert.equal(later.$refs.submission.value, identifier);
+});
+test('file-only retries recover their identifier without retaining file contents', () => {
+    const original = form(4);
+    original.files = [{ name: 'ficticio.pdf', content: 'NO ALMACENAR' }];
+    original.saveDraft();
+    assert.equal([...values.values()].some(value => value.includes('NO ALMACENAR')), false);
+    const retry = form(4);
+    assert.equal(retry.hasPendingDraft, true);
+    assert.equal(retry.notes, '');
+    retry.recoverDraft();
+    assert.equal(retry.$refs.submission.value, original.$refs.submission.value);
+    assert.deepEqual(retry.files, []);
+});
+test('a server error with returned input preserves its supplied retry identifier', () => {
+    const original = form(4); original.notes = 'Texto'; original.saveDraft();
+    const retry = form(4, { oldInput: 'Texto', submissionId: original.$refs.submission.value });
+    const reloaded = form(4); reloaded.recoverDraft();
+    assert.equal(reloaded.$refs.submission.value, original.$refs.submission.value);
 });

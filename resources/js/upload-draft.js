@@ -1,10 +1,13 @@
 export const DRAFT_TTL = 24 * 60 * 60 * 1000;
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // sessionStorage pertenece a esta pestaña; cada cuenta utiliza una clave distinta.
 export function uploadDraft({ userId, saved = false }) {
     return {
         draftKey: `propaps:upload-draft:v1:${userId}`,
         pendingDraft: '',
+        pendingSubmission: '',
+        hasPendingDraft: false,
         draftSaved: false,
         draftWarning: '',
         initDraft() {
@@ -23,6 +26,8 @@ export function uploadDraft({ userId, saved = false }) {
                         sessionStorage.removeItem(this.draftKey);
                     } else {
                         this.pendingDraft = draft.text;
+                        this.pendingSubmission = typeof draft.submissionId === 'string' && uuid.test(draft.submissionId) ? draft.submissionId : '';
+                        this.hasPendingDraft = Boolean(draft.text.trim() || draft.hadFiles === true);
                     }
                 }
                 // El borrador devuelto por el servidor tras una validación tiene prioridad.
@@ -33,14 +38,19 @@ export function uploadDraft({ userId, saved = false }) {
         },
         saveDraft() {
             this.pendingDraft = '';
+            this.hasPendingDraft = false;
             try {
                 if (this.notes.length > 8000) {
                     this.draftSaved = false;
                     this.draftWarning = 'Reduce las indicaciones a 8.000 caracteres y conserva una copia del texto completo.';
                     return;
                 }
-                if (this.notes.trim()) {
-                    sessionStorage.setItem(this.draftKey, JSON.stringify({ text: this.notes, updatedAt: Date.now() }));
+                const hadFiles = Boolean(this.files?.length);
+                if (this.notes.trim() || hadFiles) {
+                    sessionStorage.setItem(this.draftKey, JSON.stringify({
+                        text: this.notes, updatedAt: Date.now(), hadFiles,
+                        submissionId: this.$refs.submission?.value ?? '',
+                    }));
                     this.draftSaved = true;
                 } else {
                     sessionStorage.removeItem(this.draftKey);
@@ -55,13 +65,18 @@ export function uploadDraft({ userId, saved = false }) {
         recoverDraft() {
             this.notes = this.pendingDraft;
             this.$refs.notes.value = this.notes;
+            if (this.pendingSubmission && this.$refs.submission) this.$refs.submission.value = this.pendingSubmission;
             this.error = '';
-            this.saveDraft();
+            // Conserva también la referencia de los envíos solo de archivos hasta reintentarlos.
+            this.pendingDraft = '';
+            this.hasPendingDraft = false;
         },
         discardDraft() {
             try {
                 sessionStorage.removeItem(this.draftKey);
                 this.pendingDraft = '';
+                this.pendingSubmission = '';
+                this.hasPendingDraft = false;
                 this.draftSaved = false;
                 this.draftWarning = '';
             } catch {

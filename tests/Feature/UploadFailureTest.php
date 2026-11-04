@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     expect(config('database.connections.sqlite.database'))->toBe(':memory:');
@@ -70,7 +71,7 @@ test('invalid uploads preserve the draft and the entire case', function (string 
     };
     $draft = $kind === 'notes' ? str_repeat('a', 8001) : 'BORRADOR FICTICIO QUE DEBE CONSERVARSE';
     $before = ($this->snapshot)();
-    $this->post(route('private.upload-document.store'), ['document_files' => $files, 'additional_information' => $draft])
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'document_files' => $files, 'additional_information' => $draft])
         ->assertRedirect(route('private.upload-document'))
         ->assertSessionHasErrors([$key => $message])
         ->assertSessionHasInput('additional_information', $draft);
@@ -89,7 +90,7 @@ test('invalid uploads preserve the draft and the entire case', function (string 
 
 test('the exact file count size and note limits are accepted', function () {
     $files = array_map(fn ($n) => UploadedFile::fake()->create("limite-$n.pdf", 20480, 'application/pdf'), range(1, 10));
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'document_files' => $files, 'additional_information' => str_repeat('a', 8000),
     ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
     $this->assertDatabaseCount('documents', 11);
@@ -99,7 +100,7 @@ test('the exact file count size and note limits are accepted', function () {
 
 test('an empty submission does not change the case', function () {
     $before = ($this->snapshot)();
-    $this->post(route('private.upload-document.store'), [])->assertRedirect(route('private.upload-document'))
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid()])->assertRedirect(route('private.upload-document'))
         ->assertSessionHasErrors('document_files');
     expect(($this->snapshot)())->toBe($before);
 });
@@ -122,7 +123,7 @@ test('a failure during a batch removes new files rolls back records and preserve
             ->andThrow(new RuntimeException('FALLO INTERNO FICTICIO NO VISIBLE'));
     }
     $draft = 'BORRADOR TRAS FALLO DE GUARDADO';
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'document_files' => [UploadedFile::fake()->create('primero.pdf', 1, 'application/pdf'), UploadedFile::fake()->create('segundo.pdf', 1, 'application/pdf')],
         'additional_information' => $draft,
     ])->assertRedirect(route('private.upload-document'))
@@ -133,7 +134,7 @@ test('a failure during a batch removes new files rolls back records and preserve
     Storage::set('local', $this->disk);
     $this->app->forgetInstance(DocumentTypeResolver::class);
     app('router')->getRoutes()->getByName('private.upload-document.store')->flushController();
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'document_files' => [UploadedFile::fake()->create('reintento.pdf', 1, 'application/pdf')],
         'additional_information' => $draft,
     ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();

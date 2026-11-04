@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Features;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
@@ -95,7 +96,7 @@ test('registration records server chosen consent and creates only a client witho
     }
     $this->get(route('dashboard'))->assertOk()->assertSee('Elige cómo empezar');
     $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
-    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'SIN SERVICIO'])->assertForbidden();
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'SIN SERVICIO'])->assertForbidden();
     $this->get(route('admin.users.index'))->assertForbidden();
     Notification::assertNothingSent();
     $this->post(route('logout'));

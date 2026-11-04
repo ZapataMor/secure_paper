@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -53,7 +54,7 @@ test('client without paid membership cannot access upload module', function () {
         ->assertSee('Disponible con un servicio activo y pagado.')
         ->assertSee('disabled aria-describedby="sp-start-access-note"', false);
 
-    $this->actingAs($client)->postJson(route('private.upload-document.store'), [
+    $this->actingAs($client)->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'additional_information' => 'Intento ficticio sin servicio',
     ])->assertForbidden();
     expect($client->fresh()->additionalInformationEntries())->toHaveCount(0);
@@ -114,7 +115,7 @@ test('selecting a service only grants access after a verified eligible approval'
     expect($order->fresh()->status)->toBe('PENDING');
     $this->assertDatabaseCount('user_subscriptions', 0);
     $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
-    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'Sin pago'])->assertForbidden();
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'Sin pago'])->assertForbidden();
     Http::assertNothingSent();
 
     $transactionId = 'prueba-local-16';
@@ -138,7 +139,7 @@ test('selecting a service only grants access after a verified eligible approval'
         $this->get(route('dashboard'))->assertOk()->assertSee('Cargar documentos →');
     } else {
         $this->get(route('private.upload-document'))->assertRedirect(route('private.planes'));
-        $this->postJson(route('private.upload-document.store'), ['additional_information' => 'No autorizado'])->assertForbidden();
+        $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'No autorizado'])->assertForbidden();
         $this->get(route('dashboard'))->assertOk()->assertSee('Disponible con un servicio activo y pagado.');
     }
 })->with([

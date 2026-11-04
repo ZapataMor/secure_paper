@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SessionExpiryCsrfMiddleware extends PreventRequestForgery
 {
@@ -65,7 +66,7 @@ afterEach(function () {
 test('an expired csrf token rejects the upload without reflecting or storing the draft', function () {
     $before = ($this->snapshot)();
     $this->actingAs($this->client)->withSession(['_token' => 'current-token'])
-        ->post(route('private.upload-document.store'), ['_token' => 'expired-token', 'additional_information' => 'BORRADOR PRIVADO NO PUBLICADO'])
+        ->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), '_token' => 'expired-token', 'additional_information' => 'BORRADOR PRIVADO NO PUBLICADO'])
         ->assertStatus(419)->assertSee('Volver al expediente y recuperar')
         ->assertSee('Este envío no se guardó')->assertDontSee('BORRADOR PRIVADO NO PUBLICADO')
         ->assertHeader('Cache-Control', 'no-store, private')->assertSessionMissing('_old_input');
@@ -75,7 +76,7 @@ test('an expired csrf token rejects the upload without reflecting or storing the
 test('a guest upload returns to the form after login without replaying the post', function () {
     $before = ($this->snapshot)();
     $this->withHeader('Sec-Fetch-Site', 'same-origin')->from('https://example.test/irrelevante')
-        ->post(route('private.upload-document.store'), ['additional_information' => 'BORRADOR NO ENVIADO'])
+        ->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'BORRADOR NO ENVIADO'])
         ->assertRedirect(route('login'))->assertSessionHas('url.intended', route('private.upload-document'));
     $this->post(route('login.store'), ['email' => $this->client->email, 'password' => 'password'])
         ->assertRedirect(route('private.upload-document'));
@@ -91,14 +92,14 @@ test('a stale form from a different account cannot save its draft under the curr
     $subscription->save();
     $before = ($this->snapshot)();
     $this->actingAs($other)->withHeader('Sec-Fetch-Site', 'same-origin')
-        ->post(route('private.upload-document.store'), ['draft_owner' => $malformed ? [$other->id] : $this->client->id, 'additional_information' => 'BORRADOR AJENO'])
+        ->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'draft_owner' => $malformed ? [$other->id] : $this->client->id, 'additional_information' => 'BORRADOR AJENO'])
         ->assertForbidden()->assertSessionMissing('_old_input');
     expect(($this->snapshot)())->toBe($before);
 })->with([false, true]);
 
 test('json requests keep their csrf error response and do not receive html recovery content', function () {
     $before = ($this->snapshot)();
-    $this->postJson(route('private.upload-document.store'), ['_token' => 'expired-token', 'additional_information' => 'BORRADOR PRIVADO'])
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), '_token' => 'expired-token', 'additional_information' => 'BORRADOR PRIVADO'])
         ->assertStatus(419)->assertJsonStructure(['message'])->assertDontSee('BORRADOR PRIVADO')
         ->assertDontSee('Volver al expediente y recuperar');
     expect(($this->snapshot)())->toBe($before);
@@ -106,7 +107,7 @@ test('json requests keep their csrf error response and do not receive html recov
 
 test('a new valid token allows a deliberate send and confirms draft cleanup', function () {
     $this->actingAs($this->client)->withSession(['_token' => 'new-token'])
-        ->post(route('private.upload-document.store'), ['_token' => 'new-token', 'draft_owner' => $this->client->id,
+        ->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), '_token' => 'new-token', 'draft_owner' => $this->client->id,
             'additional_information' => 'RESPUESTA RECUPERADA Y CONFIRMADA'])
         ->assertRedirect(route('private.upload-document'))->assertSessionHas('upload_saved', true)->assertSessionHasNoErrors();
     expect($this->client->fresh()->additionalInformationEntries())->toHaveCount(2);

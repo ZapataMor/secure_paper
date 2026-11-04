@@ -559,3 +559,31 @@ Al intentar enviar desde la pestaña abierta, el servidor pidió ingresar nuevam
 Se compararon hashes de usuarios, documentos, mensajes, asignaciones, suscripciones, pagos, órdenes, trabajos y todos los PDF privados antes y después: sin cambios. Solo cambió el estado de las sesiones de prueba. El expediente renovado mantiene tres documentos, dos indicaciones/respuestas y el mensaje del asesor. Cero pagos, órdenes Wompi y trabajos de correo. Informe: `.local/logs/conservacion-sesion-v19.json`. Captura: `.local/logs/indicaciones-recuperadas-v19.jpg`.
 
 Versión local v19, etiqueta `local/v19-recuperacion-sesion-20261103`. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. La recuperación temporal requiere JavaScript y almacenamiento de sesión disponibles; no permite recuperar adjuntos, trasladar el borrador a otro dispositivo ni garantiza su conservación al cerrar la pestaña. Siguiente revisión sugerida: doble clic o reintento de envío para evitar duplicados en el expediente.
+
+## Bloque 20: doble clic y reintentos sin duplicados (3 de noviembre de 2026)
+
+El formulario ya desactivaba el botón durante el envío, pero el servidor no reconocía una petición repetida. Ahora cada envío del cliente lleva un identificador único y se registra su recepción dentro de la misma transacción que guarda los documentos y las indicaciones.
+
+### Comportamiento
+
+- Repetir el mismo identificador, texto y archivos devuelve: «Este envío ya se había recibido. No se duplicaron archivos ni indicaciones». No añade documentos, notas ni avisos de correo.
+- El identificador pertenece a una cuenta. La tabla `document_submissions` impide repetir la combinación usuario/identificador; el bloqueo del usuario coordina los guardados dentro de la transacción. La huella compara texto, nombres y contenido de archivos, sin depender del orden de selección.
+- Si se reutiliza un identificador recibido con contenido distinto, se rechaza esa petición, se conservan las indicaciones y se prepara un formulario nuevo para que el cliente revise y decida enviarlo. Un envío nuevo confirmado deliberadamente puede repetir contenido: esta protección reconoce reintentos, no prohíbe volver a enviar el mismo documento en otro envío.
+- Un fallo de guardado revierte también el recibo. Se mantiene el identificador para que un reintento pueda completar el envío. Identificadores ausentes, inválidos o enviados como una lista se rechazan sin guardar contenido.
+- El borrador temporal conserva ahora el identificador y si había archivos, además del texto. Si se perdió la confirmación, Recuperar indicaciones recupera también la referencia del envío, incluso cuando solo contenía adjuntos. El cliente debe seleccionar de nuevo los mismos archivos; no se almacenan sus bytes en el navegador. Se mantienen la separación por cuenta y pestaña y el plazo de 24 horas de v19.
+
+### Pruebas y demostración local
+
+Se añadieron 12 casos en `UploadIdempotencyTest.php`: reintento de texto, archivos y ambos; contenido distinto bajo la misma referencia; envío nuevo intencional; separación de cuentas; fallo y reintento; tres entradas inválidas; y aviso programado solo una vez mediante simulación. Se actualizaron las peticiones de las pruebas anteriores para incluir el identificador requerido.
+
+Batería completa: **148 pruebas PHP aprobadas, 1.785 comprobaciones**. El módulo de borradores aprueba **10 pruebas JavaScript**, incluidas pérdida de confirmación, envío solo de archivos y recuperación tras error del servidor. Evidencias: `.local/logs/pruebas-completas-v20.xml`, `.local/logs/pruebas-completas-v20.txt` y `.local/logs/borrador-v20.txt`. Las pruebas PHP utilizan SQLite en memoria; las nuevas pruebas simulan almacenamiento, correo, notificaciones y colas, y bloquean HTTP externo. Compilación de Vite completada.
+
+Se aplicó exclusivamente en SQLite local la migración `2026_11_03_210000_create_document_submissions_table.php`, tras respaldar en `.local/backups/antes-duplicados-v20-20261103-205617.sqlite`. Antes de la demostración se creó otro respaldo: `.local/backups/antes-envio-v20-20261104-020102.sqlite` (el nombre usa la hora UTC del proceso; en Bogotá seguía siendo 3 de noviembre).
+
+El ayudante privado `.local/verificar-duplicados-v20.php` inició una sesión HTTP independiente con `consulta-vencida@propaps.test` y envió tres veces exactamente el mismo formulario, PDF y texto ficticios. El primer POST no siguió la redirección, simulando que no se recibió la confirmación; los dos reintentos sí mostraron el aviso de recepción previa. Solo se añadieron **un PDF, una indicación y un recibo**. La comprobación rechaza repetir la preparación para no crear otro envío de demostración.
+
+Se compararon todos los registros anteriores y las huellas de los archivos, permitiendo únicamente la nueva indicación y fecha de actualización del cliente. Se verificó por separado la conservación exacta de sus indicaciones anteriores. El expediente mantiene su servicio, asignación y mensajes, y ahora contiene **cuatro documentos, tres indicaciones/respuestas y un mensaje del asesor**. El archivo añadido es `PRUEBA-LOCAL-envio-unico-v20.pdf`. El borrador no enviado de v19 en el navegador no se utilizó. Informe: `.local/logs/duplicados-http-v20.json`.
+
+Cero pagos, órdenes Wompi y trabajos de correo. El comprobador local confirmó SQLite en D, correo en archivos y pagos externos desactivados. Esta demostración usa peticiones HTTP repetidas en el servidor local; no constituye una prueba de concurrencia simultánea sobre MySQL de Hostinger. Si una petición concurrente encuentra contención, puede recibir el aviso de reintento; el recibo único evita guardar otra copia.
+
+Versión conservada en Git local con etiqueta `local/v20-envios-sin-duplicados-20261103`, sin publicación en GitHub ni despliegue en Hostinger. Un despliegue futuro requiere aplicar la migración y compilar los recursos. Este bloque protege los envíos del cliente; la devolución del asesor utiliza otro controlador y queda como siguiente revisión sugerida.

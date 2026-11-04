@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     expect(config('database.default'))->toBe('sqlite')
@@ -126,12 +127,12 @@ test('expired clients can read their case but cannot send files and notes', func
     foreach ($this->caseDocuments as $document) {
         $this->get(route('documents.file.show', $document))->assertOk();
     }
-    $this->post(route('private.upload-document.store'), ['additional_information' => 'NOTA BLOQUEADA'])
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'NOTA BLOQUEADA'])
         ->assertRedirect(route('private.planes'));
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'document_files' => [UploadedFile::fake()->create('bloqueado.pdf', 1, 'application/pdf')],
     ])->assertRedirect(route('private.planes'));
-    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'JSON BLOQUEADO'])->assertForbidden();
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'JSON BLOQUEADO'])->assertForbidden();
     expect(($this->caseSnapshot)())->toBe($before);
 });
 
@@ -167,14 +168,14 @@ test('a synthetic renewal restores writing to the same readable case without pay
     $oldDocuments = Document::orderBy('id')->get()->toJson();
     $oldHashes = $after['files'];
 
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'document_files' => [UploadedFile::fake()->create('renovacion-ficticia.pdf', 2, 'application/pdf')],
     ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
     $uploaded = Document::where('original_name', 'renovacion-ficticia.pdf')->sole();
     expect($uploaded->user_id)->toBe($this->client->id)
         ->and($uploaded->uploaded_by)->toBe($this->client->id);
     Storage::disk('local')->assertExists($uploaded->file_path);
-    $this->post(route('private.upload-document.store'), [
+    $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'additional_information' => 'RESPUESTA TRAS RENOVACION FICTICIA',
     ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
     $this->actingAs($this->client->fresh())->get(route('private.upload-document'))->assertOk()->assertViewHas('canUpload', true)
@@ -207,7 +208,7 @@ test('a synthetic renewal restores writing to the same readable case without pay
         ->assertViewHas('canUpload', false)->assertSee('Solo consulta')
         ->assertSee('renovacion-ficticia.pdf')->assertSee('RESPUESTA TRAS RENOVACION FICTICIA');
     $this->get(route('documents.file.show', $uploaded))->assertOk();
-    $this->postJson(route('private.upload-document.store'), [
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'additional_information' => 'FUERA DE LA RENOVACION',
     ])->assertForbidden();
     expect(($this->caseSnapshot)())->toBe($renewedSnapshot);
@@ -243,13 +244,13 @@ test('scheduled services start at Colombia midnight and not the preceding evenin
 
 test('a response is accepted in the last Colombia second and blocked at the next midnight', function () {
     Carbon::setTestNow(Carbon::parse('2030-11-04 04:59:59', 'UTC'));
-    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), [
+    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'additional_information' => 'RESPUESTA DENTRO DEL ULTIMO DIA',
     ])->assertRedirect(route('private.upload-document'))->assertSessionHasNoErrors();
     expect($this->client->fresh()->additionalInformationEntries())->toHaveCount(2);
     $before = ($this->caseSnapshot)();
     Carbon::setTestNow(Carbon::parse('2030-11-04 05:00:00', 'UTC'));
-    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), [
+    $this->actingAs($this->client->fresh())->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'additional_information' => 'RESPUESTA FUERA DE PLAZO',
     ])->assertRedirect(route('private.planes'))->assertSessionHas('membership_error');
     expect(($this->caseSnapshot)())->toBe($before);
@@ -297,7 +298,7 @@ test('cancelled unpaid or future only services do not grant historical read acce
     foreach ($this->caseDocuments as $document) {
         $this->get(route('documents.file.show', $document))->assertForbidden();
     }
-    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'NO AUTORIZADO'])->assertForbidden();
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'NO AUTORIZADO'])->assertForbidden();
 })->with([
     [['status' => 'cancelled']],
     [['payment_status' => 'pending']],
@@ -311,5 +312,5 @@ test('a future renewal does not hide previously paid expired history or permit w
     $future->fill(['start_date' => '2030-11-05', 'end_date' => '2030-12-05'])->save();
     $this->actingAs($this->client->fresh())->get(route('private.upload-document'))
         ->assertOk()->assertViewHas('canUpload', false)->assertSee('MENSAJE CONSERVADO');
-    $this->postJson(route('private.upload-document.store'), ['additional_information' => 'DEMASIADO PRONTO'])->assertForbidden();
+    $this->postJson(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'DEMASIADO PRONTO'])->assertForbidden();
 });

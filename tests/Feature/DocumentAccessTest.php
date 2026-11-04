@@ -8,6 +8,7 @@ use App\Models\UserSubscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
@@ -61,7 +62,7 @@ test('a client with active membership can upload a document', function () {
 
     $this
         ->actingAs($client)
-        ->post(route('private.upload-document.store'), [
+        ->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
             'document_files' => [$file],
         ])
         ->assertRedirect(route('private.upload-document'))

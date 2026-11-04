@@ -182,6 +182,7 @@
             x-bind:aria-busy="submitting"
         >
             @csrf
+            <input type="hidden" name="submission_id" value="{{ $submissionId }}" x-ref="submission">
             <input type="hidden" name="draft_owner" value="{{ auth()->id() }}">
             <div class="sp-upload-columns">
                 <section class="sp-upload-field" aria-labelledby="sp-upload-files-title">
@@ -212,8 +213,8 @@
                 <section class="sp-upload-field" aria-labelledby="sp-upload-notes-title">
                     <div class="sp-upload-heading"><span class="sp-upload-number" aria-hidden="true">02</span><h2 id="sp-upload-notes-title"><label for="additional_information">Indicaciones y respuestas</label></h2></div>
                     <p class="sp-upload-description">Comparte las indicaciones de tu proyecto o responde a las observaciones del equipo. Puedes enviar solo texto.</p>
-                    <div class="sp-upload-alert" x-show="pendingDraft" x-cloak role="status">
-                        <p>Hay indicaciones sin enviar de esta cuenta en esta pestaña. Puedes recuperarlas y revisarlas antes de enviar.</p>
+                    <div class="sp-upload-alert" x-show="hasPendingDraft" x-cloak role="status">
+                        <p>Hay un envío sin confirmar de esta cuenta en esta pestaña. Recupera las indicaciones y selecciona los mismos archivos para reintentarlo.</p>
                         <button type="button" class="sp-upload-remove" x-on:click="recoverDraft()">Recuperar indicaciones</button>
                         <button type="button" class="sp-upload-remove" x-on:click="discardDraft()">Descartar borrador</button>
                     </div>

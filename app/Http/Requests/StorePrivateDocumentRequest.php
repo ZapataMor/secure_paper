@@ -18,6 +18,7 @@ class StorePrivateDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'submission_id' => ['required', 'uuid'],
             'document_files' => ['nullable', 'array', 'max:10'],
             'document_files.*' => [
                 'file',
@@ -34,6 +35,8 @@ class StorePrivateDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'submission_id.required' => 'Actualiza el formulario antes de enviar. Tus indicaciones se conservan.',
+            'submission_id.uuid' => 'Actualiza el formulario antes de enviar. Tus indicaciones se conservan.',
             'document_files.array' => 'Selecciona los archivos con el botón de carga.',
             'document_files.max' => 'Puedes adjuntar hasta 10 archivos por envío.',
             'additional_information.string' => 'Escribe tus indicaciones como texto.',

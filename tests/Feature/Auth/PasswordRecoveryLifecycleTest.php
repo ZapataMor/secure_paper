@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
@@ -170,7 +171,7 @@ test('recovering access preserves the client case and active or read only permis
     }
     $this->get(route('admin.works.show', $client))->assertForbidden();
     if (! $active) {
-        $this->post(route('private.upload-document.store'), ['additional_information' => 'NO AUTORIZADO'])->assertRedirect(route('private.planes'));
+        $this->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(), 'additional_information' => 'NO AUTORIZADO'])->assertRedirect(route('private.planes'));
     }
     expect($caseState())->toBe($before);
 })->with([true, false]);

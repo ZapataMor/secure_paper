@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     expect(config('database.default'))->toBe('sqlite')
@@ -137,7 +138,7 @@ test('unauthorized actors cannot alter another case or send it documents and mes
 
 test('a client cannot choose another owner or uploader through extra upload fields', function () {
     $oldOtherNotes = $this->clientB->document_additional_information;
-    $this->actingAs($this->clientA)->post(route('private.upload-document.store'), [
+    $this->actingAs($this->clientA)->post(route('private.upload-document.store'), ['submission_id' => (string) Str::uuid(),
         'user_id' => $this->clientB->id, 'uploaded_by' => $this->advisorB->id,
         'additional_information' => 'NOTA-CON-PROPIETARIO-MANIPULADO',
         'document_files' => [UploadedFile::fake()->create('nuevo.pdf', 1, 'application/pdf')],
