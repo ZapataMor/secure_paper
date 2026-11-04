@@ -39,3 +39,11 @@ Fuentes oficiales consultadas el 4 de noviembre de 2026:
 Captura local de la base correcta seleccionada: `propaps-respaldo-base-20261104.png`, en la carpeta de visualizaciones de esta revisión. La prueba previa de restauración de las copias privadas está descrita en `docs/restauracion-aislada-20261104.md`; no fue una restauración de un archivo descargado del sistema automático de Hostinger.
 
 Conclusión: frecuencia diaria activa y copia de la base correcta disponibles; falta comprobar el contenido privado de la copia completa del plan y la existencia del próximo punto posterior a la publicación. No se requiere modificar propaps.com para esas comprobaciones.
+
+## Actualización posterior: descarga y restauración comprobadas
+
+El 4 de noviembre se completó la descarga aislada de la copia del plan correspondiente al punto **2026-11-03 23:20**. El archivo tiene 24.883.457.231 bytes y su índice se leyó correctamente. Se confirmó la presencia de `secure_paper`, su configuración privada, la entrada pública y los siete documentos privados. Los siete documentos coinciden con las huellas originales de referencia.
+
+La base automática correcta se importó y después se realizó una nueva restauración aislada del código, datos y archivos. Las 27 tablas y los siete documentos se conservaron intactos durante las comprobaciones de lectura. Los resultados, límites y procedimiento están en [Restauración de la copia automática](restauracion-automatica-20261104.md).
+
+Queda resuelta la duda sobre la inclusión de los documentos privados en **este punto concreto**. La revisión inicial de arriba se conserva como registro histórico. Sigue pendiente confirmar un punto automático posterior a la publicación del 4 de noviembre; esta descarga no acredita la cobertura de cambios posteriores al 3 de noviembre.
