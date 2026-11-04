@@ -416,3 +416,33 @@ Comprobación independiente de la base persistente: cliente original activo con 
 Este bloque usa peticiones automatizadas al framework; no realiza un cambio de contraseña mediante la interfaz de Brave ni una entrega real de correo. Las peticiones de prueba no sustituyen la comprobación de CSRF o la entrega SMTP de producción. Se conserva la configuración de contraseñas existente. La suite completa no se repitió; quedan fuera del bloque los otros fallos previamente documentados.
 
 Cambio guardado únicamente en Git local: pruebas y documentación. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. Siguiente bloque sugerido: revisar el registro de una cuenta nueva y la aceptación de condiciones, donde aún hay pruebas antiguas pendientes.
+
+## Bloque 15: registro y aceptación de condiciones (3 de noviembre de 2026)
+
+Se revisó el alta de cuentas con datos ficticios en SQLite `:memory:`, correo y notificaciones simulados, y solicitudes HTTP externas bloqueadas. No se cambió el código de registro ni los textos de términos y privacidad.
+
+La prueba antigua de registro fallaba porque no enviaba la aceptación obligatoria. Se añadió `terms=1` al caso válido y se simularon notificaciones. La validación real del servidor se conserva: rechaza solicitudes sin aceptación afirmativa.
+
+Se añadieron 15 casos en `tests/Feature/Auth/RegistrationConsentTest.php`:
+
+- Casilla obligatoria sin marcar inicialmente y enlaces accesibles a términos y privacidad.
+- Rechazo de aceptación ausente, falsa, cero o negativa, sin crear usuario ni registro de aceptación; mensaje de validación explícito.
+- Alta como cliente activo, contraseña cifrada y correo normalizado; manipular rol, estado, verificación, identidad de Google, versión aceptada o datos de pago no cambia los valores elegidos por el servidor.
+- Registro de aceptación asociado al usuario, con fecha, método de registro y versiones de términos y privacidad `2026-10-04`.
+- Sin suscripción, pago, orden, documentos ni proyecto automáticos. La cuenta puede iniciar sesión, pero no cargar archivos, responder ni entrar a administración.
+- Rechazo de datos inválidos y correo duplicado sin sobrescribir la cuenta existente ni añadir aceptaciones.
+- Si falla el registro de aceptación, la transacción revierte la creación del usuario.
+- Con verificación de correo activada solo en la prueba se genera la notificación simulada y se exige verificar; con ella desactivada, se respeta la configuración y no se habilita una membresía.
+- Google simulado: no se crea la cuenta al recibir la identidad; se exige aceptación posterior y se ignoran identidad y rol enviados desde el formulario. No se contacta a Google. Este caso no verifica el proveedor OAuth real ni su validación de estado, que está sustituida por el simulador.
+
+### Resultados y conservación
+
+Las dos pruebas existentes de registro y los 15 casos nuevos aprobaron en la ejecución conjunta con recuperación, autenticación y permisos: **78 pruebas, 1.023 comprobaciones**. Evidencia final: `.local/logs/pruebas-registro-y-acceso.xml`. Las pruebas antiguas fuera de esos bloques siguen pendientes de revisión; no se ejecutó la suite completa.
+
+Se comprobó por separado el mensaje de rechazo con una sesión HTTP real del servidor local, token CSRF y un registro ficticio **sin aceptar condiciones**. El formulario mostró Debes aceptar los términos y la política de privacidad. La cuenta `rechazo-sin-consentimiento@propaps.test` no se creó. Evidencia: `.local/logs/registro-rechazado-http.json`. La aserción automática comprueba el mensaje de sesión; la comprobación visual del HTML tras redirección se hizo en esta solicitud local, separada de la sesión en memoria de PHPUnit.
+
+El servidor local estaba detenido y se volvió a iniciar con el script habitual, tras verificar SQLite en D, correo en archivos y pagos externos desactivados. Quedó disponible en `http://127.0.0.1:8000`.
+
+La base persistente conserva cuatro cuentas de prueba, los mismos recuentos y permisos de ambos expedientes, y cero trabajos de correo, pagos y órdenes. Informe: `.local/logs/comprobacion-registro.json`. No se crearon cuentas persistentes nuevas ni se modificaron contraseñas existentes. No se aceptaron condiciones mediante una cuenta real.
+
+Versión guardada únicamente en Git local: pruebas y documentación. Sin publicación en GitHub, despliegue en Hostinger, cobros ni correos reales. Siguiente bloque sugerido: revisar las pruebas antiguas restantes del panel y acceso a servicios para completar la validación local pendiente.

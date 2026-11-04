@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::registration());
+    Notification::fake();
 });
 
 test('registration screen can be rendered', function () {
@@ -18,6 +20,7 @@ test('new users can register', function () {
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
+        'terms' => '1',
     ]);
 
     $response->assertSessionHasNoErrors()
