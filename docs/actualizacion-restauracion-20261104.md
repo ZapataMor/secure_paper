@@ -53,3 +53,7 @@ Esta prueba valida la actualización del respaldo concreto y la consulta del exp
 Para una recuperación real habría que reconciliar los datos posteriores al punto del respaldo antes de cualquier cambio. Continúa pendiente confirmar en Hostinger un punto automático posterior a la publicación del 4 de noviembre; esta prueba local no acredita esa cobertura.
 
 Siguiente revisión sugerida: ensayo completo de recuperación con tiempos y lista de comprobación, manteniendo las restauraciones aisladas y probando cualquier operación con escritura sobre otra copia con datos ficticios.
+
+## Ciclo completo posterior
+
+Se conservó esta copia actualizada sin cambios y se creó una tercera para probar escrituras con cuentas ficticias. El recorrido de carga, asignación, devolución, respuesta y privacidad pasó 76 comprobaciones mediante 52 solicitudes HTTP locales, sin pagos ni correos. Véase [Ciclo completo del expediente en copia aislada](ciclo-expediente-restaurado-20261104.md).
